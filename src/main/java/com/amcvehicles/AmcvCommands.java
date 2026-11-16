@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * /amcv (op 2), test commands.
  * <ul>
- *   <li>{@code /amcv mercedes [color] [hood] [trunk]}: one abandoned Mercedes in front of you (rear axle 3 blocks ahead), its nose
+ *   <li>{@code /amcv mercedes [color] [hood trunk [doorLeft doorRight]]}: one abandoned Mercedes in front of you (rear axle 3 blocks ahead), its nose
  *   pointing the way you look (snapped to north, south, east or west); what is not given is drawn.</li>
  * </ul>
  */
@@ -38,24 +38,36 @@ final class AmcvCommands {
         }
         d.register(Commands.literal("amcv").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("mercedes")
-                        .executes(c -> mercedes(c, null, null, null))
+                        .executes(c -> mercedes(c, null, null, null, null, null))
                         .then(Commands.argument("color", StringArgumentType.word())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(colors, b))
-                                .executes(c -> mercedes(c, StringArgumentType.getString(c, "color"), null, null))
+                                .executes(c -> mercedes(c, StringArgumentType.getString(c, "color"), null, null, null,
+                                        null))
                                 .then(Commands.argument("hood", BoolArgumentType.bool())
                                         .then(Commands.argument("trunk", BoolArgumentType.bool())
                                                 .executes(c -> mercedes(c, StringArgumentType.getString(c, "color"),
                                                         BoolArgumentType.getBool(c, "hood"),
-                                                        BoolArgumentType.getBool(c, "trunk"))))))));
+                                                        BoolArgumentType.getBool(c, "trunk"), null, null))
+                                                .then(Commands.argument("doorLeft", BoolArgumentType.bool())
+                                                        .then(Commands.argument("doorRight", BoolArgumentType.bool())
+                                                                .executes(c -> mercedes(c,
+                                                                        StringArgumentType.getString(c, "color"),
+                                                                        BoolArgumentType.getBool(c, "hood"),
+                                                                        BoolArgumentType.getBool(c, "trunk"),
+                                                                        BoolArgumentType.getBool(c, "doorLeft"),
+                                                                        BoolArgumentType.getBool(c, "doorRight"))))))))));
     }
 
-    private static int mercedes(CommandContext<CommandSourceStack> c, String color, Boolean hood, Boolean trunk) {
+    private static int mercedes(CommandContext<CommandSourceStack> c, String color, Boolean hood, Boolean trunk,
+                                Boolean doorLeft, Boolean doorRight) {
         CommandSourceStack src = c.getSource();
         // the source's position and look: a player, or "execute positioned ... rotated ... run" from the console
         RandomSource r = src.getLevel().getRandom();
         String sub = color == null ? Mercedes.drawColor(r, false) : "_" + color;
         boolean h = hood != null ? hood : r.nextDouble() < Mercedes.HOOD_OPEN_CHANCE;
         boolean t = trunk != null ? trunk : r.nextDouble() < Mercedes.TRUNK_OPEN_CHANCE;
+        boolean dl = doorLeft != null ? doorLeft : r.nextDouble() < Mercedes.DOOR_OPEN_CHANCE;
+        boolean dr = doorRight != null ? doorRight : r.nextDouble() < Mercedes.DOOR_OPEN_CHANCE;
         // the look snapped to a quarter turn: 0 south, 90 west, 180 north, 270 east
         int quarter = Mth.floor(Mth.wrapDegrees(src.getRotation().y) / 90.0 + 0.5) & 3;
         float yaw = quarter * 90f;
@@ -65,7 +77,7 @@ final class AmcvCommands {
         double z = Math.floor(src.getPosition().z) + 0.5 + dz * AHEAD;
         double y = Math.floor(src.getPosition().y);
         try {
-            Mercedes.Result res = Mercedes.spawn(src.getLevel(), x, y, z, yaw, sub, h, t);
+            Mercedes.Result res = Mercedes.spawn(src.getLevel(), x, y, z, yaw, sub, h, t, dl, dr);
             String facing = switch (quarter) {
                 case 0 -> "south";
                 case 1 -> "west";
@@ -73,10 +85,11 @@ final class AmcvCommands {
                 default -> "east";
             };
             src.sendSuccess(() -> Component.literal(String.format(
-                    "Mercedes%s at %.1f %.1f %.1f, nose to the %s; hood %s, trunk %s; fuel %.0f/%.0f mB (%s); "
+                    "Mercedes%s at %.1f %.1f %.1f, nose to the %s; hood %s, trunk %s, left door %s, right door %s; fuel %.0f/%.0f mB (%s); "
                             + "engines removed %d; parts %s",
                     res.color(), x, y, z, facing, res.hoodOpen() ? "open" : "closed",
-                    res.trunkOpen() ? "open" : "closed", res.fuel(), res.fuelCapacity(),
+                    res.trunkOpen() ? "open" : "closed", res.doorLeftOpen() ? "open" : "closed",
+                    res.doorRightOpen() ? "open" : "closed", res.fuel(), res.fuelCapacity(),
                     res.fluid().isEmpty() ? "no fluid" : res.fluid(), res.enginesRemoved(), res.parts())), true);
             return 1;
         } catch (RuntimeException e) {

@@ -25,7 +25,8 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 ## Decisões do usuário (16 Nov 2026)
 - **Estado da Mercedes, sempre**: sem motor, sem rodas, sem bancos, **10% de gasolina**, **velocímetro (km/h) e
   marcador de combustível** no painel.
-- **Sorteados**: capô aberto e porta-malas aberto (cada um à parte; 50% cada, valor meu, a confirmar).
+- **Sorteados**: capô aberto e porta-malas aberto (cada um à parte; 50% cada, valor meu, a confirmar) e **cada
+  porta lateral aberta ou fechada, 50% a esquerda e 50% a direita, à parte** (pedido do usuário, 16 Nov 2026).
 - **Cores**: as 15 civis sorteadas com a mesma chance; `_police` e `_police2` **só na delegacia** (e lá só elas).
 - **Raridade**: **3% por vaga** (cada vaga sorteia sozinha). Com isso a garagem subterrânea do prédio largo (muitas
   vagas) pode ter vários carros e as estruturas com poucas vagas quase nunca têm.
@@ -35,7 +36,9 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 
 ## Etapas
 1. **(feita, aguardando o teste do usuário)** Comando `/amcv mercedes [cor] [capô] [porta-malas]`: uma Mercedes no
-   estado pedido na frente de quem executa.
+   estado pedido na frente de quem executa. Testada pelo usuário: nariz para o lado certo (sul), porta-malas aberto
+  visível. Pedidos depois do teste (versão 0.1.1): portas sorteadas e o marcador de combustível à direita do
+  velocímetro.
 2. Vagas de uma estrutura com vagas pintadas (a garagem subterrânea do prédio largo), com o comando de debug que
    enche todas as vagas da estrutura onde o jogador está.
 3. Geração no mundo: 3% por vaga, cores, delegacia.
@@ -46,17 +49,18 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
 as peças que ficam, o combustível, os instrumentos gravados, os valores de `door_hood`/`door_trunk`, o ângulo
 gravado, e que o carro nasce **destrancado** (sem a variável `locked`; o IV não guarda dono).
-**Hipóteses, a conferir no cliente do usuário:** que o valor 1 de `door_hood`/`door_trunk` aparece aberto; que o
-nariz aponta mesmo para o lado anunciado; que a origem é o eixo traseiro; que um cliente conectado vê os
+**Visto pelo usuário no jogo (0.1.0):** o nariz para o lado anunciado (sul) e o porta-malas aberto.
+**Hipóteses, a conferir no cliente do usuário:** que o valor 1 de `door_hood` e das portas aparece aberto; as outras
+direções do nariz; que a origem é o eixo traseiro; que um cliente conectado vê os
 instrumentos e não vê motor (no teste não havia cliente para receber os pacotes de "motor posto" e "motor tirado";
 se aparecer um motor fantasma, a alternativa é pôr só as peças permanentes em vez de pôr tudo e tirar o motor).
 
 - `new EntityVehicleF_Physics(world, null, item, null)`: dados `null` = carro novo, como de um item recém-feito. O
-  pack põe `door_l`, `door_r` e `door_hood` em 1 (abertos) pelas `initialVariables`; o mod então põe `door_hood` e
-  `door_trunk` no valor sorteado. **As portas laterais ficam abertas** (padrão do pack; pergunta pendente ao usuário).
+  pack põe `door_l`, `door_r` e `door_hood` em 1 (abertos) pelas `initialVariables`; o mod então põe `door_hood`,
+  `door_trunk`, `door_l` (a porta do lado +x do modelo, a esquerda de quem está sentado) e `door_r` no valor sorteado.
 - Instrumentos (antes de pôr o carro no mundo, para irem nos dados iniciais): o carro tem 3 lugares no painel (0
-  esquerda, 1 meio e maior, 2 direita); velocímetro `instrument_car_spedometer_kph` no 1, marcador
-  `instrument_car_fuelqty` no 0; o 2 fica vazio.
+  esquerda, 1 meio e maior, 2 direita); velocímetro `instrument_car_spedometer_kph` no 1 (meio), marcador
+  `instrument_car_fuelqty` no 2 (à direita do velocímetro, pedido do usuário); o 0 fica vazio.
 - `world.spawnEntity` e `addPartsPostAddition(null, null)`: põe as peças padrão do pack: o motor
   `enginemercedesm102` e as permanentes (porta-luvas `gloveboxscout`, slot 11, e o "assento" invisível em pé do
   porta-malas `mts:invisible_standing`, slot 9, que o pack usa para carregar coisas no porta-malas). O merc230 **não
@@ -76,11 +80,11 @@ AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
 ## Comandos (op 2)
-- `/amcv mercedes [cor] [capô] [porta-malas]`: uma Mercedes com o eixo traseiro 3 blocos à frente de quem executa,
+- `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: uma Mercedes com o eixo traseiro 3 blocos à frente de quem executa,
   o nariz para onde ele olha (arredondado para N, S, L ou O). Cor sem o `_` (`white`, `police`...); capô e
-  porta-malas `true` (aberto) ou `false`; o que faltar é sorteado (a cor entre as civis). Do console:
+  porta-malas e portas `true` (aberto) ou `false`; o que faltar é sorteado (a cor entre as civis). Do console:
   `execute positioned X Y Z rotated YAW 0 run amcv mercedes ...`. Responde com a cor, a posição, o capô, o
-  porta-malas, o combustível, o fluido, os motores tirados e as peças que ficaram.
+  porta-malas, as portas, o combustível, o fluido, os motores tirados e as peças que ficaram.
 
 ## Build e teste
 - Build (Java 21; o Java padrão do sistema é o 27, que o Gradle não aceita):

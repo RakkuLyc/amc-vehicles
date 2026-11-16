@@ -28,5 +28,20 @@ Conferido nos dados salvos (`save-all flush` e `data get entity`), **e de novo d
   `door_trunk: 1.0` na de polícia; `door_l` e `door_r` 1,0 nas duas (portas abertas, padrão do pack);
 - `anglesy: -90.0` na de polícia (nariz para o oeste, ângulo do Minecraft 90 com o sinal trocado).
 
-**Não testado (precisa do cliente do usuário):** a aparência (capô e porta-malas abertos na animação, ausência das
+**Teste do usuário no jogo (0.1.0):** `Mercedes_salmon`, nariz para o sul (o lado anunciado), capô fechado e
+porta-malas aberto como na resposta do comando; porta lateral aberta (padrão do pack na 0.1.0).
+
+**Ainda não visto no jogo:** o resto da aparência (capô e porta-malas abertos na animação, ausência das
 rodas e bancos no modelo, os instrumentos no painel) e se o nariz aponta mesmo para o lado anunciado.
+
+## Versão 0.1.1 — portas sorteadas e marcador à direita (16 Nov 2026)
+Servidor de teste, nariz para o sul:
+
+| Comando | Resposta |
+|---|---|
+| `amcv mercedes red false false true false` | porta esquerda aberta, direita fechada |
+| `amcv mercedes` (3 vezes) | `_brown` as duas fechadas; `_silver` e `_black` só a direita aberta |
+
+Dados salvos da vermelha: `door_l: 1.0`, sem `door_r` (fechada = 0), `instrument1_systemName:
+"instrument_car_spedometer_kph"` (meio) e `instrument2_systemName: "instrument_car_fuelqty"` (direita), sem
+instrumento no 0.

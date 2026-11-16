@@ -22,7 +22,8 @@ import java.util.Map;
 
 /**
  * The abandoned Mercedes 230 of the MTS Official Pack ({@code mtsofficialpack:merc230}): always without engine,
- * wheels and seats, 10% of fuel, a speedometer (km/h) and a fuel gauge; hood and trunk open or closed, drawn.
+ * wheels and seats, 10% of fuel, a speedometer (km/h) and a fuel gauge; hood, trunk and each side door open or
+ * closed, drawn.
  */
 public final class Mercedes {
     public static final String PACK = "mtsofficialpack";
@@ -38,6 +39,8 @@ public final class Mercedes {
     /** Chance of the hood being open, and of the trunk being open (drawn separately). */
     public static final double HOOD_OPEN_CHANCE = 0.5;
     public static final double TRUNK_OPEN_CHANCE = 0.5;
+    /** Chance of each side door (left and right, drawn separately) being open; the pack opens both on a new car. */
+    public static final double DOOR_OPEN_CHANCE = 0.5;
 
     /** The engine the pack gives the car (its fuel type, gasoline, picks the fluid of the tank). */
     static final String ENGINE = "enginemercedesm102";
@@ -45,13 +48,14 @@ public final class Mercedes {
     static final String SPEEDOMETER = "instrument_car_spedometer_kph";
     static final int SPEEDOMETER_SLOT = 1;
     static final String FUEL_GAUGE = "instrument_car_fuelqty";
-    static final int FUEL_GAUGE_SLOT = 0;
+    static final int FUEL_GAUGE_SLOT = 2;
 
     private Mercedes() {
     }
 
     /** What was spawned. */
-    public record Result(String color, boolean hoodOpen, boolean trunkOpen, String fluid, double fuel,
+    public record Result(String color, boolean hoodOpen, boolean trunkOpen, boolean doorLeftOpen,
+                         boolean doorRightOpen, String fluid, double fuel,
                          double fuelCapacity, int enginesRemoved, List<String> parts) {
     }
 
@@ -66,14 +70,14 @@ public final class Mercedes {
      * yaw {@code noseYaw} (0 = south, +Z; 90 = west; 180 = north; 270 = east).
      */
     public static Result spawn(ServerLevel level, double x, double y, double z, float noseYaw, String color,
-                               boolean hoodOpen, boolean trunkOpen) {
+                               boolean hoodOpen, boolean trunkOpen, boolean doorLeftOpen, boolean doorRightOpen) {
         ItemVehicle item = PackParser.getItem(PACK, SYSTEM, color);
         if (item == null) {
             throw new IllegalStateException("Immersive Vehicles has no item " + PACK + ":" + SYSTEM + color);
         }
         AWrapperWorld world = WrapperWorld.getWrapperFor(level);
-        // data null = a new car, as from a fresh item: the pack's initialVariables (door_l, door_r, door_hood = open)
-        // and default instruments; the parts come with addPartsPostAddition below
+        // data null = a new car, as from a fresh item: the pack's initialVariables (door_l, door_r, door_hood = open,
+        // set again below) and default instruments; the parts come with addPartsPostAddition below
         EntityVehicleF_Physics v = new EntityVehicleF_Physics(world, null, item, null);
         v.position.set(x, y, z);
         v.prevPosition.set(v.position);
@@ -85,6 +89,9 @@ public final class Mercedes {
 
         v.getOrCreateVariable("door_hood").setTo(hoodOpen ? 1.0 : 0.0, false);
         v.getOrCreateVariable("door_trunk").setTo(trunkOpen ? 1.0 : 0.0, false);
+        // door_l is the door on the +x side of the model, the left of someone sitting in the car
+        v.getOrCreateVariable("door_l").setTo(doorLeftOpen ? 1.0 : 0.0, false);
+        v.getOrCreateVariable("door_r").setTo(doorRightOpen ? 1.0 : 0.0, false);
 
         ItemInstrument speedometer = PackParser.getItem(PACK, SPEEDOMETER);
         ItemInstrument fuelGauge = PackParser.getItem(PACK, FUEL_GAUGE);
@@ -120,7 +127,7 @@ public final class Mercedes {
         for (APart p : v.parts) {
             parts.add(p.placementSlot + ":" + p.definition.packID + ":" + p.definition.systemName);
         }
-        return new Result(color, hoodOpen, trunkOpen, fluid, fuel, capacity, removed, parts);
+        return new Result(color, hoodOpen, trunkOpen, doorLeftOpen, doorRightOpen, fluid, fuel, capacity, removed, parts);
     }
 
     /**
