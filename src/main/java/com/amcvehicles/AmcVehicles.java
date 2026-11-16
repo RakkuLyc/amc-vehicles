@@ -15,5 +15,8 @@ public final class AmcVehicles {
 
     public AmcVehicles(IEventBus modBus) {
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> AmcvCommands.register(e.getDispatcher()));
+        NeoForge.EVENT_BUS.addListener(Generation::onChunkLoad);
+        NeoForge.EVENT_BUS.addListener(Generation::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(Generation::onServerStopped);
     }
 }

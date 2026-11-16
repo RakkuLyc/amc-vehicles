@@ -88,3 +88,47 @@ o leste/oeste" do `check_bays.py` (que lê `anglesy` com a mesma regra) não dep
 
 **Não visto no jogo:** a aparência na garagem (o carro inteiro dentro da vaga, sem atravessar paredes ou pilares) e
 a garagem de outras rotações no mundo (só a rotação 1 foi testada no mundo; as 4 nos testes de unidade).
+
+## Etapa 3 — geração no mundo (16 Nov 2026, versão 0.3.0)
+
+### Testes de unidade (`DrawTest`)
+- `sameInputSameCar`: o sorteio é determinístico.
+- `chancesAndColours` (2.000.000 vagas): 2,99% com carro; capô 50,1%, porta-malas 50,0%, porta esquerda 49,8%,
+  direita 50,1%; as 15 cores civis entre 3.870 e 4.088 (1/15 ± 0,5%); nenhuma de polícia.
+- `policeOnlyPoliceColours`: na delegacia só `_police` e `_police2`.
+- `projectionPerCity`: o planejador real do AMC (terreno plano, sementes 20261027, 3478477863671517581,
+  -3297019724594858492, 1 e 42; as cidades de 12 × 12 células de cada): 492 cidades, 172 com prédio largo (35,0%),
+  5.848 vagas (11,9 por cidade), 160 carros (0,33 por cidade; 2,74% das vagas, dentro do acaso para 3%: o esperado
+  seria 175 ± 13); cidades com 0 carros 383 (77,8%), 1 66 (13,4%), 2 35 (7,1%), 3 8 (1,6%); 0,93 carro por prédio
+  largo.
+
+### No mundo (semente 20261027, mundo novo)
+- **Contagem exata**: 12 prédios largos (`/amcs locate` de uma grade de 7 × 7 pontos, 736 de distância),
+  `tools/check_generation.py --load` (forceload de cada caixa, que a gera): em todos, carros na caixa = sorteados =
+  "occupied by a vehicle" no `/amcv draw`; **11 carros, 11 sorteados, 11 no lugar**; 11 linhas `[AMCV] Mercedes` no
+  log.
+- **Faixas, 4 rotações no mundo** (`check_bays.py`): os carros gerados das caixas -1300,-1976 (3) e 385,1857 (3) e
+  -2559,-1240 (2), e `/amcv fill` nas caixas 1000,-2410 (rotação 2) e 2593,-1087 (rotação 0): **todos com 10/10
+  células de faixa**, 17 narizes N e 17 S nas caixas de rotação 0 e 2, E/W nas de rotação 1 e 3.
+- **Reinício**: 79 carros antes e 79 depois; nenhuma linha `[AMCV] Mercedes` nova; `check_generation` de novo nas 10
+  caixas geradas: 11/11/11; `pending chunks 0`.
+- **Borda (chunk completo que não roda)**: `forceload add` só do chunk 166,204: a Mercedes seagreen da vaga 27 da caixa
+  2593,3265, cujo corpo fica todo no chunk 164,204 (a 2 do forçado: completo, sem tick), foi posta ("(generated)");
+  dados salvos iguais aos de um carro normal (só invisible_standing e gloveboxscout, 1.500 de lava, velocímetro no 1,
+  combustível no 2, portas e porta-malas sorteados).
+- **Pendente sobrevive a um reinício**: `forceload add` só do chunk -245,-304: a Mercedes vermelha da vaga 24 da caixa
+  -3882,-4885 tem o dono em -243,-304 (a 2: completo) e o corpo também em -242,-304 (a 3: não completo): `pending
+  chunks 1`, sem carro. Servidor parado e reiniciado: ainda `pending chunks 1, queued 1`, sem carro. `forceload add`
+  do chunk -242,-304: o carro apareceu (`(generated)`), `pending chunks 0`.
+
+### Ferramentas corrigidas no caminho (não eram defeitos do mod)
+- `check_bays.py` pareava a lista de posições com a de `anglesy`, mas o IV não grava `anglesy` quando é 0 (nariz para
+  o sul): as listas desalinhavam e os narizes saíam errados. Agora pergunta o ângulo de cada carro (ausente = 0).
+- O RCON parte respostas acima de 4096 bytes; o cliente lia só o primeiro pedaço (`tools/rconlib.py` agora lê
+  todos). Mandar o comando e um marcador colados derrubava a conexão (o RCON do jogo fecha quando uma leitura vem
+  menor que um cabeçalho); agora vai um pacote por vez.
+- O primeiro comando do AMC depois de iniciar o servidor planeja as cidades (~10 s, "Planning cities"; o servidor fica
+  parado nesse tempo).
+
+**Não visto no jogo:** um carro gerado sozinho, com um jogador andando (o teste usou forceload; a borda de visão do
+jogador é o caso "completo sem tick", testado acima).

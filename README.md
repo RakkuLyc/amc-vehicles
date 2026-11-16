@@ -3,17 +3,18 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV) com o
 **Official Content Pack**: carros abandonados nas estruturas do AMC.
 
-**Versão 0.2.0** (16 Nov 2026), **etapa 2 de 4**: o comando de teste que coloca uma Mercedes 230 abandonada na sua
-frente (etapa 1, aprovada) e as vagas da garagem subterrânea do prédio largo, com o comando de debug que enche
-todas as vagas da estrutura onde você está. Os carros ainda **não** aparecem sozinhos no mundo: isso é a etapa 3
-(`CLAUDE.md`, seção "Etapas").
+**Versão 0.3.0** (16 Nov 2026), **etapa 3 de 4**: as Mercedes **aparecem sozinhas** nas vagas quando o mundo é
+gerado (3% por vaga), por enquanto só na garagem subterrânea do prédio largo; as outras estruturas vêm na etapa 4
+(`CLAUDE.md`, seção "Etapas"). Só as áreas geradas depois de instalar o mod recebem carros.
 
 ## A Mercedes abandonada
 - Sempre: **sem motor, sem rodas, sem bancos**, **10% de combustível** (1.500 de 15.000 mB), **velocímetro (km/h)**
   e **marcador de combustível** no painel.
 - Sorteados: capô, porta-malas, porta esquerda e porta direita, cada um aberto ou fechado com 50%, à parte.
 - Painel: velocímetro no mostrador do meio e marcador de combustível à direita dele.
-- Cores: as 15 civis com a mesma chance; as 2 de polícia só na delegacia.
+- Cores: as 15 civis com a mesma chance; as 2 de polícia só na delegacia (que ganha vagas na etapa 4).
+- Raridade: **3% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento).
+  Hoje: ~0,93 carro por prédio largo e 0,33 por cidade (77,8% das cidades sem carro).
 - O combustível é o que o IV usaria num carro novo com o motor da Mercedes (tipo `gasoline`): sem um mod de
   gasolina, lava.
 
@@ -29,6 +30,8 @@ pulada.
   direita fechada). O que não for dito é sorteado.
 - `/amcv fill`: uma Mercedes em cada vaga da estrutura do AMC onde você está (para conferir as vagas). Não funciona
   em estruturas postas com `/amcs spawn` (elas não fazem parte do plano da cidade).
+- `/amcv draw`: o sorteio real (o da geração) na estrutura onde você está: diz quais vagas têm carro e põe os que
+  faltam (útil em áreas geradas antes do mod e para testar).
 
 ## Requisitos
 - Immersive Vehicles 24.0.0+ (`mts`) e MTS Official Pack V29+ (`mtsofficialpack`).
@@ -36,6 +39,6 @@ pulada.
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.2.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.3.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, do Official Pack e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

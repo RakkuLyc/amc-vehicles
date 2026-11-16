@@ -19,9 +19,9 @@ public final class AmcWorld {
 
     /**
      * An AMC structure in the world: {@code def} with its box corner at (x0, z0), turned {@code rot}, its city ground
-     * at y = {@code base}.
+     * at y = {@code base}; {@code seed} = the seed AMC gives its lot (the copy), which the draw of the cars uses.
      */
-    public record Placed(Structures.Def def, int x0, int z0, int rot, int base) {
+    public record Placed(Structures.Def def, int x0, int z0, int rot, int base, long seed) {
         public Placement.Car car(Spots.Bay bay) {
             return Placement.car(def, x0, z0, rot, base, bay);
         }
@@ -45,7 +45,7 @@ public final class AmcWorld {
         }
         // the base of a lot column, as AMC's ChunkBuilder works it out
         int base = cp.h2[i] / 2 - 1;
-        return new Placed(lot.building, lot.x0, lot.z0, lot.rot, base);
+        return new Placed(lot.building, lot.x0, lot.z0, lot.rot, base, lot.seed);
     }
 
     /**

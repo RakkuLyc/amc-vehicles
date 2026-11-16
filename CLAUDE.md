@@ -33,16 +33,20 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 - **Comando de debug** que põe um carro em **todas as vagas da estrutura onde o jogador está** (para conferir a
   detecção das vagas).
 - Nome AMC Vehicles, repositório privado, documentação em português.
+- **Só chunks novos** recebem carros (16 Nov 2026, etapa 3): as áreas geradas antes de instalar o mod (ou antes desta
+  versão) ficam sem carros; para elas, e para testar, `/amcv draw` aplica o sorteio real na estrutura onde se está.
 
 ## Etapas
 1. **(aprovada pelo usuário, 16 Nov 2026)** Comando `/amcv mercedes`: uma Mercedes no estado pedido na frente de
    quem executa. Depois do primeiro teste (0.1.0), pedidos da 0.1.1: portas sorteadas e o marcador de combustível à
    direita do velocímetro. O usuário testou a 0.1.1 ("está tudo funcionando") e confirmou capô e porta-malas 50% e o
    combustível lava.
-2. **(feita na 0.2.0, aguardando o teste do usuário)** As vagas da garagem subterrânea do prédio largo
+2. **(aprovada pelo usuário, 16 Nov 2026)** As vagas da garagem subterrânea do prédio largo
    (`abandoned_wide_building`) e o comando de debug `/amcv fill`, que enche todas as vagas da estrutura onde o
    jogador está.
-3. Geração no mundo: 3% por vaga, cores, delegacia.
+3. **(feita na 0.3.0, aguardando o teste do usuário)** Geração no mundo: 3% por vaga, cores sorteadas, só chunks
+   novos, `/amcv draw`. As cores de polícia já saem no sorteio da delegacia (testado em unidade), mas a delegacia só
+   ganha vagas na etapa 4.
 4. As outras estruturas (oficinas por dentro, postos ao lado das bombas, casas com garagem, delegacia...), cada uma
    com uma imagem das vagas propostas para o usuário aprovar.
 
@@ -99,6 +103,32 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   empilha); senão a vaga é pulada e o motivo vai na resposta do comando e no log.
   As estruturas postas com `/amcs spawn` não estão no plano: o `/amcv fill` não as reconhece.
 
+## Geração no mundo (`Draw`, `Generation`, `Pending`; etapa 3)
+- **Sorteio** (`Draw.car`): função pura da semente do lote (a cópia da estrutura; o AMC a tira da semente do mundo) e
+  do número da vaga em `spots.txt`, com um sal próprio (SplitMix64): a mesma vaga do mesmo mundo dá sempre o mesmo
+  resultado, em qualquer ordem de carregamento. **3% por vaga** (`CHANCE_PER_BAY`); depois, cada um à parte: cor (as
+  15 civis com a mesma chance; na delegacia, `type` `police_station`, só as 2 de polícia), capô 50%, porta-malas 50%,
+  porta esquerda 50%, porta direita 50%. As cores e as chances moram em `Draw` (sem classes do Minecraft, para os
+  testes); `Mercedes` as repete.
+- **Dono**: um carro pertence ao chunk da sua origem (o eixo traseiro).
+- **Quando**: no `ChunkEvent.Load` de um chunk **recém-gerado** (`isNewChunk`; o evento roda na thread principal,
+  depois de o chunk virar `LevelChunk` com status FULL, conferido no código do NeoForge 21.1.219,
+  `ChunkStatusTasks`), o mod sorteia os carros daquele chunk (as estruturas com vagas que têm coluna nele, pelo
+  `ChunkPlan.lot` do AMC); se houver algum, o chunk vai para `Pending` (salvo no mundo, `data/amcvehicles_pending.dat`)
+  e para a fila. **Nunca dentro da geração do AMC.**
+- **Pôr** (`Generation.onLevelTick`, a cada 10 ticks): para cada chunk da fila carregado, cada carro dele espera até
+  todos os chunks sob o corpo serem chunks completos carregados (`getChunkNow`, que nunca força um carregamento); então
+  `Generation.place` confere o mundo (`AmcWorld.blocked`: piso, 2 de altura livre, nenhum veículo do IV ali) e põe o
+  carro, ou o descarta de vez se estiver bloqueado. Quando nenhum carro do chunk espera mais, ele sai de `Pending`.
+  Um chunk que descarrega sai da fila mas fica em `Pending` e volta à fila quando carregar de novo (depois de
+  reiniciar, também). A checagem de "veículo ali" impede carro duplicado se o servidor cair entre pôr o carro e
+  salvar.
+- **Log**: cada carro posto (`[AMCV] Mercedes<cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
+  descartada, com o motivo.
+- **Projeção** (`DrawTest.projectionPerCity`: o planejador real do AMC num terreno plano, 5 sementes, 492 cidades,
+  com o sorteio real): o prédio largo está em 35% das cidades, 34 vagas; **0,93 carro por prédio largo, 0,33 por
+  cidade**; cidades com 0 carros 77,8%, 1 13,4%, 2 7,1%, 3 1,6%. Só a garagem do prédio largo tem vagas por enquanto.
+
 ## Arquitetura
 ```
 AmcVehicles    o @Mod: registra os comandos
@@ -106,6 +136,9 @@ Mercedes       monta a Mercedes abandonada (estado, cores, instrumentos, combust
 Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
 Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem classes do Minecraft; testado)
 AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
+Draw           o sorteio dos carros (3% por vaga, cor, capô, porta-malas, portas), puro; cores e chances
+Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro estão prontos
+Pending        os chunks com carro sorteado ainda não posto (salvo no mundo)
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
@@ -119,6 +152,10 @@ AmcvCommands   /amcv (op 2): comandos de teste
   qualquer altura; na garagem também); cor, capô, porta-malas e portas sorteados (na delegacia, as cores de polícia).
   Responde com a estrutura, o canto da caixa, a rotação, a altura do chão, quantas vagas, quantos carros e as vagas
   puladas com o motivo. Para tirar os carros: `/kill @e[type=mts:builder_existing,distance=..80]`.
+- `/amcv draw`: o **sorteio real** (o mesmo da geração) na estrutura onde quem executa está: põe agora os carros
+  sorteados que ainda não estão lá (num chunk gerado com o mod eles já estão: a resposta diz "occupied by a vehicle").
+  Responde com a semente da cópia, as vagas, quantas sorteadas, quantas postas agora, os chunks pendentes e na fila e,
+  para cada vaga sorteada, a cor, a origem (eixo traseiro), os chunks sob o corpo e o que aconteceu.
 
 ## Build e teste
 - Build (Java 21; o Java padrão do sistema é o 27, que o Gradle não aceita):
@@ -131,5 +168,8 @@ AmcvCommands   /amcv (op 2): comandos de teste
 - Testes de unidade: `./gradlew test` (mesmo `JAVA_HOME`; ~15 s, o AMC carrega as 52 estruturas).
 - Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV, do pack e do AMC em `run/mods`;
   mundo normal na semente 20261027, RCON na porta 25576 (senha `teste`), `python3 -I tools/rcon.py "comando" ...`;
-  `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas. Detalhes e
-  resultados em `docs/TESTING.md`.
+  `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas;
+  `python3 -I tools/check_generation.py [--load] "x0,z0 .. x1,z1" ...` compara os carros de cada caixa (as que o
+  `/amcs locate` mostra) com o sorteio. Os scripts usam `tools/rconlib.py` (lê respostas longas inteiras: o RCON as
+  parte em pacotes de 4096; e manda um pacote por vez: dois colados derrubavam a conexão). Detalhes e resultados em
+  `docs/TESTING.md`.

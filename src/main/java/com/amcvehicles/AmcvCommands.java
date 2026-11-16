@@ -24,6 +24,9 @@ import java.util.List;
  *   <li>{@code /amcv fill}: a Mercedes in every bay of the AMC structure you stand in (the debug of the bays); colour,
  *   hood, trunk and doors drawn, the police colours in the police station; a bay where the car does not fit in the world
  *   is skipped and listed.</li>
+ *   <li>{@code /amcv draw}: the real draw (3% per bay, {@link Draw}) applied to the AMC structure you stand in: the
+ *   cars the generation gives that copy, placed now unless the bay is blocked or occupied (in a chunk generated with
+ *   this mod they are already there). For structures of areas generated before the mod, and to test.</li>
  * </ul>
  */
 final class AmcvCommands {
@@ -43,6 +46,7 @@ final class AmcvCommands {
         }
         d.register(Commands.literal("amcv").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("fill").executes(AmcvCommands::fill))
+                .then(Commands.literal("draw").executes(AmcvCommands::draw))
                 .then(Commands.literal("mercedes")
                         .executes(c -> mercedes(c, null, null, null, null, null))
                         .then(Commands.argument("color", StringArgumentType.word())
@@ -147,6 +151,44 @@ final class AmcvCommands {
         for (String k : skipped) {
             AmcVehicles.LOG.info("[amcv fill] {} {}", name, k);
         }
+        return n;
+    }
+
+    private static int draw(CommandContext<CommandSourceStack> c) {
+        CommandSourceStack src = c.getSource();
+        ServerLevel level = src.getLevel();
+        BlockPos at = BlockPos.containing(src.getPosition());
+        AmcWorld.Placed s = AmcWorld.at(level, at.getX(), at.getZ());
+        if (s == null) {
+            src.sendFailure(Component.literal("Not in an AMC structure (stand inside its lot)."));
+            return 0;
+        }
+        String name = s.def().name();
+        int bays = Spots.of(s.def().model()).size();
+        if (bays == 0) {
+            src.sendFailure(Component.literal(name + " has no bays yet."));
+            return 0;
+        }
+        List<String> lines = new ArrayList<>();
+        int placed = 0;
+        List<Generation.Planned> drawn = Generation.drawn(s, null, null);
+        for (Generation.Planned p : drawn) {
+            String r = Generation.place(level, p, "/amcv draw");
+            placed += r.equals("placed") ? 1 : 0;
+            // the chunks under the body (the car waits until all of them are loaded full chunks)
+            java.util.Set<String> chunks = new java.util.TreeSet<>();
+            for (int[] cell : p.car().cells()) {
+                chunks.add((cell[0] >> 4) + "," + (cell[1] >> 4));
+            }
+            lines.add(String.format("bay %d: Mercedes%s at %.2f %d %.2f (chunks %s), %s", p.bay() + 1,
+                    p.drawn().color(), p.car().x(), (int) Math.floor(p.car().y()), p.car().z(),
+                    String.join(" ", chunks), r));
+        }
+        int n = placed;
+        src.sendSuccess(() -> Component.literal(String.format("%s (seed %d): %d bays, %d drawn (%.0f%% each), %d "
+                + "placed now; pending chunks %d, queued %d%s", name, s.seed(), bays, drawn.size(),
+                Draw.CHANCE_PER_BAY * 100, n, Pending.of(level).size(), Generation.queued(),
+                lines.isEmpty() ? "" : "\n" + String.join("\n", lines))), true);
         return n;
     }
 }

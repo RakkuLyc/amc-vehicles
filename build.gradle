@@ -35,6 +35,7 @@ tasks.named('test', Test).configure {
     testLogging {
         events 'passed', 'failed', 'skipped'
         exceptionFormat = 'full'
+        showStandardStreams = true
     }
 }
 

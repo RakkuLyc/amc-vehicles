@@ -28,19 +28,14 @@ import java.util.Map;
 public final class Mercedes {
     public static final String PACK = "mtsofficialpack";
     public static final String SYSTEM = "merc230";
-    /** The 15 civilian colours (the subNames of merc230.json), drawn with equal chance outside the police station. */
-    public static final List<String> CIVILIAN = List.of("_blue", "_white", "_seagreen", "_maroon", "_brown", "_green",
-            "_black", "_red", "_gray", "_extravagant", "_olive", "_beige", "_silver", "_yellow", "_salmon");
-    /** The 2 police colours: only in the police station. */
-    public static final List<String> POLICE = List.of("_police", "_police2");
-
+    /** The colours and the chances live in {@link Draw} (no Minecraft classes, so the tests can load them). */
+    public static final List<String> CIVILIAN = Draw.CIVILIAN;
+    public static final List<String> POLICE = Draw.POLICE;
     /** Fuel left in the tank: 10% of {@code motorized.fuelCapacity} (15,000 mB → 1,500 mB). */
     public static final double FUEL_FRACTION = 0.10;
-    /** Chance of the hood being open, and of the trunk being open (drawn separately). */
-    public static final double HOOD_OPEN_CHANCE = 0.5;
-    public static final double TRUNK_OPEN_CHANCE = 0.5;
-    /** Chance of each side door (left and right, drawn separately) being open; the pack opens both on a new car. */
-    public static final double DOOR_OPEN_CHANCE = 0.5;
+    public static final double HOOD_OPEN_CHANCE = Draw.HOOD_OPEN_CHANCE;
+    public static final double TRUNK_OPEN_CHANCE = Draw.TRUNK_OPEN_CHANCE;
+    public static final double DOOR_OPEN_CHANCE = Draw.DOOR_OPEN_CHANCE;
 
     /** The engine the pack gives the car (its fuel type, gasoline, picks the fluid of the tank). */
     static final String ENGINE = "enginemercedesm102";
