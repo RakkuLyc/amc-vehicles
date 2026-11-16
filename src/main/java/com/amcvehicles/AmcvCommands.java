@@ -229,7 +229,7 @@ final class AmcvCommands {
         // the fuel pumps too (their lava drawn now, with the chance of the generation)
         List<String> pumps = new ArrayList<>();
         for (Generation.PlannedPump p : Generation.pumps(s, null, null)) {
-            int buckets = r.nextDouble() < Draw.PUMP_FUEL_CHANCE ? Draw.PUMP_BUCKETS : 0;
+            int buckets = Draw.buckets(r.nextDouble(), r.nextDouble());
             String res = Generation.placePump(level, new Generation.PlannedPump(s, p.pump(), p.at(), buckets),
                     "/amcv fill");
             pumps.add((p.pump() + 1) + ": " + (res.equals("placed") ? buckets + " bucket(s)" : res));

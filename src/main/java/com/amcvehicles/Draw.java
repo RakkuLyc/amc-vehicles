@@ -72,15 +72,21 @@ public final class Draw {
     }
 
     /**
-     * Fuel pumps (stage 6, the user's choice after the balance of 16 Nov 2026: 70% empty, 30% with 1 bucket of lava; it
-     * was 0 to 3 buckets, ~11 buckets per city): the chance of a pump having lava, and how many buckets then.
+     * Lava in a fuel pump (the user's choice, 0.6.2): {@link #PUMP_EMPTY_CHANCE} empty, else 1 to {@link #MAX_BUCKETS}
+     * buckets with the same chance (1/6 each). History: 0 to 3 the same chance (first choice), then 70% empty and 30%
+     * with 1 bucket (0.6.0, after the balance of 16 Nov 2026).
      */
-    public static final double PUMP_FUEL_CHANCE = 0.30;
-    public static final int PUMP_BUCKETS = 1;
+    public static final double PUMP_EMPTY_CHANCE = 0.5;
+    public static final int MAX_BUCKETS = 3;
 
     /** Buckets of lava in a fuel pump, from the copy and the pump ({@link Spots.Pump#key}). */
     public static int buckets(long lotSeed, long pumpKey) {
-        return unit(lotSeed, pumpKey, CAR) < PUMP_FUEL_CHANCE ? PUMP_BUCKETS : 0;
+        return buckets(unit(lotSeed, pumpKey, CAR), unit(lotSeed, pumpKey, COLOR));
+    }
+
+    /** From two numbers in [0, 1): whether the pump has lava, then how many buckets. */
+    public static int buckets(double has, double amount) {
+        return has < PUMP_EMPTY_CHANCE ? 0 : 1 + pick(amount, MAX_BUCKETS);
     }
 
     static int pick(double u, int n) {

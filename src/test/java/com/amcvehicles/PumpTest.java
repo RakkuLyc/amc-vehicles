@@ -71,42 +71,45 @@ class PumpTest {
     }
 
     @Test
-    void thirtyPercentWithOneBucket() {
-        int n = 1_000_000;
-        int full = 0;
+    void halfEmptyHalfOneToThree() {
+        int n = 1_200_000;
+        int[] count = new int[Draw.MAX_BUCKETS + 1];
         for (int i = 0; i < n; i++) {
             int b = Draw.buckets(i * 6151L + 3, Spots.pumps("gas_station").get(i % 8).key());
-            assertTrue(b == 0 || b == Draw.PUMP_BUCKETS, "buckets " + b);
-            full += b > 0 ? 1 : 0;
+            assertTrue(b >= 0 && b <= Draw.MAX_BUCKETS, "buckets " + b);
+            count[b]++;
         }
-        System.out.printf("pumps with lava: %.4f%n", (double) full / n);
-        assertEquals(Draw.PUMP_FUEL_CHANCE, (double) full / n, 0.002);
+        System.out.println("buckets 0..3: " + java.util.Arrays.toString(count));
+        assertEquals(0.5, (double) count[0] / n, 0.002);
+        for (int b = 1; b <= Draw.MAX_BUCKETS; b++) {
+            assertEquals(0.5 / Draw.MAX_BUCKETS, (double) count[b] / n, 0.002, b + " buckets");
+        }
     }
 
-    /** The pumps of one station are drawn independently: per station of 8, Binomial(8, 0.3) (mean 2.4, var 1.68). */
+    /**
+     * The pumps of one station are drawn independently: a pump has 1 bucket on average (E[X] = 1, E[X^2] = 14/6,
+     * var 4/3), so a station of 8: mean 8, var 32/3.
+     */
     @Test
     void pumpsOfAStationIndependent() {
         List<Spots.Pump> pumps = Spots.pumps("gas_station");
         int n = 200_000;
         double sum = 0;
         double sq = 0;
-        int[] hist = new int[9];
         for (int i = 0; i < n; i++) {
             long seed = Draw.mix(i * 0x9E3779B97F4A7C15L + 11);
             int k = 0;
             for (Spots.Pump p : pumps) {
-                k += Draw.buckets(seed, p.key()) > 0 ? 1 : 0;
+                k += Draw.buckets(seed, p.key());
             }
-            hist[k]++;
             sum += k;
             sq += (double) k * k;
         }
         double mean = sum / n;
         double var = sq / n - mean * mean;
-        System.out.printf("pumps with lava per gas station: mean %.3f var %.3f histogram %s%n", mean, var,
-                java.util.Arrays.toString(hist));
-        assertEquals(8 * Draw.PUMP_FUEL_CHANCE, mean, 0.02);
-        assertEquals(8 * Draw.PUMP_FUEL_CHANCE * (1 - Draw.PUMP_FUEL_CHANCE), var, 0.05);
+        System.out.printf("buckets per gas station: mean %.3f var %.3f%n", mean, var);
+        assertEquals(8.0, mean, 0.03);
+        assertEquals(32.0 / 3, var, 0.15);
     }
 
     @Test

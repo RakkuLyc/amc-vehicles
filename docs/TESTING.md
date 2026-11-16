@@ -330,3 +330,12 @@ lava (precisa dirigir) e o mod carregando no cliente (`ClientHooks` é nova).
   cidade, 3,01%), 187 cidades sem carro (38,0%).
 - Servidor: `/amcv fill` no posto pequeno e no posto: "0 bays, 0 cars", bombas "already there"; `/amcv draw` no posto:
   0 vagas, as 8 bombas listadas.
+
+## Versão 0.6.2 — lava das bombas: 50% vazias, 50% com 1 a 3 baldes (16 Nov 2026)
+- Pedido do usuário (primeiro "de volta ao original, 0 a 3", depois "50% de chance de ter 0, 50% de chance de ter 1, 2
+  ou 3"; lido como 1/6 para cada uma de 1, 2 e 3).
+- `PumpTest.halfEmptyHalfOneToThree` (1.200.000): 0 balde 599.997 (50,0%), 1 199.731, 2 199.912, 3 200.360 (16,7%
+  cada). `pumpsOfAStationIndependent` (200.000 postos): média 7,998 baldes por posto grande (esperado 8) e variância
+  10,636 (esperado 32/3 = 10,67).
+- Mundo novo: posto grande e posto pequeno gerados; as 10 bombas com a lava do sorteio (posto: 0, 1, 1, 0, 0, 0, 0, 0
+  baldes; posto pequeno: 2 e 0), `fluidLevel` 1000 e 2000 onde há, sem nível nas vazias.
