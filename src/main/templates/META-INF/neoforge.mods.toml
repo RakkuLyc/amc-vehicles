@@ -37,3 +37,11 @@ description='''${mod_description}'''
     versionRange="[29,)"
     ordering="AFTER"
     side="BOTH"
+
+# Abandoned Modern City: the structures and their plan (where each one stands, turned how)
+[[dependencies.${mod_id}]]
+    modId="abandonedmoderncity"
+    type="required"
+    versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"

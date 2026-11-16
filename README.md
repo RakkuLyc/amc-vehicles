@@ -3,8 +3,10 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV) com o
 **Official Content Pack**: carros abandonados nas estruturas do AMC.
 
-**Versão 0.1.1** (16 Nov 2026), **etapa 1 de 4**: por enquanto só o comando de teste que coloca uma Mercedes 230
-abandonada na sua frente. A geração no mundo vem nas próximas etapas (`CLAUDE.md`, seção "Etapas").
+**Versão 0.2.0** (16 Nov 2026), **etapa 2 de 4**: o comando de teste que coloca uma Mercedes 230 abandonada na sua
+frente (etapa 1, aprovada) e as vagas da garagem subterrânea do prédio largo, com o comando de debug que enche
+todas as vagas da estrutura onde você está. Os carros ainda **não** aparecem sozinhos no mundo: isso é a etapa 3
+(`CLAUDE.md`, seção "Etapas").
 
 ## A Mercedes abandonada
 - Sempre: **sem motor, sem rodas, sem bancos**, **10% de combustível** (1.500 de 15.000 mB), **velocímetro (km/h)**
@@ -15,16 +17,25 @@ abandonada na sua frente. A geração no mundo vem nas próximas etapas (`CLAUDE
 - O combustível é o que o IV usaria num carro novo com o motor da Mercedes (tipo `gasoline`): sem um mod de
   gasolina, lava.
 
-## Comando (op 2)
-`/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: exemplo
-`/amcv mercedes white true false true false` (branca, capô aberto, porta-malas fechado, porta esquerda aberta,
-direita fechada). O que não for dito é sorteado.
+## Vagas
+Estruturas com vagas até agora: o **prédio largo** (`abandoned_wide_building`): 34 vagas na garagem subterrânea,
+achadas entre as faixas brancas do piso (`docs/spots/abandoned_wide_building.png`). O carro entra de frente, com o
+nariz para a parede, centrado na vaga. Uma vaga onde o carro não cabe no mundo (bloco no caminho, sem piso) é
+pulada.
+
+## Comandos (op 2)
+- `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: exemplo
+  `/amcv mercedes white true false true false` (branca, capô aberto, porta-malas fechado, porta esquerda aberta,
+  direita fechada). O que não for dito é sorteado.
+- `/amcv fill`: uma Mercedes em cada vaga da estrutura do AMC onde você está (para conferir as vagas). Não funciona
+  em estruturas postas com `/amcs spawn` (elas não fazem parte do plano da cidade).
 
 ## Requisitos
 - Immersive Vehicles 24.0.0+ (`mts`) e MTS Official Pack V29+ (`mtsofficialpack`).
-- A partir da etapa 2: Abandoned Modern City.
+- Abandoned Modern City (0.1.0, build de 16 Nov 2026 ou mais novo).
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.1.1.jar`. A pasta `libs/` (fora do git) precisa do jar do Immersive Vehicles para compilar.
+`build/libs/amcvehicles-0.2.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+Immersive Vehicles, do Official Pack e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

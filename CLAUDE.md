@@ -35,12 +35,13 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 - Nome AMC Vehicles, repositório privado, documentação em português.
 
 ## Etapas
-1. **(feita, aguardando o teste do usuário)** Comando `/amcv mercedes [cor] [capô] [porta-malas]`: uma Mercedes no
-   estado pedido na frente de quem executa. Testada pelo usuário: nariz para o lado certo (sul), porta-malas aberto
-  visível. Pedidos depois do teste (versão 0.1.1): portas sorteadas e o marcador de combustível à direita do
-  velocímetro.
-2. Vagas de uma estrutura com vagas pintadas (a garagem subterrânea do prédio largo), com o comando de debug que
-   enche todas as vagas da estrutura onde o jogador está.
+1. **(aprovada pelo usuário, 16 Nov 2026)** Comando `/amcv mercedes`: uma Mercedes no estado pedido na frente de
+   quem executa. Depois do primeiro teste (0.1.0), pedidos da 0.1.1: portas sorteadas e o marcador de combustível à
+   direita do velocímetro. O usuário testou a 0.1.1 ("está tudo funcionando") e confirmou capô e porta-malas 50% e o
+   combustível lava.
+2. **(feita na 0.2.0, aguardando o teste do usuário)** As vagas da garagem subterrânea do prédio largo
+   (`abandoned_wide_building`) e o comando de debug `/amcv fill`, que enche todas as vagas da estrutura onde o
+   jogador está.
 3. Geração no mundo: 3% por vaga, cores, delegacia.
 4. As outras estruturas (oficinas por dentro, postos ao lado das bombas, casas com garagem, delegacia...), cada uma
    com uma imagem das vagas propostas para o usuário aprovar.
@@ -72,26 +73,63 @@ se aparecer um motor fantasma, a alternativa é pôr só as peças permanentes e
   ângulo do Minecraft para onde o **nariz** aponta (0 sul, 90 oeste, 180 norte, 270 leste). A origem do modelo é o
   eixo traseiro: a carroceria vai de ~1,3 bloco atrás dele a ~4,15 à frente (rodas em z 0 e 3,19 do `merc230.json`).
 
+## Vagas (`Spots`, `Placement`, `AmcWorld`)
+- **Lista**: `src/main/resources/amcvehicles/spots.txt`, uma linha por vaga:
+  `<modelo> bay <x0> <y> <z0> <x1> <z1> <nariz>`, em coordenadas do `.nbt` do modelo (as do structure block). O
+  modelo é a coluna `model` do `index.txt` do AMC, senão o nome do arquivo: as variantes de cor dividem as vagas.
+  x0..x1, z0..z1 = as células da vaga; y = a camada do piso; nariz = para onde o nariz aponta no `.nbt` (N = -Z,
+  S = +Z, E = +X, W = -X). O carro fica no meio da vaga (o corpo centrado: o eixo traseiro 1,425 atrás do meio).
+- **Detecção** (`tools/find_spots.py <arquivo.nbt> <y do piso> [--png] [--out] [--model]`, Python, fora do mod):
+  vaga = o piso entre duas faixas pintadas paralelas (linhas retas do bloco da faixa, 4+ de comprimento) com 2 a 5
+  células entre elas e 6+ de sobreposição; precisa de piso e 2 blocos livres em todas as células (senão sai como
+  BLOCKED e não entra na lista). O nariz vai para a ponta fechada (o carro entra de frente): a outra ponta, com piso e
+  altura livre além dela, é o corredor. A imagem (`--png`) mostra o piso, as faixas, as vagas (verde; vermelho =
+  bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
+- **Prédio largo** (`abandoned_wide_building`, garagem com o piso na camada 0 do `.nbt`, 8 camadas enterradas, 7 de
+  altura livre; faixas de `white_concrete`, linhas amarelas no corredor): 36 vagas achadas, **34 na lista**; as 2 da
+  fileira sul em x 43..45 e 47..49 ficam de fora (a escada está nelas). Vagas de 3 × 8 (fileira norte, nariz N) e
+  3 × 9 (fileira sul, nariz S). Imagem: `docs/spots/abandoned_wide_building.png`.
+- **Do `.nbt` ao mundo** (`Placement.car`): o mesmo giro do AMC (`Structures.Def.template`, lido ao contrário): a caixa
+  dos blocos sólidos começa em ox, oy, oz do `.nbt` e mede w × h × d; gira `(rot do lote + turn do modelo) & 3`
+  quartos de volta no sentido horário; vai para o canto do lote (x0, z0); o piso da camada y fica em
+  `base + y - oy - ground`, sendo `base` = a altura do chão da cidade naquela coluna (`ChunkPlan.h2 / 2 - 1`, como o
+  `ChunkBuilder` do AMC) e o carro fica em cima dele.
+- **No mundo** (`AmcWorld`): a estrutura de uma coluna vem do plano do AMC (`Plans.get(level).chunk(cx, cz).lot[i]`).
+  Antes de pôr um carro, todas as colunas sob o corpo (5,45 × 2) precisam de piso (bloco com colisão) e 2 blocos sem
+  colisão em cima (ar, tapetes, grama, cipós); senão a vaga é pulada e o motivo vai na resposta do comando e no log.
+  As estruturas postas com `/amcs spawn` não estão no plano: o `/amcv fill` não as reconhece.
+
 ## Arquitetura
 ```
 AmcVehicles    o @Mod: registra os comandos
 Mercedes       monta a Mercedes abandonada (estado, cores, instrumentos, combustível)
+Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
+Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem classes do Minecraft; testado)
+AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
 ## Comandos (op 2)
-- `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: uma Mercedes com o eixo traseiro 3 blocos à frente de quem executa,
-  o nariz para onde ele olha (arredondado para N, S, L ou O). Cor sem o `_` (`white`, `police`...); capô e
+- `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: uma Mercedes com o eixo traseiro 3
+  blocos à frente de quem executa, o nariz para onde ele olha (arredondado para N, S, L ou O). Cor sem o `_` (`white`, `police`...); capô e
   porta-malas e portas `true` (aberto) ou `false`; o que faltar é sorteado (a cor entre as civis). Do console:
   `execute positioned X Y Z rotated YAW 0 run amcv mercedes ...`. Responde com a cor, a posição, o capô, o
   porta-malas, as portas, o combustível, o fluido, os motores tirados e as peças que ficaram.
+- `/amcv fill`: uma Mercedes em **cada vaga** da estrutura do AMC onde quem executa está (dentro do lote dela, em
+  qualquer altura; na garagem também); cor, capô, porta-malas e portas sorteados (na delegacia, as cores de polícia).
+  Responde com a estrutura, o canto da caixa, a rotação, a altura do chão, quantas vagas, quantos carros e as vagas
+  puladas com o motivo. Para tirar os carros: `/kill @e[type=mts:builder_existing,distance=..80]`.
 
 ## Build e teste
 - Build (Java 21; o Java padrão do sistema é o 27, que o Gradle não aceita):
   `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME`
   → `build/libs/amcvehicles-<versão>.jar`.
-- `libs/` (não versionada) precisa de `Immersive Vehicles-1.21.1-24.0.0.jar` (compilação) e
-  `MTS Official Pack-1.21.1-V29.jar`; cópias em `AbandonedModernCity/libs/`.
-- Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV e do pack em `run/mods`; mundo
-  plano, RCON na porta 25576 (senha `teste`), `python3 -I tools/rcon.py "comando" ...`. Detalhes e resultados em
-  `docs/TESTING.md`.
+- `libs/` (não versionada) precisa de `Immersive Vehicles-1.21.1-24.0.0.jar`, `MTS Official Pack-1.21.1-V29.jar`
+  (cópias em `AbandonedModernCity/libs/`) e `abandonedmoderncity-0.1.0.jar` (o jar do AMC, de
+  `AbandonedModernCity/build/libs/`; o usado na 0.2.0 é o de 16 Nov 2026, 02:40). O build compila contra eles e os
+  testes usam o código puro do AMC (estruturas e `Def.code`); nenhum vai dentro do jar deste mod.
+- Testes de unidade: `./gradlew test` (mesmo `JAVA_HOME`; ~15 s, o AMC carrega as 52 estruturas).
+- Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV, do pack e do AMC em `run/mods`;
+  mundo normal na semente 20261027, RCON na porta 25576 (senha `teste`), `python3 -I tools/rcon.py "comando" ...`;
+  `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas. Detalhes e
+  resultados em `docs/TESTING.md`.

@@ -7,7 +7,9 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
@@ -17,8 +19,11 @@ import java.util.List;
 /**
  * /amcv (op 2), test commands.
  * <ul>
- *   <li>{@code /amcv mercedes [color] [hood trunk [doorLeft doorRight]]}: one abandoned Mercedes in front of you (rear axle 3 blocks ahead), its nose
- *   pointing the way you look (snapped to north, south, east or west); what is not given is drawn.</li>
+ *   <li>{@code /amcv mercedes [color] [hood trunk [doorLeft doorRight]]}: one abandoned Mercedes in front of you
+ *   (rear axle 3 blocks ahead), its nose pointing the way you look (snapped to north, south, east or west); what is not given is drawn.</li>
+ *   <li>{@code /amcv fill}: a Mercedes in every bay of the AMC structure you stand in (the debug of the bays); colour,
+ *   hood, trunk and doors drawn, the police colours in the police station; a bay where the car does not fit in the world
+ *   is skipped and listed.</li>
  * </ul>
  */
 final class AmcvCommands {
@@ -37,6 +42,7 @@ final class AmcvCommands {
             colors.add(c.substring(1));
         }
         d.register(Commands.literal("amcv").requires(s -> s.hasPermission(2))
+                .then(Commands.literal("fill").executes(AmcvCommands::fill))
                 .then(Commands.literal("mercedes")
                         .executes(c -> mercedes(c, null, null, null, null, null))
                         .then(Commands.argument("color", StringArgumentType.word())
@@ -97,5 +103,50 @@ final class AmcvCommands {
             src.sendFailure(Component.literal("Could not spawn the Mercedes: " + e));
             return 0;
         }
+    }
+
+    private static int fill(CommandContext<CommandSourceStack> c) {
+        CommandSourceStack src = c.getSource();
+        ServerLevel level = src.getLevel();
+        BlockPos at = BlockPos.containing(src.getPosition());
+        AmcWorld.Placed s = AmcWorld.at(level, at.getX(), at.getZ());
+        if (s == null) {
+            src.sendFailure(Component.literal("Not in an AMC structure (stand inside its lot)."));
+            return 0;
+        }
+        String name = s.def().name();
+        List<Spots.Bay> bays = Spots.of(s.def().model());
+        if (bays.isEmpty()) {
+            src.sendFailure(Component.literal(name + " has no bays yet."));
+            return 0;
+        }
+        RandomSource r = level.getRandom();
+        int spawned = 0;
+        List<String> skipped = new ArrayList<>();
+        for (int k = 0; k < bays.size(); k++) {
+            Placement.Car car = s.car(bays.get(k));
+            String why = AmcWorld.blocked(level, car);
+            if (why != null) {
+                skipped.add("bay " + (k + 1) + ": " + why);
+                continue;
+            }
+            try {
+                Mercedes.spawn(level, car.x(), car.y(), car.z(), car.noseYaw(), Mercedes.drawColor(r, s.police()),
+                        r.nextDouble() < Mercedes.HOOD_OPEN_CHANCE, r.nextDouble() < Mercedes.TRUNK_OPEN_CHANCE,
+                        r.nextDouble() < Mercedes.DOOR_OPEN_CHANCE, r.nextDouble() < Mercedes.DOOR_OPEN_CHANCE);
+                spawned++;
+            } catch (RuntimeException e) {
+                AmcVehicles.LOG.error("Could not spawn the Mercedes of bay {} of {}", k + 1, name, e);
+                skipped.add("bay " + (k + 1) + ": " + e);
+            }
+        }
+        int n = spawned;
+        src.sendSuccess(() -> Component.literal(String.format("%s (box corner %d %d, rotation %d, ground y %d): %d bays, "
+                + "%d cars, %d skipped%s", name, s.x0(), s.z0(), s.rot(), s.base(), bays.size(), n, skipped.size(),
+                skipped.isEmpty() ? "" : "\n" + String.join("\n", skipped))), true);
+        for (String k : skipped) {
+            AmcVehicles.LOG.info("[amcv fill] {} {}", name, k);
+        }
+        return n;
     }
 }

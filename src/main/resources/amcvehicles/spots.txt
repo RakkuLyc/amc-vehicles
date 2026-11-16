@@ -1,0 +1,43 @@
+# Parking bays of the AMC structures, by model (the `model` column of AMC's index.txt, else the file name: the colour
+# variants share it). Template coordinates of the model's .nbt, as the structure block shows them.
+#   <model> bay <x0> <y> <z0> <x1> <z1> <facing>
+# x0..x1, z0..z1: the cells of the bay (inclusive); y: the layer of its floor; facing: where the nose of the car points
+# in the template (N = -Z, S = +Z, E = +X, W = -X). The car stands in the middle of the bay.
+#
+# abandoned_wide_building: the underground garage (floor on layer 0, 8 layers buried), found by
+# `python3 -I tools/find_spots.py <abandoned_wide_building.nbt> 0` between the white_concrete stripes; nose to the wall
+# (nose-in). 36 bays found, 2 left out (x 43..45 and 47..49 of the south row: the stairwell stands in them).
+abandoned_wide_building bay 11 0 4 13 11 N
+abandoned_wide_building bay 15 0 4 17 11 N
+abandoned_wide_building bay 19 0 4 21 11 N
+abandoned_wide_building bay 23 0 4 25 11 N
+abandoned_wide_building bay 27 0 4 29 11 N
+abandoned_wide_building bay 31 0 4 33 11 N
+abandoned_wide_building bay 35 0 4 37 11 N
+abandoned_wide_building bay 39 0 4 41 11 N
+abandoned_wide_building bay 43 0 4 45 11 N
+abandoned_wide_building bay 47 0 4 49 11 N
+abandoned_wide_building bay 51 0 4 53 11 N
+abandoned_wide_building bay 55 0 4 57 11 N
+abandoned_wide_building bay 59 0 4 61 11 N
+abandoned_wide_building bay 63 0 4 65 11 N
+abandoned_wide_building bay 67 0 4 69 11 N
+abandoned_wide_building bay 71 0 4 73 11 N
+abandoned_wide_building bay 75 0 4 77 11 N
+abandoned_wide_building bay 3 0 19 5 27 S
+abandoned_wide_building bay 7 0 19 9 27 S
+abandoned_wide_building bay 11 0 19 13 27 S
+abandoned_wide_building bay 15 0 19 17 27 S
+abandoned_wide_building bay 19 0 19 21 27 S
+abandoned_wide_building bay 23 0 19 25 27 S
+abandoned_wide_building bay 27 0 19 29 27 S
+abandoned_wide_building bay 31 0 19 33 27 S
+abandoned_wide_building bay 35 0 19 37 27 S
+abandoned_wide_building bay 39 0 19 41 27 S
+abandoned_wide_building bay 51 0 19 53 27 S
+abandoned_wide_building bay 55 0 19 57 27 S
+abandoned_wide_building bay 59 0 19 61 27 S
+abandoned_wide_building bay 63 0 19 65 27 S
+abandoned_wide_building bay 67 0 19 69 27 S
+abandoned_wide_building bay 71 0 19 73 27 S
+abandoned_wide_building bay 75 0 19 77 27 S

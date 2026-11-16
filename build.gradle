@@ -16,10 +16,24 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-// The jars of Immersive Vehicles (and, from stage 2 on, AMC) are only compiled against, never bundled:
+// The jars of Immersive Vehicles and AMC are only compiled against, never bundled:
 // they must be in libs/ (not versioned; see README) and, to run, in run/mods.
 dependencies {
     compileOnly files('libs/Immersive Vehicles-1.21.1-24.0.0.jar')
+    compileOnly files('libs/abandonedmoderncity-0.1.0.jar')
+    // the unit tests use AMC's pure planner (package core: its structures and Def.code), no game needed
+    testImplementation files('libs/abandonedmoderncity-0.1.0.jar')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    maxHeapSize = '3G'
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
 }
 
 neoForge {
