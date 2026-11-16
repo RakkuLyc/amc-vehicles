@@ -53,15 +53,11 @@ workshop_medium bay 13 0 4 15 11 S
 # workshop_small (5 colours): one car in each box (the two doors of the front; pillars at x 10 between them).
 workshop_small bay 5 0 4 7 11 S
 workshop_small bay 13 0 4 15 11 S
-# gas_station (5 colours): beside the islands of the pumps (islands at x 13..19 and 25..31, z 7..10 and 14..17), in
-# the lane between the two rows and south of the second row, along the islands, the way drawn.
-gas_station bay 13 0 11 19 13 X
-gas_station bay 25 0 11 31 13 X
-gas_station bay 13 0 18 19 20 X
-gas_station bay 25 0 18 31 20 X
-# gas_station_small (5 colours): on both sides of the island (x 6..14, z 8..11), along it, the way drawn.
-gas_station_small bay 7 0 5 13 7 X
-gas_station_small bay 7 0 12 13 14 X
+# gas_station and gas_station_small: no bays since 0.6.1 (the user, 16 Nov 2026: cars parked beside the pumps were in
+# the way of a car that comes to fill up). They had 4 and 2, along the islands with the nose drawn (X):
+#   gas_station bay 13 0 11 19 13 X / 25 0 11 31 13 X / 13 0 18 19 20 X / 25 0 18 31 20 X
+#   gas_station_small bay 7 0 5 13 7 X / 7 0 12 13 14 X
+# Their fuel pumps stay (below).
 # pharmacy_large (5 colours; added by the user, 16 Nov 2026): the parking of the front, between the worn yellow_concrete
 # stripes at x 1, 6, 11, 16 and 21, nose to the shop; it stops at z 7 (the hedge of the facade is at z 8..9).
 pharmacy_large bay 2 0 1 5 7 S

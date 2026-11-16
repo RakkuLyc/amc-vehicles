@@ -322,3 +322,11 @@ uma variante de cada).
 
 **Não visto no jogo:** a aparência e a frente das bombas, abastecer um carro na bomba e com balde, o consumo novo da
 lava (precisa dirigir) e o mod carregando no cliente (`ClientHooks` é nova).
+
+## Versão 0.6.1 — sem carros nos postos (16 Nov 2026)
+- Pedido do usuário depois de testar a 0.6.0: os carros nos postos atrapalhavam abastecer um carro montado. As 6 vagas
+  dos postos saíram de `spots.txt`; as bombas ficam. O sorteio das outras vagas não muda (é pela posição da vaga).
+- Testes de unidade: todos passam; projeção 17.507 vagas em 492 cidades (35,6 por cidade), 527 carros (1,07 por
+  cidade, 3,01%), 187 cidades sem carro (38,0%).
+- Servidor: `/amcv fill` no posto pequeno e no posto: "0 bays, 0 cars", bombas "already there"; `/amcv draw` no posto:
+  0 vagas, as 8 bombas listadas.

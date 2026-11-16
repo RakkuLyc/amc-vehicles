@@ -3,9 +3,9 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.6.0** (16 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
-**aparecem sozinhos** quando o mundo é gerado (3% por vaga) nas 63 vagas de 12 estruturas do AMC (lista abaixo), e as
-bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
+**Versão 0.6.1** (16 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**aparecem sozinhos** quando o mundo é gerado (3% por vaga) nas 57 vagas de 10 estruturas do AMC (lista abaixo; desde a
+0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
 ## Os carros abandonados
 - **Modelos** (a mesma chance cada): do Official Pack, **Mercedes 230**, **Mustang 69** e **Scout**; do Official
@@ -18,7 +18,7 @@ bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebe
 - Sorteados: capô, porta-malas (no Scout, a tampa da caçamba; o Mustang não tem) e cada porta lateral (a Station Wagon
   tem 4), cada um aberto ou fechado com 50%, à parte.
 - Raridade: **3% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
-  média ~1,2 carro por cidade (32,9% das cidades sem nenhum). Uma vaga com algo no caminho (por exemplo, um baú que o
+  média ~1,07 carro por cidade (38% das cidades sem nenhum). Uma vaga com algo no caminho (por exemplo, um baú que o
   AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
   lava.
@@ -37,8 +37,6 @@ bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebe
 | Prédio largo | 34 | garagem subterrânea, entre as faixas brancas, nariz para a parede |
 | Delegacia | 4 | estacionamento da frente (linhas brancas gastas), nariz para o prédio, **só viaturas** |
 | Farmácia grande (5 cores) | 4 | estacionamento da frente (faixas amarelas gastas), nariz para a loja |
-| Posto (5 cores) | 4 | ao lado das ilhas das bombas, nariz para um dos dois lados (sorteado) |
-| Posto pequeno (5 cores) | 2 | dos dois lados da ilha, nariz sorteado |
 | Oficina média (3 cores) | 2 | dentro, nariz para o fundo |
 | Oficina pequena (5 cores) | 2 | dentro, uma em cada box |
 | Prédio pequeno | 4 | térreo de pilotis (2 na entrada, 2 ao fundo) |
@@ -68,6 +66,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.6.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.6.1.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

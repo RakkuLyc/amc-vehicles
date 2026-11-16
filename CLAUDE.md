@@ -72,7 +72,9 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 5. **(feita na 0.5.0, aguardando o teste do usuário)** Os 8 modelos (ver "Modelos" abaixo); `/amcv car` e
    `/amcv lineup` no lugar de `/amcv mercedes`.
 6. **(feita na 0.6.0, aguardando o teste do usuário)** As bombas de combustível dos postos (`mts:fuelpump`, 10 posições)
-   e o balanceamento da lava (ver "Bombas" e "Balanceamento" abaixo).
+   e o balanceamento da lava (ver "Bombas" e "Balanceamento" abaixo). Depois de testar, o usuário pediu (0.6.1) para
+   **tirar os carros dos postos**: os carros estacionados ao lado das bombas atrapalhavam abastecer um carro montado.
+   As 6 vagas dos postos saíram de `spots.txt` (ficam num comentário); as bombas ficam.
 
 ## Modelos (`Cars`, `Vehicles`; etapa 5)
 - **Tabela** (`Cars.java`, sem classes do Minecraft): para cada modelo a chave dos comandos, o pack e o nome, as cores
@@ -152,7 +154,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   BLOCKED e não entra na lista). O nariz vai para a ponta fechada (o carro entra de frente): a outra ponta, com piso e
   altura livre além dela, é o corredor. A imagem (`--png`) mostra o piso, as faixas, as vagas (verde; vermelho =
   bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
-- **Nariz sorteado**: nas vagas sem pintura que diga como o carro para (os postos), o nariz é `X` ou `Z` em
+- **Nariz sorteado** (usado só pelas vagas dos postos, que saíram na 0.6.1; o formato continua aceito): o nariz é `X` ou `Z` em
   `spots.txt`: ao longo desse eixo, o sentido sorteado por carro (`Draw.Car.flip`, 50%; `Spots.Bay.oriented`).
 - **Estruturas com vagas (0.4.1, 63 vagas em 12 modelos)**: prédio largo 34 (faixas pintadas, detectadas); e, escritas
   à mão e conferidas (`find_spots.py --bays`): oficina média 2 e pequena 2 (dentro, uma por box, nariz para o fundo),
@@ -220,7 +222,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   com o sorteio real; 0.4.1, as 63 vagas): 40,5 vagas por cidade, **1,22 carro por cidade**; 32,9% das cidades sem
   carro. Por cópia: prédio largo 0,92, delegacia 0,15, posto 0,13, farmácia grande 0,12, prédio pequeno 0,11, casa
   abandonada, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina média
-  0,03. (0.4.0: 1,01 por cidade; até a 0.3.0, só o prédio largo: 0,32.)
+  0,03. (0.4.0: 1,01 por cidade; até a 0.3.0, só o prédio largo: 0,32.) **0.6.1, sem as 6 vagas dos postos (57 vagas
+  em 10 modelos)**: 35,6 vagas por cidade, **1,07 carro por cidade**, 38,0% das cidades sem carro.
 
 ## Bombas (`FuelPumps`, `Generation`; etapa 6)
 - **Modelo**: `mts:fuelpump`, do IV base (`decor.type` `fuel_pump`, tanque de 15.000 mB; o do Official Pack é igual
