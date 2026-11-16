@@ -95,7 +95,7 @@ class PlacementTest {
                                 String floor = state(def, rx, ry, rz, rot);
                                 String where = def.name() + " " + bay + " rot " + rot + " cell " + x + "," + z;
                                 assertFalse(free(floor), where + ": no floor (" + floor + ")");
-                                for (int k = 1; k <= 2; k++) {
+                                for (int k = 1; k <= Placement.HEADROOM; k++) {
                                     String above = state(def, rx, ry + k, rz, rot);
                                     assertTrue(free(above), where + ": " + above + " " + k + " over the floor");
                                 }
@@ -172,7 +172,7 @@ class PlacementTest {
                     float yaw = car.noseYaw();
                     assertEquals(longX, yaw == 90f || yaw == 270f, e.getKey() + " " + bay + " rot " + rot);
                     // floor: the layer of the bay is the floor (a block, not air) and the car stands on top of it
-                    assertEquals(base + bay.y() - def.oy() - def.ground() + 1, car.y(), 1e-9);
+                    assertEquals(base + bay.y() - def.oy() - def.ground() + 1 + Placement.CAR_LIFT, car.y(), 1e-9);
                 }
             }
         }

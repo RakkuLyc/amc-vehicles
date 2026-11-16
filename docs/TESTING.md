@@ -216,3 +216,22 @@ uma variante de cada).
   Geração: nenhum carro sorteado nas 4 (3%), 0 no mundo, igual. `/amcv fill`: casa abandonada 2/2 (rotações 0 e 2),
   prédio pequeno 4/4 (duas cópias de rotação 1), nenhuma vaga pulada. O caminho da geração é o mesmo das outras vagas
   (só os dados mudaram); não foi refeita a rodada a 100%.
+
+## Versão 0.4.2 — carros apoiados nos blocos de apoio, não enterrados (16 Nov 2026)
+- O usuário testou com um jar de teste a 100% (não versionado) e viu os carros meio enterrados (print: a soleira e as
+  caixas de roda abaixo do piso, um bloco escuro afundado sob a caixa da roda dianteira).
+- Causa, medida no pack: o `merc230.obj` tem os objetos `cube_fl/fr/rl/rr` (blocos de apoio nas posições das rodas,
+  visíveis quando falta a roda: `part_present_N` = 0 e `terrain_distance` 0..0,7 no `merc230.json`) com o ponto mais
+  baixo em y -0,46875 (o mais baixo do modelo; a carroceria -0,1875); as caixas de colisão mais baixas também descem a
+  -0,47. A origem era posta no piso, então tudo afundava 0,47. O ponto mais alto do modelo: 1,625 (giroflex das cores
+  de polícia), carroceria 1,5625.
+- Correção: origem 0,46875 acima do piso (`Placement.CAR_LIFT`) e 3 blocos livres exigidos (`Placement.HEADROOM`,
+  topo do carro a 2,09). Testes de unidade: todos passam com 3 blocos (`floorAndRoom`, 11.204 células: as 63 vagas
+  cabem).
+- No servidor (mundo novo): `/amcv fill` na delegacia 4/4 e no prédio largo 34/34 (3 blocos livres no mundo);
+  posição logo depois e 30 s depois, em chunks que rodam: y 69,460175 (piso em y 69) e 57,460175 (piso em 57): parados,
+  apoiados nos blocos (a base deles 0,0086 dentro do piso, o mesmo assentamento de antes).
+- Jar de teste a 100% refeito com a correção (`amcvehicles-0.4.2-TESTE-100pct.jar`, só local; `javap -constants`:
+  `CHANCE_PER_BAY = 1.0d`, `CAR_LIFT = 0.46875d`); o jar normal tem `CHANCE_PER_BAY = 0.03d`.
+
+**Não visto no jogo:** a aparência corrigida (precisa do cliente do usuário).

@@ -58,13 +58,14 @@ public final class AmcWorld {
 
     /**
      * Why the car cannot stand where it is planned, or null when it fits: under every column of its body a floor
-     * (a block with a collision shape) and 2 blocks free over it (no collision: air, grass and vines; on the first one a
+     * (a block with a collision shape) and {@link Placement#HEADROOM} (3) blocks free over it (no collision: air, grass and vines; on the first one a
      * thin block, such as a carpet, is allowed: {@link #THIN}), and no
      * Immersive Vehicles vehicle there already ({@code mts:builder_existing}: a car of an earlier {@code /amcv fill} or of
      * the generation; not IV's helper entities, such as the ones that follow the players).
      */
     public static String blocked(ServerLevel level, Placement.Car car) {
-        int y = (int) Math.round(car.y());
+        // the first block over the floor (the car's origin is CAR_LIFT over it)
+        int y = (int) Math.floor(car.y());
         int minX = Integer.MAX_VALUE;
         int minZ = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
@@ -75,7 +76,7 @@ public final class AmcWorld {
             maxX = Math.max(maxX, c[0]);
             maxZ = Math.max(maxZ, c[1]);
         }
-        AABB box = new AABB(minX, y, minZ, maxX + 1, y + 2, maxZ + 1);
+        AABB box = new AABB(minX, y, minZ, maxX + 1, y + Placement.HEADROOM, maxZ + 1);
         for (Entity e : level.getEntities((Entity) null, box,
                 e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).equals(VEHICLE))) {
             return "occupied by a vehicle at " + e.getBlockX() + " " + e.getBlockY() + " " + e.getBlockZ();
@@ -90,7 +91,7 @@ public final class AmcWorld {
                 return "no floor at " + c[0] + " " + (y - 1) + " " + c[1] + " (" + f.getBlock().getName().getString()
                         + ")";
             }
-            for (int k = 0; k < 2; k++) {
+            for (int k = 0; k < Placement.HEADROOM; k++) {
                 BlockPos p = new BlockPos(c[0], y + k, c[1]);
                 BlockState s = level.getBlockState(p);
                 VoxelShape shape = s.getCollisionShape(level, p);

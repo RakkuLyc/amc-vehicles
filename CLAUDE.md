@@ -77,6 +77,12 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - Rotação: o ângulo do IV é o do Minecraft com o sinal trocado (`WrapperEntity.getYaw`); `Mercedes.spawn` recebe o
   ângulo do Minecraft para onde o **nariz** aponta (0 sul, 90 oeste, 180 norte, 270 leste). A origem do modelo é o
   eixo traseiro: a carroceria vai de ~1,3 bloco atrás dele a ~4,15 à frente (rodas em z 0 e 3,19 do `merc230.json`).
+- **Altura (0.4.2, o usuário viu os carros meio enterrados)**: sem rodas, o merc230 se apoia nos 4 blocos de apoio do
+  modelo (`cube_fl/fr/rl/rr`, que o pack mostra quando falta a roda daquele canto: `part_present_N` = 0 e perto do
+  chão), com a base em y -0,46875 do modelo (as caixas de colisão mais baixas também: y -0,37, altura 0,2). Com a
+  origem no piso o carro afundava 0,47; agora a origem fica **0,46875 acima do piso** (`Placement.CAR_LIFT`, também no
+  `/amcv mercedes`). O ponto mais alto do modelo é 1,625 (a giroflex das cores de polícia; a carroceria 1,5625), então o
+  carro chega a 2,09 sobre o piso e precisa de **3 blocos livres** (`Placement.HEADROOM`), não 2.
 
 ## Vagas (`Spots`, `Placement`, `AmcWorld`)
 - **Lista**: `src/main/resources/amcvehicles/spots.txt`, uma linha por vaga:
@@ -86,7 +92,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   S = +Z, E = +X, W = -X). O carro fica no meio da vaga (o corpo centrado: o eixo traseiro 1,425 atrás do meio).
 - **Detecção** (`tools/find_spots.py <arquivo.nbt> <y do piso> [--png] [--out] [--model]`, Python, fora do mod):
   vaga = o piso entre duas faixas pintadas paralelas (linhas retas do bloco da faixa, 4+ de comprimento) com 2 a 5
-  células entre elas e 6+ de sobreposição; precisa de piso e 2 blocos livres em todas as células (senão sai como
+  células entre elas e 6+ de sobreposição; precisa de piso e 3 blocos livres em todas as células (senão sai como
   BLOCKED e não entra na lista). O nariz vai para a ponta fechada (o carro entra de frente): a outra ponta, com piso e
   altura livre além dela, é o corredor. A imagem (`--png`) mostra o piso, as faixas, as vagas (verde; vermelho =
   bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
@@ -120,8 +126,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   `base + y - oy - ground`, sendo `base` = a altura do chão da cidade naquela coluna (`ChunkPlan.h2 / 2 - 1`, como o
   `ChunkBuilder` do AMC) e o carro fica em cima dele.
 - **No mundo** (`AmcWorld`): a estrutura de uma coluna vem do plano do AMC (`Plans.get(level).chunk(cx, cz).lot[i]`).
-  Antes de pôr um carro, todas as colunas sob o corpo (5,45 × 2) precisam de piso (bloco com colisão) e 2 blocos sem
-  colisão em cima (ar, grama, cipós; no primeiro, um bloco fino de até 1/4 de altura, como o tapete de musgo do mato
+  Antes de pôr um carro, todas as colunas sob o corpo (5,45 × 2) precisam de piso (bloco com colisão) e 3 blocos sem
+  colisão em cima (`Placement.HEADROOM`; 2 até a 0.4.1) (ar, grama, cipós; no primeiro, um bloco fino de até 1/4 de altura, como o tapete de musgo do mato
   do AMC, `AmcWorld.THIN`) e nenhum veículo do IV ali (um carro de um `fill` anterior: não empilha); senão a vaga é
   pulada e o motivo vai na resposta do comando e no log.
   As estruturas postas com `/amcs spawn` não estão no plano: o `/amcv fill` não as reconhece.

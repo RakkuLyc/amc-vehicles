@@ -3,11 +3,13 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV) com o
 **Official Content Pack**: carros abandonados nas estruturas do AMC.
 
-**Versão 0.4.1** (16 Nov 2026), **etapa 4 de 4**: as Mercedes **aparecem sozinhas** quando o mundo é gerado (3% por
+**Versão 0.4.2** (16 Nov 2026), **etapa 4 de 4**: as Mercedes **aparecem sozinhas** quando o mundo é gerado (3% por
 vaga) nas 63 vagas de 12 estruturas do AMC (lista abaixo). Só as áreas geradas depois de instalar o mod recebem
 carros.
 
 ## A Mercedes abandonada
+- Apoiada nos 4 blocos de apoio que o próprio modelo do pack mostra quando faltam as rodas (0,47 bloco acima do chão;
+  até a 0.4.1 ela nascia meio enterrada).
 - Sempre: **sem motor, sem rodas, sem bancos**, **10% de combustível** (1.500 de 15.000 mB), **velocímetro (km/h)**
   e **marcador de combustível** no painel.
 - Sorteados: capô, porta-malas, porta esquerda e porta direita, cada um aberto ou fechado com 50%, à parte.
@@ -54,6 +56,6 @@ vaga. Uma vaga onde o carro não cabe no mundo (bloco no caminho, sem piso) é p
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.4.1.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.4.2.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, do Official Pack e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

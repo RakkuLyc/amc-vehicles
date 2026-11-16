@@ -16,9 +16,19 @@ public final class Placement {
     public static final double CAR_REAR = 1.3;
     public static final double CAR_FRONT = 4.15;
     public static final double CAR_HALF_WIDTH = 1.0;
+    /**
+     * Height of the origin over the floor: merc230 without wheels rests on the 4 support blocks of its model
+     * ({@code cube_fl/fr/rl/rr}, shown when the wheel of that corner is missing; their bottom, and the lowest collision
+     * boxes, at y -0.46875 of the model). With the origin on the floor the car was half sunk into it (seen by the user).
+     */
+    public static final double CAR_LIFT = 0.46875;
+    /** Highest point of the model (the light bars of the police colours, 1.625; the body 1.5625). */
+    public static final double CAR_TOP = 1.625;
+    /** Free blocks the car needs over the floor: its top is at CAR_LIFT + CAR_TOP = 2.09 over the floor. */
+    public static final int HEADROOM = (int) Math.ceil(CAR_LIFT + CAR_TOP);
 
     /**
-     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor), the nose to the Minecraft yaw
+     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor + {@link #CAR_LIFT}), the nose to the Minecraft yaw
      * {@code noseYaw} (0 south, 90 west, 180 north, 270 east), and the columns its body covers.
      */
     public record Car(double x, double y, double z, float noseYaw, List<int[]> cells) {
@@ -86,9 +96,9 @@ public final class Placement {
         double back = (CAR_FRONT - CAR_REAR) / 2.0;
         double x = lotX0 + c[0] - wd[0] * back;
         double z = lotZ0 + c[1] - wd[1] * back;
-        // the floor block of the bay is at layer y of the template; the car stands on top of it
+        // the floor block of the bay is at layer y of the template; the car rests on its support blocks over it
         int floorY = base + (bay.y() - def.oy() - def.ground());
-        return new Car(x, floorY + 1, z, yaw(wd[0], wd[1]), cells(x, z, wd));
+        return new Car(x, floorY + 1 + CAR_LIFT, z, yaw(wd[0], wd[1]), cells(x, z, wd));
     }
 
     /** Columns (x, z) under the body of a car with its origin at (x, z), the nose to {@code wd}. */

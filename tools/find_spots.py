@@ -23,7 +23,7 @@ from nbt import load
 MIN_RUN = 4        # shortest stripe
 GAP_MIN, GAP_MAX = 2, 5   # width of a bay between two stripes
 BAY_MIN_LEN = 6    # the car is ~5.45 long
-HEADROOM = 2       # free cells over the floor needed in the bay
+HEADROOM = 3       # free cells over the floor needed in the bay (the car on its support blocks is 2.09 tall)
 CAR_W, CAR_REAR, CAR_FRONT = 2.0, 1.3, 4.15   # merc230: width, rear and front of the body from the rear axle
 
 AIRS = {'air', 'cave_air', 'void_air'}
@@ -123,7 +123,7 @@ def render(path, size, blocks, y, result):
             if s is None or base(s) in AIRS:
                 continue
             b = base(s)
-            ok = all(free(blocks, x, y + k, z) for k in (1, 2))
+            ok = all(free(blocks, x, y + k, z) for k in range(1, HEADROOM + 1))
             covered = ok and any(not free(blocks, x, yy, z) for yy in range(y + 3, size[1]))
             col = (245, 245, 245) if b == 'white_concrete' else (230, 190, 30) if b.startswith('yellow') else \
                 (225, 90, 70) if b in ('red_terracotta', 'red_concrete') and ok else \

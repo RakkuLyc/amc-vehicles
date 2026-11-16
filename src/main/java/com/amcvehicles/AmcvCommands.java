@@ -85,7 +85,8 @@ final class AmcvCommands {
         double dz = Math.cos(Math.toRadians(yaw));
         double x = Math.floor(src.getPosition().x) + 0.5 + dx * AHEAD;
         double z = Math.floor(src.getPosition().z) + 0.5 + dz * AHEAD;
-        double y = Math.floor(src.getPosition().y);
+        // on its support blocks, like the cars of the bays (Placement.CAR_LIFT)
+        double y = Math.floor(src.getPosition().y) + Placement.CAR_LIFT;
         try {
             Mercedes.Result res = Mercedes.spawn(src.getLevel(), x, y, z, yaw, sub, h, t, dl, dr);
             String facing = switch (quarter) {
