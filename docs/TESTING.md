@@ -149,3 +149,45 @@ sorteio usa a posição da vaga; "ocupado" só por `mts:builder_existing`) e **t
 
 **Não visto no jogo:** um carro gerado sozinho, com um jogador andando (os testes usaram forceload; a borda da visão
 do jogador é o caso "completo sem tick", testado acima).
+
+## Etapa 4 — as outras estruturas (16 Nov 2026, versão 0.4.0)
+
+### Levantamento e proposta
+- Varredura de todos os 30 modelos, todas as camadas, todo bloco com 8+ células na camada como possível faixa
+  (`find_spots.py` por bloco): fora o prédio largo, só falsos positivos (tábuas do piso das casas e do prédio das
+  rampas, a grade de concreto branco do saguão da torre, o piso do prédio azulado e do apocalíptico) e, no posto, as
+  próprias ilhas das bombas (contornadas de terracota vermelha). Mapas de piso coberto/aberto para achar as garagens.
+- Proposta (`docs/spots/etapa4_propostas.png`), aprovada pelo usuário; ele acrescentou a farmácia grande e escolheu o
+  nariz sorteado nos postos. Ajustes antes da proposta, pela checagem de `find_spots.py --bays`: oficina média (uma
+  coluna em x 6: vagas em x 8..10 e 13..15), casa moderna (blocos em z 9: vagas de z 10), farmácia grande (a sebe da
+  fachada em z 8..9: vagas até z 7).
+
+### Testes de unidade
+- `PlacementTest.floorAndRoomInEveryRotationAndVariant` (novo): toda vaga, nas 4 rotações, em **toda variante de cor**
+  do modelo, tem piso em todas as células e 2 blocos livres (ar, nada salvo, plantas, tapetes, cipós) em cima, em
+  `Def.code` do AMC (com o mato): 10.628 células conferidas. **O teste pega erro**: com a vaga da oficina média de volta
+  em x 6..8, falhou ("workshop_medium_blue_black ... cell 6,4: minecraft:polished_blackstone 1 over the floor"); o
+  arquivo foi devolvido.
+- `stripesOnBothSidesInEveryRotation`: agora só para os modelos de faixa pintada (o prédio largo).
+- `carInsideItsBayAndAlongIt`: os dois sentidos das vagas de nariz sorteado.
+- `DrawTest.projectionPerCity` (as 57 vagas): 16.567 vagas em 492 cidades (33,7 por cidade), 497 carros (1,01 por
+  cidade, 3,00%); cidades com 0 carros 196 (39,8%), 1 166 (33,7%), 2 80 (16,3%), 3 31 (6,3%), 4 18 (3,7%), 6 1 (0,2%).
+
+### No mundo (semente 20261027, mundo novo)
+- Uma cópia de cada estrutura nova (`/amcs locate structure ...` de 0, 100, 0). **Geração, contagem exata**
+  (`check_generation.py --load` nas 9 caixas): 8 sem carro sorteado e a delegacia com 1 (`Mercedes_police2`, vaga 1):
+  **1 carro, 1 sorteado, 1 no lugar**.
+- **`/amcv fill`** em cada uma: oficina média 2/2 (rotação 2), oficina pequena 2/2 (rotação 2), posto 4/4 (rotação 3),
+  posto pequeno 2/2 (rotação 0), farmácia grande 4/4 (rotação 0), delegacia 4/4 (rotação 2), casa com garagem 1/1,
+  casa suburbana 2/2 (rotação 2); casa moderna **0/2 na primeira rodada: "Moss Carpet at 242 70 184"**: o tapete de
+  musgo do mato do AMC tem colisão de 1/16 e a checagem o tratava como obstáculo; corrigido (`AmcWorld.THIN`: no
+  primeiro bloco sobre o piso, até 1/4 de altura não barra) e de novo: **2/2**. Total 23 carros.
+- **Delegacia**: os 4 carros só de cores de polícia (2 `_police`, 2 `_police2`); `check_bays.py ... white_concrete`:
+  6, 7, 8 e 7 de 10 células de faixa (as linhas são gastas no modelo), nariz para o prédio.
+- **Farmácia grande**: `check_bays.py` dá 2 a 4/10, porque ele procura a faixa a 2 blocos do meio e estas vagas têm 4 de
+  largura (a faixa fica a 3 de um lado); conferido pela conta: vaga x 2..5, z 1..7 da cópia de canto -317,172, rotação
+  0, meio em x -313,0, z 176,5; o carro está em x -313,00, z 175,075 (= 176,5 - 1,425, nariz para o sul). Exato.
+- **Postos**: narizes misturados como pedido (posto: 3 N e 1 S; posto pequeno: 1 E e 1 W).
+
+**Não visto no jogo:** a aparência nestas estruturas (o carro dentro da garagem sem atravessar parede, ao lado da ilha
+sem atravessar a bomba).

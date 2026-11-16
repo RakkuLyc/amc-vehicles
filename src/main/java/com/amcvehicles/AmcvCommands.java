@@ -128,7 +128,7 @@ final class AmcvCommands {
         int spawned = 0;
         List<String> skipped = new ArrayList<>();
         for (int k = 0; k < bays.size(); k++) {
-            Placement.Car car = s.car(bays.get(k));
+            Placement.Car car = s.car(bays.get(k).oriented(r.nextBoolean()));
             String why = AmcWorld.blocked(level, car);
             if (why != null) {
                 skipped.add("bay " + (k + 1) + ": " + why);

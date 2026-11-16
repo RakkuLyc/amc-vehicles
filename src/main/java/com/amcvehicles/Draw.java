@@ -25,8 +25,12 @@ public final class Draw {
     private Draw() {
     }
 
-    /** A drawn car: colour (a subName of merc230) and what is open. */
-    public record Car(String color, boolean hoodOpen, boolean trunkOpen, boolean doorLeftOpen, boolean doorRightOpen) {
+    /**
+     * A drawn car: colour (a subName of merc230), what is open, and {@code flip}: the way of the nose in a bay whose
+     * facing is drawn ('X' or 'Z', {@link Spots.Bay#oriented}), 50%.
+     */
+    public record Car(String color, boolean hoodOpen, boolean trunkOpen, boolean doorLeftOpen, boolean doorRightOpen,
+                      boolean flip) {
     }
 
     /**
@@ -43,7 +47,8 @@ public final class Draw {
                 unit(lotSeed, bay, 2) < HOOD_OPEN_CHANCE,
                 unit(lotSeed, bay, 3) < TRUNK_OPEN_CHANCE,
                 unit(lotSeed, bay, 4) < DOOR_OPEN_CHANCE,
-                unit(lotSeed, bay, 5) < DOOR_OPEN_CHANCE);
+                unit(lotSeed, bay, 5) < DOOR_OPEN_CHANCE,
+                unit(lotSeed, bay, 6) < 0.5);
     }
 
     /** A number in [0, 1) from the lot seed, the bay and what is drawn. */

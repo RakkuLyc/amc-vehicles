@@ -6,17 +6,21 @@ import com.abandonedmoderncity.core.Structures;
 import com.abandonedmoderncity.core.WorldPlan;
 import com.abandonedmoderncity.gen.Plans;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** The AMC plan read from the world: which structure stands at a column, and whether a car fits in the world. */
 public final class AmcWorld {
     /** The Minecraft entity of IV's vehicles (and of its other "existing" entities). */
     static final ResourceLocation VEHICLE = ResourceLocation.fromNamespaceAndPath("mts", "builder_existing");
+    /** Height (blocks) up to which a block on the floor does not stop a car: carpets (1/16), a thin snow layer. */
+    static final double THIN = 0.25;
 
     private AmcWorld() {
     }
@@ -54,7 +58,8 @@ public final class AmcWorld {
 
     /**
      * Why the car cannot stand where it is planned, or null when it fits: under every column of its body a floor
-     * (a block with a collision shape) and 2 blocks free over it (no collision: air, carpets, grass and vines), and no
+     * (a block with a collision shape) and 2 blocks free over it (no collision: air, grass and vines; on the first one a
+     * thin block, such as a carpet, is allowed: {@link #THIN}), and no
      * Immersive Vehicles vehicle there already ({@code mts:builder_existing}: a car of an earlier {@code /amcv fill} or of
      * the generation; not IV's helper entities, such as the ones that follow the players).
      */
@@ -88,7 +93,9 @@ public final class AmcWorld {
             for (int k = 0; k < 2; k++) {
                 BlockPos p = new BlockPos(c[0], y + k, c[1]);
                 BlockState s = level.getBlockState(p);
-                if (!s.getCollisionShape(level, p).isEmpty()) {
+                VoxelShape shape = s.getCollisionShape(level, p);
+                // on the floor, a thin block (a carpet of the overgrowth, 1/16 high) does not stop the car
+                if (!shape.isEmpty() && (k > 0 || shape.max(Direction.Axis.Y) > THIN)) {
                     return s.getBlock().getName().getString() + " at " + c[0] + " " + (y + k) + " " + c[1];
                 }
             }

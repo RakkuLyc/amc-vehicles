@@ -3,9 +3,9 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV) com o
 **Official Content Pack**: carros abandonados nas estruturas do AMC.
 
-**Versão 0.3.0** (16 Nov 2026), **etapa 3 de 4**: as Mercedes **aparecem sozinhas** nas vagas quando o mundo é
-gerado (3% por vaga), por enquanto só na garagem subterrânea do prédio largo; as outras estruturas vêm na etapa 4
-(`CLAUDE.md`, seção "Etapas"). Só as áreas geradas depois de instalar o mod recebem carros.
+**Versão 0.4.0** (16 Nov 2026), **etapa 4 de 4**: as Mercedes **aparecem sozinhas** quando o mundo é gerado (3% por
+vaga) nas 57 vagas de 10 estruturas do AMC (lista abaixo). Só as áreas geradas depois de instalar o mod recebem
+carros.
 
 ## A Mercedes abandonada
 - Sempre: **sem motor, sem rodas, sem bancos**, **10% de combustível** (1.500 de 15.000 mB), **velocímetro (km/h)**
@@ -14,16 +14,27 @@ gerado (3% por vaga), por enquanto só na garagem subterrânea do prédio largo;
 - Painel: velocímetro no mostrador do meio e marcador de combustível à direita dele.
 - Cores: as 15 civis com a mesma chance; as 2 de polícia só na delegacia (que ganha vagas na etapa 4).
 - Raridade: **3% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento).
-  Hoje: ~0,92 carro por prédio largo e 0,32 por cidade (77,2% das cidades sem carro). Uma vaga com algo no caminho
-  (por exemplo, um baú que o AMC sorteou ali) fica sem o carro.
+  Em média ~1 carro por cidade (39,8% das cidades sem nenhum). Uma vaga com algo no caminho (por exemplo, um baú que
+  o AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor da Mercedes (tipo `gasoline`): sem um mod de
   gasolina, lava.
 
 ## Vagas
-Estruturas com vagas até agora: o **prédio largo** (`abandoned_wide_building`): 34 vagas na garagem subterrânea,
-achadas entre as faixas brancas do piso (`docs/spots/abandoned_wide_building.png`). O carro entra de frente, com o
-nariz para a parede, centrado na vaga. Uma vaga onde o carro não cabe no mundo (bloco no caminho, sem piso) é
-pulada.
+| Estrutura | Vagas | Onde |
+|---|---|---|
+| Prédio largo | 34 | garagem subterrânea, entre as faixas brancas, nariz para a parede |
+| Delegacia | 4 | estacionamento da frente (linhas brancas gastas), nariz para o prédio, **só cores de polícia** |
+| Farmácia grande (5 cores) | 4 | estacionamento da frente (faixas amarelas gastas), nariz para a loja |
+| Posto (5 cores) | 4 | ao lado das ilhas das bombas, nariz para um dos dois lados (sorteado) |
+| Posto pequeno (5 cores) | 2 | dos dois lados da ilha, nariz sorteado |
+| Oficina média (3 cores) | 2 | dentro, nariz para o fundo |
+| Oficina pequena (5 cores) | 2 | dentro, uma em cada box |
+| Casa moderna com garagem | 2 | dentro da garagem |
+| Casa suburbana | 2 | dentro da garagem (porta do lado oeste) |
+| Casa com garagem | 1 | dentro da garagem |
+
+Imagens: `docs/spots/abandoned_wide_building.png` e `docs/spots/etapa4_propostas.png`. O carro fica centrado na
+vaga. Uma vaga onde o carro não cabe no mundo (bloco no caminho, sem piso) é pulada.
 
 ## Comandos (op 2)
 - `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: exemplo
@@ -40,6 +51,6 @@ pulada.
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.3.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.4.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, do Official Pack e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

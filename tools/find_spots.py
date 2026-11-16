@@ -7,6 +7,9 @@ of the bay that is closed (the other end, open, is the aisle).
 
 usage: python3 -I tools/find_spots.py <file.nbt> <floor y of the template> [--stripe white_concrete]
                                        [--png out.png] [--out spots.txt] [--model name]
+       python3 -I tools/find_spots.py <file.nbt> <floor y> --bays spots.txt [--model name] [--png out.png]
+         checks and draws the bays written (by hand) for that model and floor in a spots file instead of detecting
+         them: each must have a floor and 2 free cells over every cell; covered floor (a roof over it) is drawn blue.
 Output lines (template coordinates of the .nbt, as the structure block shows them), the format of
 src/main/resources/amcvehicles/spots.txt:
   <model> bay <x0> <y> <z0> <x1> <z1> <facing>
@@ -120,8 +123,11 @@ def render(path, size, blocks, y, result):
             if s is None or base(s) in AIRS:
                 continue
             b = base(s)
+            ok = all(free(blocks, x, y + k, z) for k in (1, 2))
+            covered = ok and any(not free(blocks, x, yy, z) for yy in range(y + 3, size[1]))
             col = (245, 245, 245) if b == 'white_concrete' else (230, 190, 30) if b.startswith('yellow') else \
-                (120, 120, 120) if all(free(blocks, x, y + k, z) for k in (1, 2)) else (70, 55, 45)
+                (225, 90, 70) if b in ('red_terracotta', 'red_concrete') and ok else \
+                ((90, 120, 200) if covered else (140, 140, 140)) if ok else (70, 55, 45)
             d.rectangle([40 + x * S, 40 + z * S, 40 + x * S + S - 1, 40 + z * S + S - 1], fill=col)
     for x in range(0, sx, 5):
         d.text((40 + x * S, 4), str(x), fill=(255, 255, 255))
@@ -132,13 +138,17 @@ def render(path, size, blocks, y, result):
         d.rectangle([40 + x0 * S, 40 + z0 * S, 40 + (x1 + 1) * S - 1, 40 + (z1 + 1) * S - 1],
                     outline=(255, 60, 60) if bad else (60, 220, 60), width=2)
         cx, cz = (x0 + x1 + 1) / 2, (z0 + z1 + 1) / 2
-        dx, dz = {'N': (0, -1), 'S': (0, 1), 'E': (1, 0), 'W': (-1, 0)}[face]
+        # X / Z: the way is drawn per car; drawn as E / S, with a dot at both ends
+        dx, dz = {'N': (0, -1), 'S': (0, 1), 'E': (1, 0), 'W': (-1, 0), 'X': (1, 0), 'Z': (0, 1)}[face]
         half_len = (CAR_REAR + CAR_FRONT) / 2
         hx, hz = (abs(dx) * half_len + abs(dz) * CAR_W / 2, abs(dz) * half_len + abs(dx) * CAR_W / 2)
         d.rectangle([40 + (cx - hx) * S, 40 + (cz - hz) * S, 40 + (cx + hx) * S, 40 + (cz + hz) * S],
                     outline=(60, 140, 255), width=2)
         nx, nz = cx + dx * (half_len - 0.4), cz + dz * (half_len - 0.4)
         d.ellipse([40 + nx * S - 4, 40 + nz * S - 4, 40 + nx * S + 4, 40 + nz * S + 4], fill=(255, 60, 60))
+        if face in 'XZ':
+            mx, mz = cx - dx * (half_len - 0.4), cz - dz * (half_len - 0.4)
+            d.ellipse([40 + mx * S - 4, 40 + mz * S - 4, 40 + mx * S + 4, 40 + mz * S + 4], fill=(255, 60, 60))
         d.text((40 + (cx - 0.4) * S, 40 + (cz - 0.5) * S), str(i + 1), fill=(255, 255, 0))
     img.save(path)
 
@@ -151,12 +161,21 @@ def main():
     ap.add_argument('--png')
     ap.add_argument('--out')
     ap.add_argument('--model', help='model name (default: the file name)')
+    ap.add_argument('--bays', help='check the bays of this spots file instead of detecting')
     a = ap.parse_args()
     size, blocks = load(a.nbt)
-    result = []
-    for bay in sorted(bays(blocks, a.y, set(a.stripe.split(','))), key=lambda b: (b[1], b[0])):
-        result.append((bay, facing(blocks, a.y, bay), blocked(blocks, a.y, bay)))
     model = a.model or os.path.splitext(os.path.basename(a.nbt))[0]
+    result = []
+    if a.bays:
+        for line in open(a.bays):
+            f = line.split()
+            if len(f) == 8 and f[0] == model and f[1] == 'bay' and int(f[3]) == a.y:
+                x0, z0, x1, z1 = int(f[2]), int(f[4]), int(f[5]), int(f[6])
+                bay = (x0, z0, x1, z1, 'z' if f[7] in 'NS' else 'x')
+                result.append((bay, f[7], blocked(blocks, a.y, bay)))
+    else:
+        for bay in sorted(bays(blocks, a.y, set(a.stripe.split(','))), key=lambda b: (b[1], b[0])):
+            result.append((bay, facing(blocks, a.y, bay), blocked(blocks, a.y, bay)))
     lines = []
     for i, (bay, face, bad) in enumerate(result):
         x0, z0, x1, z1, _ = bay

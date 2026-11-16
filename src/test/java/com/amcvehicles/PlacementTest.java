@@ -4,6 +4,7 @@ import com.abandonedmoderncity.core.BlockCode;
 import com.abandonedmoderncity.core.Structures;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PlacementTest {
     /** Stripe cells beside the bay that must still be the stripe block after the overgrowth (it turns some floor). */
     static final double STRIPE_SHARE = 0.6;
+    /** The models whose bays lie between painted stripes, and the stripe block (the others are written by hand). */
+    static final Map<String, String> PAINTED = Map.of("abandoned_wide_building", "minecraft:white_concrete");
+    /** Blocks a car goes through (no collision): plants, carpets, vines, cobwebs, torches... */
+    static final String[] SOFT = {"vine", "short_grass", "tall_grass", "fern", "carpet", "cobweb", "lichen",
+            "dead_bush", "torch", "button", "pressure_plate", "minecraft:snow[", "flower", "sapling"};
+
+    /** Every structure (colour variant) of a model. */
+    static List<Structures.Def> variants(String model) {
+        List<Structures.Def> out = new ArrayList<>();
+        for (Structures.Def d : Structures.ALL) {
+            if (d.model().equals(model)) {
+                out.add(d);
+            }
+        }
+        return out;
+    }
+
+    /** The bay with each way of the nose it may take (both for a drawn facing). */
+    static List<Spots.Bay> ways(Spots.Bay bay) {
+        return bay.drawnFacing() ? List.of(bay.oriented(false), bay.oriented(true)) : List.of(bay);
+    }
+
+    static boolean free(String state) {
+        if (state.equals("air") || state.startsWith("code ")) {
+            return state.equals("air") || state.equals("code " + BlockCode.KEEP);
+        }
+        for (String s : SOFT) {
+            if (state.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     static Structures.Def def(String model) {
         for (Structures.Def d : Structures.ALL) {
@@ -46,11 +80,45 @@ class PlacementTest {
     }
 
     @Test
+    void floorAndRoomInEveryRotationAndVariant() {
+        int checked = 0;
+        for (Map.Entry<String, List<Spots.Bay>> e : Spots.all().entrySet()) {
+            for (Structures.Def def : variants(e.getKey())) {
+                for (Spots.Bay bay : e.getValue()) {
+                    int ry = bay.y() - def.oy() - def.ground();
+                    for (int rot = 0; rot < 4; rot++) {
+                        for (int x = bay.x0(); x <= bay.x1(); x++) {
+                            for (int z = bay.z0(); z <= bay.z1(); z++) {
+                                double[] p = Placement.turn(def, rot, x - def.ox() + 0.5, z - def.oz() + 0.5);
+                                int rx = (int) Math.floor(p[0]);
+                                int rz = (int) Math.floor(p[1]);
+                                String floor = state(def, rx, ry, rz, rot);
+                                String where = def.name() + " " + bay + " rot " + rot + " cell " + x + "," + z;
+                                assertFalse(free(floor), where + ": no floor (" + floor + ")");
+                                for (int k = 1; k <= 2; k++) {
+                                    String above = state(def, rx, ry + k, rz, rot);
+                                    assertTrue(free(above), where + ": " + above + " " + k + " over the floor");
+                                }
+                                checked++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("floorAndRoom: " + checked + " cells checked");
+    }
+
+    @Test
     void stripesOnBothSidesInEveryRotation() {
         for (Map.Entry<String, List<Spots.Bay>> e : Spots.all().entrySet()) {
+            String stripe = PAINTED.get(e.getKey());
+            if (stripe == null) {
+                continue;
+            }
             Structures.Def def = def(e.getKey());
             for (Spots.Bay bay : e.getValue()) {
-                boolean alongZ = bay.facing() == 'N' || bay.facing() == 'S';
+                boolean alongZ = bay.alongZ();
                 for (int rot = 0; rot < 4; rot++) {
                     int ry = bay.y() - def.oy() - def.ground();
                     int good = 0;
@@ -64,7 +132,7 @@ class PlacementTest {
                             double[] p = Placement.turn(def, rot, t[0] - def.ox() + 0.5, t[1] - def.oz() + 0.5);
                             String s = state(def, (int) Math.floor(p[0]), ry, (int) Math.floor(p[1]), rot);
                             all++;
-                            if (s.startsWith("minecraft:white_concrete")) {
+                            if (s.startsWith(stripe)) {
                                 good++;
                             }
                         }
@@ -80,7 +148,8 @@ class PlacementTest {
     void carInsideItsBayAndAlongIt() {
         for (Map.Entry<String, List<Spots.Bay>> e : Spots.all().entrySet()) {
             Structures.Def def = def(e.getKey());
-            for (Spots.Bay bay : e.getValue()) {
+            for (Spots.Bay drawnBay : e.getValue()) {
+                for (Spots.Bay bay : ways(drawnBay))
                 for (int rot = 0; rot < 4; rot++) {
                     int lotX = 1000;
                     int lotZ = -2000;

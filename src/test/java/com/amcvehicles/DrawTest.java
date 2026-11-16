@@ -160,8 +160,8 @@ class DrawTest {
         }
         for (Map.Entry<String, int[]> e : perModel.entrySet()) {
             int[] m = e.getValue();
-            System.out.printf("  %s: %d copies (in %.1f%% of the cities), %d bays, %d cars (%.2f per copy)%n",
-                    e.getKey(), m[0], 100.0 * m[0] / cities, m[1], m[2], (double) m[2] / m[0]);
+            System.out.printf("  %s: %d copies (%.2f per city), %d bays, %d cars (%.2f per copy)%n",
+                    e.getKey(), m[0], (double) m[0] / cities, m[1], m[2], (double) m[2] / m[0]);
         }
         assertTrue(cities > 100);
     }

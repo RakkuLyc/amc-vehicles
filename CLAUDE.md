@@ -44,11 +44,11 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 2. **(aprovada pelo usuário, 16 Nov 2026)** As vagas da garagem subterrânea do prédio largo
    (`abandoned_wide_building`) e o comando de debug `/amcv fill`, que enche todas as vagas da estrutura onde o
    jogador está.
-3. **(feita na 0.3.0, aguardando o teste do usuário)** Geração no mundo: 3% por vaga, cores sorteadas, só chunks
-   novos, `/amcv draw`. As cores de polícia já saem no sorteio da delegacia (testado em unidade), mas a delegacia só
-   ganha vagas na etapa 4.
-4. As outras estruturas (oficinas por dentro, postos ao lado das bombas, casas com garagem, delegacia...), cada uma
-   com uma imagem das vagas propostas para o usuário aprovar.
+3. **(aprovada pelo usuário, 16 Nov 2026)** Geração no mundo: 3% por vaga, cores sorteadas, só chunks novos,
+   `/amcv draw`.
+4. **(feita na 0.4.0, aguardando o teste do usuário)** As outras estruturas: imagem das vagas propostas
+   (`docs/spots/etapa4_propostas.png`) aprovada pelo usuário ("Aprovar todas"), com o nariz **sorteado** nos postos
+   (escolha dele) e a **farmácia grande** acrescentada por ele (vagas da frente). Ver "Vagas" abaixo.
 
 ## Como a Mercedes é montada (`Mercedes.spawn`)
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
@@ -88,6 +88,17 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   BLOCKED e não entra na lista). O nariz vai para a ponta fechada (o carro entra de frente): a outra ponta, com piso e
   altura livre além dela, é o corredor. A imagem (`--png`) mostra o piso, as faixas, as vagas (verde; vermelho =
   bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
+- **Nariz sorteado**: nas vagas sem pintura que diga como o carro para (os postos), o nariz é `X` ou `Z` em
+  `spots.txt`: ao longo desse eixo, o sentido sorteado por carro (`Draw.Car.flip`, 50%; `Spots.Bay.oriented`).
+- **Estruturas com vagas (0.4.0, 57 vagas em 10 modelos)**: prédio largo 34 (faixas pintadas, detectadas); e, escritas
+  à mão e conferidas (`find_spots.py --bays`): oficina média 2 e pequena 2 (dentro, uma por box, nariz para o fundo),
+  posto 4 e posto pequeno 2 (ao lado das ilhas das bombas, ao longo delas, nariz sorteado), farmácia grande 4 (vagas da
+  frente entre as faixas amarelas gastas, nariz para a loja, até a sebe da fachada), delegacia 4 (vagas da frente entre
+  as linhas brancas gastas, nariz para o prédio, só cores de polícia), casa com garagem 1, casa moderna com garagem 2 e
+  casa suburbana 2 (dentro da garagem). As coordenadas e o porquê de cada uma estão nos comentários de `spots.txt`.
+  Olhados e sem vagas: a torre (a grade de concreto branco é o piso do saguão), o prédio azulado e o apocalíptico
+  (desenhos do piso), o prédio das rampas (salas no térreo), a farmácia pequena e as outras casas (o usuário confirmou:
+  só a farmácia grande a mais).
 - **Prédio largo** (`abandoned_wide_building`, garagem com o piso na camada 0 do `.nbt`, 8 camadas enterradas, 7 de
   altura livre; faixas de `white_concrete`, linhas amarelas no corredor): 36 vagas achadas, **34 na lista**; as 2 da
   fileira sul em x 43..45 e 47..49 ficam de fora (a escada está nelas). Vagas de 3 × 8 (fileira norte, nariz N) e
@@ -99,8 +110,9 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   `ChunkBuilder` do AMC) e o carro fica em cima dele.
 - **No mundo** (`AmcWorld`): a estrutura de uma coluna vem do plano do AMC (`Plans.get(level).chunk(cx, cz).lot[i]`).
   Antes de pôr um carro, todas as colunas sob o corpo (5,45 × 2) precisam de piso (bloco com colisão) e 2 blocos sem
-  colisão em cima (ar, tapetes, grama, cipós) e nenhuma entidade do IV ali (um carro de um `fill` anterior: não
-  empilha); senão a vaga é pulada e o motivo vai na resposta do comando e no log.
+  colisão em cima (ar, grama, cipós; no primeiro, um bloco fino de até 1/4 de altura, como o tapete de musgo do mato
+  do AMC, `AmcWorld.THIN`) e nenhum veículo do IV ali (um carro de um `fill` anterior: não empilha); senão a vaga é
+  pulada e o motivo vai na resposta do comando e no log.
   As estruturas postas com `/amcs spawn` não estão no plano: o `/amcv fill` não as reconhece.
 
 ## Geração no mundo (`Draw`, `Generation`, `Pending`; etapa 3)
@@ -132,8 +144,10 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - **Log**: cada carro posto (`[AMCV] Mercedes<cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
   descartada, com o motivo.
 - **Projeção** (`DrawTest.projectionPerCity`: o planejador real do AMC num terreno plano, 5 sementes, 492 cidades,
-  com o sorteio real): o prédio largo está em 35% das cidades, 34 vagas; **0,92 carro por prédio largo, 0,32 por
-  cidade**; cidades com 0 carros 77,2%, 1 15,0%, 2 6,1%, 3 1,4%, 4 0,2%. Só a garagem do prédio largo tem vagas por enquanto.
+  com o sorteio real; 0.4.0, as 57 vagas): 33,7 vagas por cidade, **1,01 carro por cidade**; cidades com 0 carros
+  39,8%, 1 33,7%, 2 16,3%, 3 6,3%, 4 3,7%, 6 0,2%. Por cópia: prédio largo 0,92, delegacia 0,15, posto 0,13, farmácia
+  grande 0,12, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina
+  média 0,03. (Até a 0.3.0, só o prédio largo: 0,32 por cidade.)
 
 ## Arquitetura
 ```
