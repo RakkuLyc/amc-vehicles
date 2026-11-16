@@ -42,7 +42,15 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 4. As outras estruturas (oficinas por dentro, postos ao lado das bombas, casas com garagem, delegacia...), cada uma
    com uma imagem das vagas propostas para o usuário aprovar.
 
-## Como a Mercedes é montada (`Mercedes.spawn`, confirmado no código do IV 24.0.0 e testado no servidor)
+## Como a Mercedes é montada (`Mercedes.spawn`)
+**Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
+as peças que ficam, o combustível, os instrumentos gravados, os valores de `door_hood`/`door_trunk`, o ângulo
+gravado, e que o carro nasce **destrancado** (sem a variável `locked`; o IV não guarda dono).
+**Hipóteses, a conferir no cliente do usuário:** que o valor 1 de `door_hood`/`door_trunk` aparece aberto; que o
+nariz aponta mesmo para o lado anunciado; que a origem é o eixo traseiro; que um cliente conectado vê os
+instrumentos e não vê motor (no teste não havia cliente para receber os pacotes de "motor posto" e "motor tirado";
+se aparecer um motor fantasma, a alternativa é pôr só as peças permanentes em vez de pôr tudo e tirar o motor).
+
 - `new EntityVehicleF_Physics(world, null, item, null)`: dados `null` = carro novo, como de um item recém-feito. O
   pack põe `door_l`, `door_r` e `door_hood` em 1 (abertos) pelas `initialVariables`; o mod então põe `door_hood` e
   `door_trunk` no valor sorteado. **As portas laterais ficam abertas** (padrão do pack; pergunta pendente ao usuário).
