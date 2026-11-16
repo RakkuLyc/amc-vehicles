@@ -48,7 +48,9 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
    `/amcv draw`.
 4. **(feita na 0.4.0, aguardando o teste do usuário)** As outras estruturas: imagem das vagas propostas
    (`docs/spots/etapa4_propostas.png`) aprovada pelo usuário ("Aprovar todas"), com o nariz **sorteado** nos postos
-   (escolha dele) e a **farmácia grande** acrescentada por ele (vagas da frente). Ver "Vagas" abaixo.
+   (escolha dele) e a **farmácia grande** acrescentada por ele (vagas da frente). Ver "Vagas" abaixo. Na 0.4.1 o
+   usuário apontou as garagens da **casa abandonada** e do **prédio pequeno** (proposta
+   `docs/spots/garagens_propostas.png`, "Aprovar as 6").
 
 ## Como a Mercedes é montada (`Mercedes.spawn`)
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
@@ -90,12 +92,14 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
 - **Nariz sorteado**: nas vagas sem pintura que diga como o carro para (os postos), o nariz é `X` ou `Z` em
   `spots.txt`: ao longo desse eixo, o sentido sorteado por carro (`Draw.Car.flip`, 50%; `Spots.Bay.oriented`).
-- **Estruturas com vagas (0.4.0, 57 vagas em 10 modelos)**: prédio largo 34 (faixas pintadas, detectadas); e, escritas
+- **Estruturas com vagas (0.4.1, 63 vagas em 12 modelos)**: prédio largo 34 (faixas pintadas, detectadas); e, escritas
   à mão e conferidas (`find_spots.py --bays`): oficina média 2 e pequena 2 (dentro, uma por box, nariz para o fundo),
   posto 4 e posto pequeno 2 (ao lado das ilhas das bombas, ao longo delas, nariz sorteado), farmácia grande 4 (vagas da
   frente entre as faixas amarelas gastas, nariz para a loja, até a sebe da fachada), delegacia 4 (vagas da frente entre
   as linhas brancas gastas, nariz para o prédio, só cores de polícia), casa com garagem 1, casa moderna com garagem 2 e
-  casa suburbana 2 (dentro da garagem). As coordenadas e o porquê de cada uma estão nos comentários de `spots.txt`.
+  casa suburbana 2 (dentro da garagem), casa abandonada 2 (a sala-garagem da frente, sem parede na frente) e prédio
+  pequeno 4 (o térreo de pilotis: 2 na entrada, 2 ao fundo). As coordenadas e o porquê de cada uma estão nos
+  comentários de `spots.txt`.
   Imagem das vagas aplicadas, gerada de `spots.txt`: `docs/spots/etapa4_vagas.png` (a proposta aprovada, sem a
   farmácia grande e com os narizes do posto ainda fixos: `docs/spots/etapa4_propostas.png`). Olhados e sem vagas: a
   torre (a grade de concreto branco é o piso do saguão), o prédio azulado e o apocalíptico (desenhos do piso), o prédio
@@ -104,7 +108,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   delegacia são salas pequenas); nas casas de piso elevado (mansão, piscina, torre, vitoriana, grande) a camada do chão
   sai bloqueada e o mapa não é conclusivo. O detector só vê faixas pintadas inteiras: não acha vagas de pintura gasta
   (a farmácia grande e a delegacia foram vistas a olho) nem garagens sem pintura. O usuário acrescentou a farmácia
-  grande; outras estruturas com vagas entram quando ele apontar.
+  grande e, na 0.4.1, a casa abandonada e o prédio pequeno (que o levantamento não tinha visto como garagens); outras
+  estruturas com vagas entram quando ele apontar.
 - **Prédio largo** (`abandoned_wide_building`, garagem com o piso na camada 0 do `.nbt`, 8 camadas enterradas, 7 de
   altura livre; faixas de `white_concrete`, linhas amarelas no corredor): 36 vagas achadas, **34 na lista**; as 2 da
   fileira sul em x 43..45 e 47..49 ficam de fora (a escada está nelas). Vagas de 3 × 8 (fileira norte, nariz N) e
@@ -150,10 +155,10 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - **Log**: cada carro posto (`[AMCV] Mercedes<cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
   descartada, com o motivo.
 - **Projeção** (`DrawTest.projectionPerCity`: o planejador real do AMC num terreno plano, 5 sementes, 492 cidades,
-  com o sorteio real; 0.4.0, as 57 vagas): 33,7 vagas por cidade, **1,01 carro por cidade**; cidades com 0 carros
-  39,8%, 1 33,7%, 2 16,3%, 3 6,3%, 4 3,7%, 6 0,2%. Por cópia: prédio largo 0,92, delegacia 0,15, posto 0,13, farmácia
-  grande 0,12, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina
-  média 0,03. (Até a 0.3.0, só o prédio largo: 0,32 por cidade.)
+  com o sorteio real; 0.4.1, as 63 vagas): 40,5 vagas por cidade, **1,22 carro por cidade**; 32,9% das cidades sem
+  carro. Por cópia: prédio largo 0,92, delegacia 0,15, posto 0,13, farmácia grande 0,12, prédio pequeno 0,11, casa
+  abandonada, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina média
+  0,03. (0.4.0: 1,01 por cidade; até a 0.3.0, só o prédio largo: 0,32.)
 
 ## Arquitetura
 ```

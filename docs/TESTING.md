@@ -203,3 +203,16 @@ do jogador é o caso "completo sem tick", testado acima).
 **Não visto no jogo:** a aparência nestas estruturas (o carro dentro da garagem sem atravessar parede, ao lado da ilha
 sem atravessar a bomba, antes da sebe da farmácia); as outras variantes de cor só nos testes de unidade (no mundo,
 uma variante de cada).
+
+## Versão 0.4.1 — garagens da casa abandonada e do prédio pequeno (16 Nov 2026)
+- Apontadas pelo usuário. Casa abandonada: a sala da frente à esquerda não tem parede na frente (z 13, ar até 4 de
+  altura), piso de pedra; prédio pequeno: térreo de pilotis aberto na frente, camadas 1 a 5 livres. Proposta
+  (`docs/spots/garagens_propostas.png`) conferida com `find_spots.py --bays`: a vaga 3 do prédio pequeno batia num banco
+  de escada de abeto em x 15..16, z 12 e foi para x 12..14. Aprovada pelo usuário ("Aprovar as 6").
+- Testes de unidade: todos passam; `floorAndRoom` 11.204 células; projeção 19.905 vagas em 492 cidades (40,5 por
+  cidade), 599 carros (1,22 por cidade, 3,01%), 162 cidades sem carro (32,9%); casa abandonada 0,07 por cópia, prédio
+  pequeno 0,11.
+- No mundo (semente 20261027, mundo novo): 2 cópias de cada (`/amcs locate` de 0,0, 1500,1500 e -1500,1500).
+  Geração: nenhum carro sorteado nas 4 (3%), 0 no mundo, igual. `/amcv fill`: casa abandonada 2/2 (rotações 0 e 2),
+  prédio pequeno 4/4 (duas cópias de rotação 1), nenhuma vaga pulada. O caminho da geração é o mesmo das outras vagas
+  (só os dados mudaram); não foi refeita a rodada a 100%.

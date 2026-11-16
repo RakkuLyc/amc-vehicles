@@ -82,3 +82,13 @@ abandoned_modern_garage_house bay 14 0 10 16 17 S
 # abandoned_suburban_house: inside the garage and workshop with a door of 10 on the west side (x 10, z 25..34).
 abandoned_suburban_house bay 11 0 26 18 28 E
 abandoned_suburban_house bay 11 0 31 18 33 E
+# abandoned_house (pointed out by the user, 16 Nov 2026; docs/spots/garagens_propostas.png): the garage room of the
+# front left (x 4..10, z 13..24: no wall on the front, stone floor), two side by side, nose to the back.
+abandoned_house bay 4 0 14 6 21 S
+abandoned_house bay 8 0 14 10 21 S
+# abandoned_small_building (pointed out by the user): the ground floor on pilotis (layers 1..5 free, open on the front),
+# two at the entrance on the left and two further in on the right (beside the bench of spruce stairs at x 15..16, z 12).
+abandoned_small_building bay 3 0 2 5 9 S
+abandoned_small_building bay 7 0 2 9 9 S
+abandoned_small_building bay 12 0 10 14 17 S
+abandoned_small_building bay 17 0 10 19 17 S
