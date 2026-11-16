@@ -3,9 +3,9 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.5.0** (16 Nov 2026), **etapa 5**: 8 modelos de carro. Os carros **aparecem sozinhos** quando o mundo é
-gerado (3% por vaga) nas 63 vagas de 12 estruturas do AMC (lista abaixo). Só as áreas geradas depois de instalar o mod
-recebem carros. Próximo passo (etapa 6, proposta): bombas de combustível nos postos.
+**Versão 0.6.0** (16 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**aparecem sozinhos** quando o mundo é gerado (3% por vaga) nas 63 vagas de 12 estruturas do AMC (lista abaixo), e as
+bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
 ## Os carros abandonados
 - **Modelos** (a mesma chance cada): do Official Pack, **Mercedes 230**, **Mustang 69** e **Scout**; do Official
@@ -22,6 +22,14 @@ recebem carros. Próximo passo (etapa 6, proposta): bombas de combustível nos p
   AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
   lava.
+
+## Bombas de combustível e combustível
+- Bombas `mts:fuelpump` (do IV) sempre presentes nos postos: 8 no posto (2 em cada ilha) e 2 no posto pequeno
+  (`docs/spots/bombas_propostas.png`). **70% vazias, 30% com 1 balde de lava** (~2 baldes por cidade).
+- **A lava rende 0,35** como combustível de motor (gasolina, diesel e avgas): cerca de 0,45 cidade por balde (5 baldes ≈
+  2 cidades; antes ~1,3 cidade por balde). O mod aplica isso ao iniciar o servidor, só na memória: o arquivo
+  `config/mtsconfig.json` do IV não muda, e tirar o mod volta ao valor normal. Uma gasolina "de verdade" de outro mod
+  continua rendendo 1,0.
 
 ## Vagas
 | Estrutura | Vagas | Onde |
@@ -50,7 +58,8 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
   estruturas postas com `/amcs spawn` (elas não fazem parte do plano da cidade).
 - `/amcv draw`: o sorteio real (o da geração) na estrutura onde você está: diz quais vagas têm carro e põe os que
   faltam (útil em áreas geradas antes do mod e para testar).
-- `/amcv pump [baldes]`: teste da etapa 6, uma bomba de combustível na sua frente com tantos baldes de lava.
+- `/amcv pump [baldes]`: uma bomba de combustível na sua frente com tantos baldes de lava.
+- `/amcv fill` e `/amcv draw` também põem as bombas do posto onde você está.
 
 ## Requisitos
 - Immersive Vehicles 24.0.0+ (`mts`), MTS Official Pack V29+ (`mtsofficialpack`) e **Official Automobile Pack V3+
@@ -59,6 +68,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.5.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.6.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

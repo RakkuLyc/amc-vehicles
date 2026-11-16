@@ -55,6 +55,19 @@ public final class Placement {
         };
     }
 
+    /** A fuel pump in the world: its block at x, y, z, its front to the Minecraft yaw {@code yaw}. */
+    public record PumpAt(int x, int y, int z, float yaw) {
+    }
+
+    /** Where a pump of the template stands for the structure {@code def} placed as in {@link #car}. */
+    public static PumpAt pump(Structures.Def def, int lotX0, int lotZ0, int rot, int base, Spots.Pump pump) {
+        double[] c = turn(def, rot, pump.x() - def.ox() + 0.5, pump.z() - def.oz() + 0.5);
+        int[] dir = pump.dir();
+        int[] wd = turnDir(def, rot, dir[0], dir[1]);
+        return new PumpAt(lotX0 + (int) Math.floor(c[0]), base + (pump.y() - def.oy() - def.ground()),
+                lotZ0 + (int) Math.floor(c[1]), yaw(wd[0], wd[1]));
+    }
+
     /** Minecraft yaw of a horizontal unit direction: south 0, west 90, north 180, east 270. */
     public static float yaw(int dx, int dz) {
         if (dz > 0) {

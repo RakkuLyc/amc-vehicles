@@ -42,10 +42,16 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
   (Mercedes, Cagouille e Mustang, 1/3 cada; na Mercedes `_police` ou `_police2` a 50%); o mesmo estado da Mercedes em
   todos (sem motor, rodas e bancos, 10% de combustível, capô, porta-malas e cada porta a 50%); painel **só velocímetro
   km/h + marcador de combustível** em todos (escolha dele, entre manter os mostradores do pack ou não).
-- **Etapa 6 (pedida junto, ainda não aplicada)**: as bombas de combustível `mtsofficialpack:fuelpump` nos postos, 2 por
-  ilha, sempre presentes, cada uma com **0 a 3 baldes de lava** sorteados (leitura minha de "sorteie um número de 0 a 3
-  para o número do combustível (lava)": 0, 1, 2 ou 3 baldes = 0 a 3.000 mB, a mesma chance; a confirmar). Proposta das
-  posições: `docs/spots/bombas_propostas.png`.
+- **Etapa 6 (16 Nov 2026)**: bombas de combustível nos postos, 2 por ilha, sempre presentes (posições aprovadas:
+  `docs/spots/bombas_propostas.png`). Modelo: o usuário pediu `mts:fuelpump` (o do IV base) no lugar do
+  `mtsofficialpack:fuelpump` que tinha escolhido antes. Conteúdo: primeiro "0 a 3 baldes de lava" (confirmado por ele);
+  depois do balanceamento abaixo, **70% vazias e 30% com 1 balde**.
+- **Balanceamento do combustível (16 Nov 2026)**: o usuário mediu que 5 baldes de lava levam um carro por 6 a 7
+  cidades (~1,3 cidade por balde) e pediu um balanço. Conta: com 0 a 3 baldes por bomba seriam ~11 baldes por cidade
+  (~7 bombas por cidade: 0,61 posto × 8 + 1,21 posto pequeno × 2), e a lava é infinita nos lagos. Escolhas dele:
+  **lava rende 0,35** como combustível de motor (cerca de 0,45 cidade por balde; 5 baldes ≈ 2 cidades), **aplicado pelo
+  mod ao iniciar** (não pela config); **bombas 70% vazias, 30% com 1 balde** (~2 baldes por cidade); **tanque dos carros
+  continua 10%**.
 
 ## Etapas
 1. **(aprovada pelo usuário, 16 Nov 2026)** Comando `/amcv mercedes`: uma Mercedes no estado pedido na frente de
@@ -65,8 +71,8 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
    apoio do modelo (o usuário os viu meio enterrados com um jar de teste a 100%).
 5. **(feita na 0.5.0, aguardando o teste do usuário)** Os 8 modelos (ver "Modelos" abaixo); `/amcv car` e
    `/amcv lineup` no lugar de `/amcv mercedes`.
-6. **(proposta, aguardando aprovação)** As bombas de combustível dos postos. Prova feita na 0.5.0: `/amcv pump`
-   (comando de teste) põe uma bomba do IV sem jogador (ver "Bombas" abaixo).
+6. **(feita na 0.6.0, aguardando o teste do usuário)** As bombas de combustível dos postos (`mts:fuelpump`, 10 posições)
+   e o balanceamento da lava (ver "Bombas" e "Balanceamento" abaixo).
 
 ## Modelos (`Cars`, `Vehicles`; etapa 5)
 - **Tabela** (`Cars.java`, sem classes do Minecraft): para cada modelo a chave dos comandos, o pack e o nome, as cores
@@ -214,8 +220,25 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   abandonada, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina média
   0,03. (0.4.0: 1,01 por cidade; até a 0.3.0, só o prédio largo: 0,32.)
 
-## Bombas (`FuelPumps`; prova da etapa 6)
-- A bomba do Official Pack é um bloco decorativo do IV (`decor.type` `fuel_pump`, tanque de 15.000 mB). O
+## Bombas (`FuelPumps`, `Generation`; etapa 6)
+- **Modelo**: `mts:fuelpump`, do IV base (`decor.type` `fuel_pump`, tanque de 15.000 mB; o do Official Pack é igual
+  por dentro). Posições em `spots.txt` (linhas `<modelo> pump <x> <y> <z> <frente>`, coordenadas do `.nbt`, y = a
+  camada sobre o piso da ilha): posto 8 (2 em cada ilha: x 15 e 17 / 27 e 29, z 9 e 16, frente S), posto pequeno 2
+  (x 8 e 12, z 9, frente N). Conferidas por `find_spots.py --bays` e pelo `PumpTest` (piso embaixo, a célula e a de
+  cima livres, em toda cor e rotação; fora das vagas).
+- **Lava**: `Draw.buckets`, função pura da semente da cópia e da posição da bomba (`Spots.Pump.key`, com uma marca que
+  nunca coincide com a chave de uma vaga): 30% com 1 balde (`Draw.PUMP_FUEL_CHANCE`, `PUMP_BUCKETS`), as outras
+  vazias; independentes entre as bombas de um posto (testado).
+- **Geração**: como os carros. Um chunk novo com bomba entra em `Pending`. A bomba só é posta quando o chunk dela
+  **e os 8 vizinhos** são chunks completos carregados (`Generation.pumpReady`), porque o `NeighbourRepair` do AMC
+  repõe os blocos do plano (a célula da bomba é ar no `.nbt`) num chunk já construído quando um vizinho é gerado
+  depois. No teste, uma bomba posta à mão num chunk com o vizinho ainda por gerar **sobreviveu** à geração do vizinho
+  (hipótese: para um chunk ficar completo os vizinhos já passaram pela etapa em que o AMC repara, e não a repetem); a
+  regra fica como margem de segurança (custo: a bomba aparece quando os vizinhos estão prontos). `placePump` também
+  não põe nada se os chunks em volta não estão prontos (o `/amcv draw` numa área não carregada não força
+  carregamento), nem onde já há um bloco do IV ("already there"), nem onde a célula não é ar ou planta, ou falta piso.
+- **Como a bomba é posta**: o `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
+  `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
   `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
   `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
   `BuilderBlock.blockMap`), cria o tile entity com dados que levam o ângulo (`angles`, lido pelo construtor antes de
@@ -224,17 +247,31 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
   bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
 
+## Balanceamento (`FuelBalance`; etapa 6)
+- Ao iniciar um servidor (`ServerAboutToStartEvent`, o mundo single-player também) e, num cliente, ao entrar num
+  servidor (`ClientHooks`, só carregada no cliente), o mod põe a potência da lava em **0,35** nos tipos de combustível
+  de motor do IV que a aceitam (`gasoline`, `diesel`, `avgas` por padrão; `furnace` e `brewing_stand`, que não são de
+  motor, ficam como estão: a primeira rodada da 0.6.0 tinha mudado esses também). Só na memória: o IV grava o
+  `config/mtsconfig.json` no fim do carregamento do jogo (no cliente, `FMLLoadCompleteEvent`, que roda em paralelo com
+  os outros mods), então o valor é posto depois disso e o arquivo não muda; tirar o mod volta ao valor do IV. O motor
+  do IV lê o mapa a cada vez que queima combustível (`PartEngine`), então vale na hora. O log diz
+  `[AMCV] Lava as a fuel set to 0.35 (...; was: ...)`. Se o usuário abrir a tela de configuração do IV no jogo e salvar,
+  o 0,35 pode ir para o arquivo (não testado).
+
 ## Arquitetura
 ```
 AmcVehicles    o @Mod: registra os comandos
 Cars           os 8 modelos: cores, medidas, portas, porta-malas (puro; conferido contra os jars)
+FuelBalance    a lava rende 0,35 como combustível de motor (na memória, ao iniciar o servidor / entrar num servidor)
+ClientHooks    só no cliente: o FuelBalance ao entrar num servidor
 Vehicles       monta um carro abandonado de qualquer modelo (estado, painel, peças, combustível)
 FuelPumps      põe uma bomba de combustível do IV (sem jogador) com lava
 Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
 Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem classes do Minecraft; testado)
 AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
 Draw           o sorteio dos carros (3% por vaga, modelo, cor, capô, porta-malas, portas), puro
-Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro estão prontos
+Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro (ou em volta da
+               bomba) estão prontos
 Pending        os chunks com carro sorteado ainda não posto (salvo no mundo; percorrido a cada 10 ticks)
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
@@ -250,8 +287,10 @@ AmcvCommands   /amcv (op 2): comandos de teste
 - `/amcv lineup` (0.5.0): os 8 modelos lado a lado (4 blocos entre eles, para a direita de quem olha), cor civil
   sorteada, e depois as 4 viaturas (`mercedes_police`, `mercedes_police2`, `cagouille_police`, `mustang_police`):
   para olhar altura, portas e painel de todos. Responde uma linha por carro.
-- `/amcv pump [baldes]` (0.5.0, teste da etapa 6): uma bomba de combustível do Official Pack 3 blocos à frente, a frente
-  dela para quem executa, com tantos baldes de lava (0 a 15).
+- `/amcv pump [baldes]`: uma bomba de combustível (`mts:fuelpump` desde a 0.6.0) 3 blocos à frente, a frente dela para
+  quem executa, com tantos baldes de lava (0 a 15).
+- `/amcv fill` e `/amcv draw` também põem as bombas da estrutura (o `fill` sorteia a lava na hora, com a chance da
+  geração; o `draw` usa a lava sorteada da cópia e lista cada bomba com o chunk dela).
 - `/amcv fill`: um carro em **cada vaga** da estrutura do AMC onde quem executa está (dentro do lote dela, em
   qualquer altura; na garagem também); modelo, cor, capô, porta-malas e portas sorteados (na delegacia, as viaturas).
   Responde com a estrutura, o canto da caixa, a rotação, a altura do chão, quantas vagas, quantos carros e as vagas

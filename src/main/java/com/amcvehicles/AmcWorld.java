@@ -34,6 +34,10 @@ public final class AmcWorld {
             return Placement.car(def, x0, z0, rot, base, bay, m);
         }
 
+        public Placement.PumpAt pump(Spots.Pump pump) {
+            return Placement.pump(def, x0, z0, rot, base, pump);
+        }
+
         public boolean police() {
             return "police_station".equals(def.type());
         }

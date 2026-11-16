@@ -92,3 +92,21 @@ abandoned_small_building bay 3 0 2 5 9 S
 abandoned_small_building bay 7 0 2 9 9 S
 abandoned_small_building bay 12 0 10 14 17 S
 abandoned_small_building bay 17 0 10 19 17 S
+
+# Stage 6 (16 Nov 2026, approved by the user from docs/spots/bombas_propostas.png): the fuel pumps, IV's own
+# mts:fuelpump, always there, 30% of them with 1 bucket of lava (Draw.PUMP_FUEL_CHANCE), the others empty.
+#   <model> pump <x> <y> <z> <facing>
+# x, y, z: the cell of the pump in the template (y = the layer over the floor of the island); facing: its front (N, S,
+# E, W). Checked with `find_spots.py --bays` (free or a plant, a floor under it) and by PumpTest.
+# gas_station: 2 on each of the 4 islands (x 13..19 and 25..31, z 7..10 and 14..17).
+gas_station pump 15 1 9 S
+gas_station pump 17 1 9 S
+gas_station pump 27 1 9 S
+gas_station pump 29 1 9 S
+gas_station pump 15 1 16 S
+gas_station pump 17 1 16 S
+gas_station pump 27 1 16 S
+gas_station pump 29 1 16 S
+# gas_station_small: 2 on its island (x 6..14, z 8..11).
+gas_station_small pump 8 1 9 N
+gas_station_small pump 12 1 9 N

@@ -71,6 +71,18 @@ public final class Draw {
                 u.applyAsDouble(FLIP) < 0.5);
     }
 
+    /**
+     * Fuel pumps (stage 6, the user's choice after the balance of 16 Nov 2026: 70% empty, 30% with 1 bucket of lava; it
+     * was 0 to 3 buckets, ~11 buckets per city): the chance of a pump having lava, and how many buckets then.
+     */
+    public static final double PUMP_FUEL_CHANCE = 0.30;
+    public static final int PUMP_BUCKETS = 1;
+
+    /** Buckets of lava in a fuel pump, from the copy and the pump ({@link Spots.Pump#key}). */
+    public static int buckets(long lotSeed, long pumpKey) {
+        return unit(lotSeed, pumpKey, CAR) < PUMP_FUEL_CHANCE ? PUMP_BUCKETS : 0;
+    }
+
     static int pick(double u, int n) {
         return Math.min(n - 1, (int) Math.floor(u * n));
     }

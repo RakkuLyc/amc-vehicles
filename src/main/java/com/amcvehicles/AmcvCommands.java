@@ -34,6 +34,8 @@ import java.util.TreeSet;
  *   cars the generation gives that copy, placed now unless the bay is blocked or occupied (in a chunk generated with
  *   this mod they are already there). For structures of areas generated before the mod, and to test.</li>
  *   <li>{@code /amcv pump [buckets]}: a fuel pump 3 blocks ahead, its front to you, with that many buckets of lava.</li>
+ *   <li>{@code fill} and {@code draw} also place the fuel pumps of the structure (fill: the lava drawn now; draw: the
+ *   lava of the generation).</li>
  * </ul>
  */
 final class AmcvCommands {
@@ -199,7 +201,7 @@ final class AmcvCommands {
         }
         String name = s.def().name();
         List<Spots.Bay> bays = Spots.of(s.def().model());
-        if (bays.isEmpty()) {
+        if (bays.isEmpty() && Spots.pumps(s.def().model()).isEmpty()) {
             src.sendFailure(Component.literal(name + " has no bays yet."));
             return 0;
         }
@@ -224,10 +226,19 @@ final class AmcvCommands {
                 skipped.add("bay " + (k + 1) + ": " + e);
             }
         }
+        // the fuel pumps too (their lava drawn now, with the chance of the generation)
+        List<String> pumps = new ArrayList<>();
+        for (Generation.PlannedPump p : Generation.pumps(s, null, null)) {
+            int buckets = r.nextDouble() < Draw.PUMP_FUEL_CHANCE ? Draw.PUMP_BUCKETS : 0;
+            String res = Generation.placePump(level, new Generation.PlannedPump(s, p.pump(), p.at(), buckets),
+                    "/amcv fill");
+            pumps.add((p.pump() + 1) + ": " + (res.equals("placed") ? buckets + " bucket(s)" : res));
+        }
         int n = spawned;
         src.sendSuccess(() -> Component.literal(String.format("%s (box corner %d %d, rotation %d, ground y %d): %d bays, "
-                        + "%d cars %s, %d skipped%s", name, s.x0(), s.z0(), s.rot(), s.base(), bays.size(), n, models,
-                skipped.size(), skipped.isEmpty() ? "" : "\n" + String.join("\n", skipped))), true);
+                        + "%d cars %s, %d skipped%s%s", name, s.x0(), s.z0(), s.rot(), s.base(), bays.size(), n, models,
+                skipped.size(), skipped.isEmpty() ? "" : "\n" + String.join("\n", skipped),
+                pumps.isEmpty() ? "" : "\nfuel pumps: " + String.join("; ", pumps))), true);
         for (String k : skipped) {
             AmcVehicles.LOG.info("[amcv fill] {} {}", name, k);
         }
@@ -245,7 +256,7 @@ final class AmcvCommands {
         }
         String name = s.def().name();
         int bays = Spots.of(s.def().model()).size();
-        if (bays == 0) {
+        if (bays == 0 && Spots.pumps(s.def().model()).isEmpty()) {
             src.sendFailure(Component.literal(name + " has no bays yet."));
             return 0;
         }
@@ -263,6 +274,11 @@ final class AmcvCommands {
             lines.add(String.format("bay %d: %s%s at %.2f %d %.2f (chunks %s), %s", p.bay() + 1,
                     p.drawn().model().key(), p.drawn().color(), p.car().x(), (int) Math.floor(p.car().y()),
                     p.car().z(), String.join(" ", chunks), r));
+        }
+        for (Generation.PlannedPump p : Generation.pumps(s, null, null)) {
+            String r = Generation.placePump(level, p, "/amcv draw");
+            lines.add(String.format("fuel pump %d at %d %d %d (chunk %d,%d), %d bucket(s): %s", p.pump() + 1, p.at().x(),
+                    p.at().y(), p.at().z(), p.at().x() >> 4, p.at().z() >> 4, p.buckets(), r));
         }
         int n = placed;
         src.sendSuccess(() -> Component.literal(String.format("%s (seed %d): %d bays, %d drawn (%.0f%% each), %d "

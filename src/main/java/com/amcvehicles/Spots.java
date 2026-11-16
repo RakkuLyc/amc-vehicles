@@ -61,7 +61,27 @@ public final class Spots {
         }
     }
 
-    private static final Map<String, List<Bay>> BY_MODEL = load();
+    /**
+     * A fuel pump of a gas station (stage 6): it stands in the cell x, y, z of the template (y = the layer over the
+     * floor), its front to {@code facing} ('N', 'S', 'E' or 'W').
+     */
+    public record Pump(int x, int y, int z, char facing) {
+        /** The key of the pump in the draw (its position; tagged so it never equals the key of a bay). */
+        public long key() {
+            return (1L << 48) | ((long) (x & 0xFFFF) << 32) | ((long) (y & 0xFFFF) << 16) | (z & 0xFFFF);
+        }
+
+        public int[] dir() {
+            return new Bay(x, y, z, x, z, facing).dir();
+        }
+    }
+
+    private static final Map<String, List<Bay>> BY_MODEL = new HashMap<>();
+    private static final Map<String, List<Pump>> PUMPS = new HashMap<>();
+
+    static {
+        load();
+    }
 
     private Spots() {
     }
@@ -75,8 +95,18 @@ public final class Spots {
         return BY_MODEL;
     }
 
-    private static Map<String, List<Bay>> load() {
+    /** The fuel pumps of a model (empty when it has none). */
+    public static List<Pump> pumps(String model) {
+        return PUMPS.getOrDefault(model, List.of());
+    }
+
+    public static Map<String, List<Pump>> allPumps() {
+        return PUMPS;
+    }
+
+    private static void load() {
         Map<String, List<Bay>> out = new HashMap<>();
+        Map<String, List<Pump>> pumps = new HashMap<>();
         try (InputStream in = Spots.class.getResourceAsStream("/amcvehicles/spots.txt")) {
             if (in == null) {
                 throw new IllegalStateException("amcvehicles/spots.txt missing from the jar");
@@ -91,6 +121,11 @@ public final class Spots {
                     continue;
                 }
                 String[] f = line.split("\\s+");
+                if (f.length == 6 && f[1].equals("pump") && f[5].length() == 1 && "NSEW".indexOf(f[5].charAt(0)) >= 0) {
+                    pumps.computeIfAbsent(f[0], k -> new ArrayList<>()).add(new Pump(Integer.parseInt(f[2]),
+                            Integer.parseInt(f[3]), Integer.parseInt(f[4]), f[5].charAt(0)));
+                    continue;
+                }
                 if (f.length != 8 || !f[1].equals("bay") || f[7].length() != 1 || "NSEWXZ".indexOf(f[7].charAt(0)) < 0) {
                     throw new IllegalStateException("spots.txt line " + n + ": " + line);
                 }
@@ -104,7 +139,7 @@ public final class Spots {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        out.replaceAll((k, v) -> List.copyOf(v));
-        return Map.copyOf(out);
+        out.forEach((k, v) -> BY_MODEL.put(k, List.copyOf(v)));
+        pumps.forEach((k, v) -> PUMPS.put(k, List.copyOf(v)));
     }
 }

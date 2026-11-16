@@ -276,3 +276,33 @@ uma variante de cada).
 - `/amcv fill` na delegacia: `[mustang_police, cagouille_police, mercedes_police, cagouille_police]`, só viaturas.
 
 **Não visto no jogo:** a aparência dos 7 modelos novos (altura, portas, painel), que só o cliente do usuário mostra.
+
+## Etapa 6 — bombas de combustível e balanceamento (16 Nov 2026, versão 0.6.0)
+
+### Testes de unidade (22, todos passam)
+- `PumpTest.floorAndRoomInEveryRotationAndVariant`: as 10 bombas, nas 5 cores e 4 rotações (200 posições): piso
+  embaixo, a célula e a de cima livres em `Def.code` do AMC. **Pega erro**: com uma bomba de propósito em x 22, z 11
+  (um pilar da cobertura) falhou ("minecraft:chiseled_polished_blackstone at +0"); o arquivo foi devolvido.
+- `pumpsOutOfTheBays`, `facingTurnsWithTheStructure`, `pumpKeysNeverBayKeys`, `pumpsOfTheGasStations` (8 e 2).
+- `thirtyPercentWithOneBucket` (1.000.000): 30,00% com 1 balde. `pumpsOfAStationIndependent` (200.000 postos): média
+  2,400 bombas com lava por posto e variância 1,679 (binomial de 8 com 0,3: 2,4 e 1,68), histograma
+  [11542, 39476, 59288, 50937, 27201, 9326, 1951, 263, 16]: 6 ou mais em 1,1% dos postos.
+
+### No mundo (semente 20261027, mundo novo)
+- **Balanceamento**: no log ao iniciar, `[AMCV] Lava as a fuel set to 0.35 (server starting; was: diesel 1.0, avgas
+  1.0, gasoline 1.0); IV's config file is not changed`. A primeira rodada tinha mudado também `furnace` e
+  `brewing_stand` (não são de motor): corrigido. `config/mtsconfig.json` com `"lava": 1.0` nos 5 tipos antes e depois
+  de duas partidas do servidor.
+- **`/amcv draw` antes de gerar** (posto 2593,-351 e posto pequeno 385,172): lista as bombas com posição, chunk e lava
+  sorteada, "chunks around not ready", sem forçar carregamento.
+- **Espera e o reparo do AMC** (posto pequeno, bombas no chunk 24,11): `forceload` do chunk 22,11 (o 24 completo, o
+  vizinho 25 não): `pending chunks 1`, nenhuma bomba. Uma bomba posta à mão (`/amcv pump 1`) em 397, 70, 181 (célula de
+  ar no `.nbt`). `forceload` do 26,11 (gera o 25): a bomba gerada 1 apareceu (0 balde, "generated"), `pending chunks 0`,
+  e a posta à mão **continuou lá** (1.000 mB): o reparo do AMC não passou na célula; a regra dos 8 vizinhos fica como
+  margem (ver `CLAUDE.md`).
+- **Posto grande**: `forceload` da caixa: as 8 bombas postas ("generated"), lava 1, 0, 0, 1, 1, 1, 1, 1 balde como o
+  sorteio do `draw`; `data get block`: `systemName "fuelpump"`, `fluidLevel 1000` nas com lava, sem nível nas vazias;
+  `anglesy` 90 nas 8 (a cópia está na rotação 3).
+- **Reinício**: as bombas continuam (mesma lava); `/amcv fill` no posto pequeno: "already there" nas 2.
+
+**Não visto no jogo:** a aparência e a frente das bombas, e o consumo novo da lava (precisa dirigir).
