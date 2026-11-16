@@ -17,6 +17,8 @@ import minecrafttransportsimulator.mcinterface.AWrapperWorld;
 import minecrafttransportsimulator.mcinterface.InterfaceManager;
 import minecrafttransportsimulator.packloading.PackParser;
 import minecrafttransportsimulator.systems.ConfigSystem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
 import java.util.ArrayList;
@@ -115,7 +117,9 @@ public final class Vehicles {
         if (fluid.isEmpty()) {
             AmcVehicles.LOG.warn("No valid fluid for the fuel type of {}; the car spawns without fuel", m.id());
         } else {
-            v.fuelTank.manuallySet(fluid, "", fuel);
+            // the fluid's namespace, as IV stores a poured bucket: with "" a bucket of lava could not top the car up
+            // (EntityFluidTank.fill takes the same fluid only with the same mod, or "wildcard" as the pumps send)
+            v.fuelTank.manuallySet(fluid, namespace(fluid), fuel);
         }
 
         List<String> parts = new ArrayList<>();
@@ -172,6 +176,22 @@ public final class Vehicles {
             }
         }
         return right >= 0 ? right : left;
+    }
+
+    /** The namespace of the registered fluid of this path (minecraft first), as IV reads a bucket's fluid. */
+    static String namespace(String path) {
+        String found = "";
+        for (ResourceLocation key : BuiltInRegistries.FLUID.keySet()) {
+            if (key.getPath().equals(path)) {
+                if (key.getNamespace().equals("minecraft")) {
+                    return "minecraft";
+                }
+                if (found.isEmpty()) {
+                    found = key.getNamespace();
+                }
+            }
+        }
+        return found;
     }
 
     /**

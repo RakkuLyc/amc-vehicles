@@ -12,10 +12,11 @@ import java.util.Map;
  * lava in IV's fuel config ({@code fuel.fuels.<type>.lava}, 1.0 by default for gasoline, diesel and avgas) is set to
  * {@link #LAVA}: each bucket goes about a third as far (~0.45 city). A real gasoline of another mod keeps its potency.
  * <p>
- * Only in memory, never in IV's {@code config/mtsconfig.json}: IV writes that file while the game loads (on the client,
- * in {@code FMLLoadCompleteEvent}), so the value is set later, when a server starts (the single player world included:
- * the integrated server shares IV's settings) and, on a client, when it joins a server. Taking the mod out restores
- * IV's value. IV's engines read the map every time they burn fuel ({@code PartEngine}), so the change applies at once.
+ * In memory: IV writes {@code config/mtsconfig.json} while the game loads (on the client, in
+ * {@code FMLLoadCompleteEvent}), so the value is set later, when a server starts (the single player world included: the
+ * integrated server shares IV's settings) and, on a client, when it joins a server, and put back when the server stops
+ * or the client leaves ({@link #restore}). IV also saves that file when a player changes its controls or its config
+ * screen during a game: such a save writes 0.35 to the file (to undo it, edit the file). IV's engines read the map every time they burn fuel ({@code PartEngine}), so the change applies at once.
  */
 public final class FuelBalance {
     /** Potency of lava as an engine fuel. */
@@ -26,7 +27,30 @@ public final class FuelBalance {
      */
     static final java.util.Set<String> NOT_ENGINES = java.util.Set.of("furnace", "brewing_stand");
 
+    /** IV's values before {@link #apply}: put back by {@link #restore}. */
+    private static final Map<String, Double> ORIGINAL = new java.util.HashMap<>();
+
     private FuelBalance() {
+    }
+
+    /**
+     * Puts IV's values back (when the server stops and when a client leaves a server): IV also writes its config file
+     * while the game runs (its controls and config screens, ControlSystem and GUIConfig, call saveToDisk), and a save
+     * made while 0.35 is in memory writes it to the file; putting the values back between sessions keeps that window to
+     * the time a world is open.
+     */
+    static void restore(String when) {
+        if (ORIGINAL.isEmpty() || ConfigSystem.settings == null || ConfigSystem.settings.fuel == null) {
+            return;
+        }
+        for (Map.Entry<String, Double> e : ORIGINAL.entrySet()) {
+            Map<String, Double> m = ConfigSystem.settings.fuel.fuels.get(e.getKey());
+            if (m != null) {
+                m.put("lava", e.getValue());
+            }
+        }
+        AmcVehicles.LOG.info("[AMCV] Lava as a fuel put back to IV's values ({}): {}", when, ORIGINAL);
+        ORIGINAL.clear();
     }
 
     /** Sets lava to {@link #LAVA} in every engine fuel type of IV's config that takes it; logs what changed. */
@@ -43,6 +67,7 @@ public final class FuelBalance {
             }
             Double was = e.getValue().get("lava");
             if (was != null && was != LAVA) {
+                ORIGINAL.putIfAbsent(e.getKey(), was);
                 e.getValue().put("lava", LAVA);
                 changed.add(e.getKey() + " " + was);
             }

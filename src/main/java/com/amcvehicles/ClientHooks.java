@@ -10,5 +10,6 @@ final class ClientHooks {
 
     static void register() {
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingIn e) -> FuelBalance.apply("joining a server"));
+        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> FuelBalance.restore("leaving a server"));
     }
 }

@@ -305,4 +305,20 @@ uma variante de cada).
   `anglesy` 90 nas 8 (a cópia está na rotação 3).
 - **Reinício**: as bombas continuam (mesma lava); `/amcv fill` no posto pequeno: "already there" nas 2.
 
-**Não visto no jogo:** a aparência e a frente das bombas, e o consumo novo da lava (precisa dirigir).
+### Revisão antes da entrega (0.6.0)
+- **Consumo**: no `PartEngine` do IV o consumo é `getTotalFuelConsumption() * fuelUsageFactor / fuelFactor`: a potência
+  divide, então 0,35 faz cada balde render ~1/3 (a estimativa de ~0,45 cidade por balde vale, a partir da medida do
+  usuário).
+- **Arquivo de config**: o `saveToDisk` do IV também é chamado pelo `ControlSystem` e pelo `GUIConfig` (controles e tela
+  de configuração do IV, durante o jogo). Acrescentado: os valores voltam ao parar o servidor e ao sair de um servidor;
+  no servidor de teste, o log diz `[AMCV] Lava as a fuel put back to IV's values (server stopped): {diesel=1.0,
+  avgas=1.0, gasoline=1.0}` e o arquivo segue com 1,0 nos 5 tipos. Uma gravação feita com o mundo aberto ainda leva o
+  0,35 para o arquivo (documentado).
+- **Tanque dos carros**: o `EntityFluidTank.fill` só junta o mesmo fluido do mesmo mod (ou `wildcard`): com o mod `""`
+  um balde de lava (`minecraft`) seria recusado. Agora o tanque é gravado com `currentFluidMod: "minecraft"`
+  (conferido em `data get entity` de um carro do `/amcv car`). Despejar o balde não foi testado (precisa de jogador).
+- **Células das bombas**: nas 10 variantes, todas ar no `.nbt`; a regra do jogo aceita agora também plantas, cipós,
+  teias e blocos finos, como o `PumpTest`.
+
+**Não visto no jogo:** a aparência e a frente das bombas, abastecer um carro na bomba e com balde, o consumo novo da
+lava (precisa dirigir) e o mod carregando no cliente (`ClientHooks` é nova).

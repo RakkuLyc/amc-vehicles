@@ -7,10 +7,12 @@ import com.abandonedmoderncity.gen.Plans;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import mcinterface1211.BuilderTileEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -169,7 +171,11 @@ public final class Generation {
         }
         BlockState s = level.getBlockState(pos);
         BlockState under = level.getBlockState(pos.below());
-        String blocked = !s.canBeReplaced() ? s.getBlock().getName().getString() + " in the cell"
+        // the cell may hold air, a plant, a vine, a cobweb or a thin block (a carpet), as PumpTest allows
+        VoxelShape shape = s.getCollisionShape(level, pos);
+        boolean free = !s.hasBlockEntity() && (s.canBeReplaced() || shape.isEmpty()
+                || shape.max(Direction.Axis.Y) <= AmcWorld.THIN);
+        String blocked = !free ? s.getBlock().getName().getString() + " in the cell"
                 : under.getCollisionShape(level, pos.below()).isEmpty() ? "no floor" : null;
         if (blocked == null) {
             blocked = FuelPumps.place(level, pos, at.yaw(), p.buckets() * FuelPumps.BUCKET);

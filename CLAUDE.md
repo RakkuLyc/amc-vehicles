@@ -102,7 +102,9 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
   motores, **todas as rodas** (o estepe do Escargot também) e os bancos não permanentes; ficam o porta-luvas, o assento
   invisível do porta-malas, a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Combustível: 10% do
   `fuelCapacity` do modelo (Camaro e Highwayman 1.000, Mustang 800, os outros 1.500), o fluido do tipo do motor padrão
-  dele (gasoline: lava, sem mod de gasolina).
+  dele (gasoline: lava, sem mod de gasolina), gravado com o mod real do fluido (`minecraft` para a lava; 0.6.0): com
+  `""`, como o IV faz nos carros novos, um balde despejado no carro (mod `minecraft`) seria recusado pelo
+  `EntityFluidTank.fill`, que só junta o mesmo fluido do mesmo mod ou `wildcard` (o que a bomba manda).
 - **Sorteio** (`Draw`): índices novos, sem mudar o 0 (a vaga tem carro): 7 o modelo, 8 e 9 as portas de trás da
   Station Wagon; o 1 (cor) passa a sortear entre as cores do modelo.
 
@@ -236,7 +238,9 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   (hipótese: para um chunk ficar completo os vizinhos já passaram pela etapa em que o AMC repara, e não a repetem); a
   regra fica como margem de segurança (custo: a bomba aparece quando os vizinhos estão prontos). `placePump` também
   não põe nada se os chunks em volta não estão prontos (o `/amcv draw` numa área não carregada não força
-  carregamento), nem onde já há um bloco do IV ("already there"), nem onde a célula não é ar ou planta, ou falta piso.
+  carregamento), nem onde já há um bloco do IV ("already there"), nem onde a célula não é ar, planta, cipó, teia ou
+  bloco fino (até 1/4, como um tapete; a mesma regra do `PumpTest`), nem sem piso. Nas 10 variantes de cor, as células
+  das bombas são ar no `.nbt` (conferido).
 - **Como a bomba é posta**: o `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
   `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
   `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
@@ -253,10 +257,15 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   de motor do IV que a aceitam (`gasoline`, `diesel`, `avgas` por padrão; `furnace` e `brewing_stand`, que não são de
   motor, ficam como estão: a primeira rodada da 0.6.0 tinha mudado esses também). Só na memória: o IV grava o
   `config/mtsconfig.json` no fim do carregamento do jogo (no cliente, `FMLLoadCompleteEvent`, que roda em paralelo com
-  os outros mods), então o valor é posto depois disso e o arquivo não muda; tirar o mod volta ao valor do IV. O motor
-  do IV lê o mapa a cada vez que queima combustível (`PartEngine`), então vale na hora. O log diz
-  `[AMCV] Lava as a fuel set to 0.35 (...; was: ...)`. Se o usuário abrir a tela de configuração do IV no jogo e salvar,
-  o 0,35 pode ir para o arquivo (não testado).
+  os outros mods), então o valor é posto depois disso; ao parar o servidor (`ServerStoppedEvent`) e ao sair de um
+  servidor (cliente) os valores do IV voltam (`FuelBalance.restore`). O motor do IV divide o consumo pela potência
+  (`PartEngine`: `getTotalFuelConsumption() * fuelUsageFactor / fuelFactor`, lida a cada uso), então 0,35 faz cada balde
+  render ~1/3 e vale na hora. O log diz `[AMCV] Lava as a fuel set to 0.35 (...; was: ...)` e, ao parar,
+  `... put back to IV's values`. **Limite**: o IV também grava o arquivo durante a partida quando o jogador muda os
+  controles ou a tela de configuração dele (`ControlSystem`, `GUIConfig` chamam `saveToDisk`); uma gravação dessas,
+  com o mundo aberto, leva 0,35 para o `mtsconfig.json` (para desfazer: editar o arquivo). O usuário aprovou a lava a
+  0,35 citando `fuels.gasoline.lava`; o mod aplica também a `diesel` e `avgas` (senão um motor a diesel seria uma brecha;
+  a confirmar com ele).
 
 ## Arquitetura
 ```
