@@ -105,7 +105,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 
 ## Geração no mundo (`Draw`, `Generation`, `Pending`; etapa 3)
 - **Sorteio** (`Draw.car`): função pura da semente do lote (a cópia da estrutura; o AMC a tira da semente do mundo) e
-  do número da vaga em `spots.txt`, com um sal próprio (SplitMix64): a mesma vaga do mesmo mundo dá sempre o mesmo
+  da **posição da vaga** no `.nbt` (`Spots.Bay.key`: x0, y, z0; não a ordem em `spots.txt`, para que acrescentar ou
+  reordenar vagas de um modelo não mude o sorteio das outras), com um sal próprio (SplitMix64): a mesma vaga do mesmo mundo dá sempre o mesmo
   resultado, em qualquer ordem de carregamento. **3% por vaga** (`CHANCE_PER_BAY`); depois, cada um à parte: cor (as
   15 civis com a mesma chance; na delegacia, `type` `police_station`, só as 2 de polícia), capô 50%, porta-malas 50%,
   porta esquerda 50%, porta direita 50%. As cores e as chances moram em `Draw` (sem classes do Minecraft, para os
@@ -114,20 +115,25 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - **Quando**: no `ChunkEvent.Load` de um chunk **recém-gerado** (`isNewChunk`; o evento roda na thread principal,
   depois de o chunk virar `LevelChunk` com status FULL, conferido no código do NeoForge 21.1.219,
   `ChunkStatusTasks`), o mod sorteia os carros daquele chunk (as estruturas com vagas que têm coluna nele, pelo
-  `ChunkPlan.lot` do AMC); se houver algum, o chunk vai para `Pending` (salvo no mundo, `data/amcvehicles_pending.dat`)
-  e para a fila. **Nunca dentro da geração do AMC.**
-- **Pôr** (`Generation.onLevelTick`, a cada 10 ticks): para cada chunk da fila carregado, cada carro dele espera até
-  todos os chunks sob o corpo serem chunks completos carregados (`getChunkNow`, que nunca força um carregamento); então
-  `Generation.place` confere o mundo (`AmcWorld.blocked`: piso, 2 de altura livre, nenhum veículo do IV ali) e põe o
-  carro, ou o descarta de vez se estiver bloqueado. Quando nenhum carro do chunk espera mais, ele sai de `Pending`.
-  Um chunk que descarrega sai da fila mas fica em `Pending` e volta à fila quando carregar de novo (depois de
-  reiniciar, também). A checagem de "veículo ali" impede carro duplicado se o servidor cair entre pôr o carro e
+  `ChunkPlan.lot` do AMC); se houver algum, o chunk vai para `Pending` (salvo no mundo,
+  `data/amcvehicles_pending.dat`). **Nunca dentro da geração do AMC.**
+- **Pôr** (`Generation.onLevelTick`, a cada 10 ticks): o mod percorre o próprio `Pending` (não uma fila alimentada
+  pelos carregamentos: assim pega também um chunk que cai abaixo de completo e volta na borda da visão de um jogador
+  sem um novo evento de carregamento, e os pendentes depois de reiniciar); para cada chunk pendente que é um chunk
+  completo carregado, cada carro dele espera até todos os chunks sob o corpo serem chunks completos carregados
+  (`getChunkNow`, que nunca força um carregamento); então `Generation.place` confere o mundo (`AmcWorld.blocked`: piso,
+  2 de altura livre, nenhum veículo do IV, `mts:builder_existing`, ali) e põe o carro, ou o descarta de vez se estiver
+  bloqueado (por exemplo, um baú sorteado pelo AMC dentro da vaga). Quando nenhum carro do chunk espera mais, ele sai
+  de `Pending`. Num chunk com um carro esperando, os outros já resolvidos não são tentados de novo na mesma sessão
+  (sem log repetido). A checagem de "veículo ali" impede carro duplicado se o servidor cair entre pôr o carro e
   salvar.
+- **Limite conhecido**: `Pending` é salvo com o mundo; se o chunk novo for salvo (ao descarregar) e o servidor cair
+  antes de o mundo salvar `Pending`, os carros daquele chunk se perdem (ele não é "novo" de novo).
 - **Log**: cada carro posto (`[AMCV] Mercedes<cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
   descartada, com o motivo.
 - **Projeção** (`DrawTest.projectionPerCity`: o planejador real do AMC num terreno plano, 5 sementes, 492 cidades,
-  com o sorteio real): o prédio largo está em 35% das cidades, 34 vagas; **0,93 carro por prédio largo, 0,33 por
-  cidade**; cidades com 0 carros 77,8%, 1 13,4%, 2 7,1%, 3 1,6%. Só a garagem do prédio largo tem vagas por enquanto.
+  com o sorteio real): o prédio largo está em 35% das cidades, 34 vagas; **0,92 carro por prédio largo, 0,32 por
+  cidade**; cidades com 0 carros 77,2%, 1 15,0%, 2 6,1%, 3 1,4%, 4 0,2%. Só a garagem do prédio largo tem vagas por enquanto.
 
 ## Arquitetura
 ```
@@ -138,7 +144,7 @@ Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem
 AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
 Draw           o sorteio dos carros (3% por vaga, cor, capô, porta-malas, portas), puro; cores e chances
 Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro estão prontos
-Pending        os chunks com carro sorteado ainda não posto (salvo no mundo)
+Pending        os chunks com carro sorteado ainda não posto (salvo no mundo; percorrido a cada 10 ticks)
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
@@ -154,7 +160,7 @@ AmcvCommands   /amcv (op 2): comandos de teste
   puladas com o motivo. Para tirar os carros: `/kill @e[type=mts:builder_existing,distance=..80]`.
 - `/amcv draw`: o **sorteio real** (o mesmo da geração) na estrutura onde quem executa está: põe agora os carros
   sorteados que ainda não estão lá (num chunk gerado com o mod eles já estão: a resposta diz "occupied by a vehicle").
-  Responde com a semente da cópia, as vagas, quantas sorteadas, quantas postas agora, os chunks pendentes e na fila e,
+  Responde com a semente da cópia, as vagas, quantas sorteadas, quantas postas agora, os chunks pendentes e,
   para cada vaga sorteada, a cor, a origem (eixo traseiro), os chunks sob o corpo e o que aconteceu.
 
 ## Build e teste
@@ -171,5 +177,6 @@ AmcvCommands   /amcv (op 2): comandos de teste
   `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas;
   `python3 -I tools/check_generation.py [--load] "x0,z0 .. x1,z1" ...` compara os carros de cada caixa (as que o
   `/amcs locate` mostra) com o sorteio. Os scripts usam `tools/rconlib.py` (lê respostas longas inteiras: o RCON as
-  parte em pacotes de 4096; e manda um pacote por vez: dois colados derrubavam a conexão). Detalhes e resultados em
+  parte em pacotes de 4096; e manda um pacote por vez: o `RconClient` do jogo lê até 1.460 bytes, trata um pacote
+  por leitura e fecha a conexão quando uma leitura traz menos de 10 bytes, conferido no código). Detalhes e resultados em
   `docs/TESTING.md`.

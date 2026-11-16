@@ -97,38 +97,55 @@ a garagem de outras rotações no mundo (só a rotação 1 foi testada no mundo;
   direita 50,1%; as 15 cores civis entre 3.870 e 4.088 (1/15 ± 0,5%); nenhuma de polícia.
 - `policeOnlyPoliceColours`: na delegacia só `_police` e `_police2`.
 - `projectionPerCity`: o planejador real do AMC (terreno plano, sementes 20261027, 3478477863671517581,
-  -3297019724594858492, 1 e 42; as cidades de 12 × 12 células de cada): 492 cidades, 172 com prédio largo (35,0%),
-  5.848 vagas (11,9 por cidade), 160 carros (0,33 por cidade; 2,74% das vagas, dentro do acaso para 3%: o esperado
-  seria 175 ± 13); cidades com 0 carros 383 (77,8%), 1 66 (13,4%), 2 35 (7,1%), 3 8 (1,6%); 0,93 carro por prédio
-  largo.
+  -3297019724594858492, 1 e 42; as cidades de 12 × 12 células de cada), com o sorteio pela posição da vaga: 492
+  cidades, 172 com prédio largo (35,0%), 5.848 vagas (11,9 por cidade), 159 carros (0,32 por cidade; 2,72% das vagas,
+  dentro do acaso para 3%: o esperado seria 175 ± 13); cidades com 0 carros 380 (77,2%), 1 74 (15,0%), 2 30 (6,1%),
+  3 7 (1,4%), 4 1 (0,2%); 0,92 carro por prédio largo.
 
-### No mundo (semente 20261027, mundo novo)
+### No mundo (semente 20261027)
+Primeira rodada com o sorteio pela ordem da vaga e uma fila em memória; o revisor apontou dois caminhos que o jogo
+normal alcança e os testes não (um chunk que cai abaixo de completo e volta sem novo evento de carregamento; um chunk
+com dois carros em que um espera, que repetia o log a cada 10 ticks), e que o sorteio pela ordem mudaria se as vagas
+de um modelo fossem reordenadas. Corrigido (o mod percorre `Pending`; carros resolvidos não são tentados de novo; o
+sorteio usa a posição da vaga; "ocupado" só por `mts:builder_existing`) e **tudo rodado de novo, num mundo novo**:
+
 - **Contagem exata**: 12 prédios largos (`/amcs locate` de uma grade de 7 × 7 pontos, 736 de distância),
   `tools/check_generation.py --load` (forceload de cada caixa, que a gera): em todos, carros na caixa = sorteados =
-  "occupied by a vehicle" no `/amcv draw`; **11 carros, 11 sorteados, 11 no lugar**; 11 linhas `[AMCV] Mercedes` no
-  log.
-- **Faixas, 4 rotações no mundo** (`check_bays.py`): os carros gerados das caixas -1300,-1976 (3) e 385,1857 (3) e
-  -2559,-1240 (2), e `/amcv fill` nas caixas 1000,-2410 (rotação 2) e 2593,-1087 (rotação 0): **todos com 10/10
-  células de faixa**, 17 narizes N e 17 S nas caixas de rotação 0 e 2, E/W nas de rotação 1 e 3.
-- **Reinício**: 79 carros antes e 79 depois; nenhuma linha `[AMCV] Mercedes` nova; `check_generation` de novo nas 10
-  caixas geradas: 11/11/11; `pending chunks 0`.
-- **Borda (chunk completo que não roda)**: `forceload add` só do chunk 166,204: a Mercedes seagreen da vaga 27 da caixa
-  2593,3265, cujo corpo fica todo no chunk 164,204 (a 2 do forçado: completo, sem tick), foi posta ("(generated)");
-  dados salvos iguais aos de um carro normal (só invisible_standing e gloveboxscout, 1.500 de lava, velocímetro no 1,
-  combustível no 2, portas e porta-malas sorteados).
-- **Pendente sobrevive a um reinício**: `forceload add` só do chunk -245,-304: a Mercedes vermelha da vaga 24 da caixa
-  -3882,-4885 tem o dono em -243,-304 (a 2: completo) e o corpo também em -242,-304 (a 3: não completo): `pending
-  chunks 1`, sem carro. Servidor parado e reiniciado: ainda `pending chunks 1, queued 1`, sem carro. `forceload add`
-  do chunk -242,-304: o carro apareceu (`(generated)`), `pending chunks 0`.
+  "occupied by a vehicle" no `/amcv draw`; **11 carros, 11 sorteados, 11 no lugar**; 11 linhas `(generated)` no log,
+  nenhuma vaga pulada.
+- **Muitos carros por chunk (chance trocada para 100% só neste teste, depois devolvida a 3%: o diff do `Draw.java`
+  não tem a linha, e `javap -constants` do jar mostra `CHANCE_PER_BAY = 0.03d`)**: mundo novo; `forceload` só do chunk
+  162,207 (perto da caixa 2593,3265): as vagas 8 a 17 (nos chunks completos 162..164 da fileira 205) postas, 10 linhas
+  no log, as outras esperando os chunks delas nascerem; `forceload` da caixa inteira: **33 carros e 1 vaga pulada**
+  ("bay 25 skipped (generated): Chest at 2643 64 3272", um baú sorteado pelo AMC dentro da vaga), **34 linhas, uma
+  por vaga, nenhuma repetida** (iguais 10 s depois), `pending chunks 0`.
+- **Faixas, 4 rotações no mundo** (`check_bays.py`, na primeira rodada; o giro e a posição não mudaram com as
+  correções): os carros gerados das caixas -1300,-1976 (3) e 385,1857 (3) e -2559,-1240 (2), e `/amcv fill` nas
+  caixas 1000,-2410 (rotação 2) e 2593,-1087 (rotação 0): **todos com 10/10 células de faixa**, 17 narizes N e 17 S nas
+  caixas de rotação 0 e 2, E/W nas de rotação 1 e 3.
+- **Reinício** (primeira rodada): 79 carros antes e 79 depois; nenhuma linha `[AMCV] Mercedes` nova; as 10 caixas
+  geradas de novo 11/11/11; `pending chunks 0`.
+- **Borda (chunk completo que não roda)** (primeira rodada): `forceload add` só do chunk 166,204: a Mercedes cujo corpo
+  fica todo no chunk 164,204 (a 2 do forçado: completo, sem tick) foi posta ("(generated)"); dados salvos iguais aos de
+  um carro normal (só invisible_standing e gloveboxscout, 1.500 de lava, velocímetro no 1, combustível no 2, portas e
+  porta-malas sorteados).
+- **Pendente sobrevive a um reinício** (primeira rodada): dono no chunk -243,-304 (a 2 do forçado -245,-304: completo)
+  e corpo também em -242,-304 (a 3: não completo): `pending chunks 1`, sem carro; servidor parado e reiniciado: ainda
+  `pending chunks 1`, sem carro; `forceload add` de -242,-304: o carro apareceu, `pending chunks 0`.
+- **Pendente sobrevive a descarregar** (segunda rodada): a Mercedes prata da vaga 13 da caixa 4648,-415 (dono 291,-25,
+  corpo também em 292,-25): `forceload` de 289,-25 → `pending chunks 1`, sem carro; `forceload remove` e 20 s → ainda
+  1, sem carro; `forceload add` de novo → 1, sem carro; `forceload add` de 292,-25 → **o carro apareceu**,
+  `pending chunks 0`.
 
 ### Ferramentas corrigidas no caminho (não eram defeitos do mod)
 - `check_bays.py` pareava a lista de posições com a de `anglesy`, mas o IV não grava `anglesy` quando é 0 (nariz para
   o sul): as listas desalinhavam e os narizes saíam errados. Agora pergunta o ângulo de cada carro (ausente = 0).
 - O RCON parte respostas acima de 4096 bytes; o cliente lia só o primeiro pedaço (`tools/rconlib.py` agora lê
-  todos). Mandar o comando e um marcador colados derrubava a conexão (o RCON do jogo fecha quando uma leitura vem
-  menor que um cabeçalho); agora vai um pacote por vez.
+  todos). Mandar o comando e um marcador colados derrubava a conexão: o `RconClient` do jogo lê até 1.460 bytes, trata
+  um pacote por leitura e fecha quando uma leitura traz menos de 10 bytes (conferido no código do Minecraft 1.21.1);
+  agora vai um pacote por vez.
 - O primeiro comando do AMC depois de iniciar o servidor planeja as cidades (~10 s, "Planning cities"; o servidor fica
   parado nesse tempo).
 
-**Não visto no jogo:** um carro gerado sozinho, com um jogador andando (o teste usou forceload; a borda de visão do
-jogador é o caso "completo sem tick", testado acima).
+**Não visto no jogo:** um carro gerado sozinho, com um jogador andando (os testes usaram forceload; a borda da visão
+do jogador é o caso "completo sem tick", testado acima).

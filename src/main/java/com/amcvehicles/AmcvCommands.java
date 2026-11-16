@@ -186,8 +186,8 @@ final class AmcvCommands {
         }
         int n = placed;
         src.sendSuccess(() -> Component.literal(String.format("%s (seed %d): %d bays, %d drawn (%.0f%% each), %d "
-                + "placed now; pending chunks %d, queued %d%s", name, s.seed(), bays, drawn.size(),
-                Draw.CHANCE_PER_BAY * 100, n, Pending.of(level).size(), Generation.queued(),
+                + "placed now; pending chunks %d%s", name, s.seed(), bays, drawn.size(),
+                Draw.CHANCE_PER_BAY * 100, n, Pending.of(level).size(),
                 lines.isEmpty() ? "" : "\n" + String.join("\n", lines))), true);
         return n;
     }

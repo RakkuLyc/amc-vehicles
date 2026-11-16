@@ -29,8 +29,11 @@ public final class Draw {
     public record Car(String color, boolean hoodOpen, boolean trunkOpen, boolean doorLeftOpen, boolean doorRightOpen) {
     }
 
-    /** The car of bay {@code bay} of the copy of seed {@code lotSeed}, or null when the bay is empty. */
-    public static Car car(long lotSeed, int bay, boolean police) {
+    /**
+     * The car of the bay of key {@code bay} ({@link Spots.Bay#key}: its position in the template) of the copy of seed
+     * {@code lotSeed}, or null when the bay is empty.
+     */
+    public static Car car(long lotSeed, long bay, boolean police) {
         if (unit(lotSeed, bay, 0) >= CHANCE_PER_BAY) {
             return null;
         }
@@ -44,7 +47,7 @@ public final class Draw {
     }
 
     /** A number in [0, 1) from the lot seed, the bay and what is drawn. */
-    static double unit(long lotSeed, int bay, int what) {
+    static double unit(long lotSeed, long bay, int what) {
         long h = mix(lotSeed ^ SALT);
         h = mix(h + bay * 0x9E3779B97F4A7C15L);
         h = mix(h + what * 0xC2B2AE3D27D4EB4FL);

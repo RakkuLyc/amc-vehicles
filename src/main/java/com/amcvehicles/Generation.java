@@ -4,7 +4,7 @@ import com.abandonedmoderncity.core.ChunkPlan;
 import com.abandonedmoderncity.core.Lot;
 import com.abandonedmoderncity.core.WorldPlan;
 import com.abandonedmoderncity.gen.Plans;
-import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -22,19 +22,25 @@ import java.util.Map;
  * <ul>
  *   <li>A car belongs to the chunk of its origin (the rear axle). When a chunk is <b>generated</b> (not when an old
  *   one loads: the user's choice, only new chunks get cars), its cars are drawn ({@link Draw}, a pure function of the
- *   lot's seed and the bay); if there is any, the chunk is written in {@link Pending} and queued.</li>
- *   <li>Never inside AMC's generation: the cars are placed by the server tick, in the real world, once every chunk under
- *   the body is a loaded full chunk ({@code getChunkNow}, which never forces a load). A car whose chunks are not ready
- *   waits; a car blocked in the world (a block in the way, no floor, a vehicle there) is dropped for good.</li>
- *   <li>A pending chunk that loads again (after a restart) is queued again.</li>
+ *   lot's seed and the bay's position); if there is any, the chunk is written in {@link Pending} (saved with the
+ *   world).</li>
+ *   <li>Never inside AMC's generation: every {@link #EVERY} ticks the server looks at the pending chunks that are loaded
+ *   full chunks and places each of their cars once every chunk under its body is a loaded full chunk too
+ *   ({@code getChunkNow}, which never forces a load). A car whose chunks are not ready waits; a car blocked in the world
+ *   (a block in the way, no floor, a vehicle there) is dropped for good. When no car of a chunk waits any more, it
+ *   leaves Pending. Polling Pending itself (not a queue fed by chunk loads) also catches a chunk that drops below full
+ *   and comes back at the edge of a player's view without a new load event, and the chunks pending after a restart.</li>
  * </ul>
  */
 public final class Generation {
-    /** How often (ticks) the queue is looked at. */
+    /** How often (ticks) the pending chunks are looked at. */
     static final int EVERY = 10;
 
-    /** Chunks to look at, in order. Only the overworld has AMC cities. */
-    private static final LongLinkedOpenHashSet QUEUE = new LongLinkedOpenHashSet();
+    /**
+     * The cars resolved (placed or dropped) in this session in chunks that are still pending because another car of
+     * theirs waits: not tried again (no log line every 10 ticks). Keys: {@link #resolvedKey}.
+     */
+    private static final LongOpenHashSet RESOLVED = new LongOpenHashSet();
 
     private Generation() {
     }
@@ -44,52 +50,62 @@ public final class Generation {
     }
 
     static void onChunkLoad(ChunkEvent.Load e) {
-        if (!(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) {
+        if (!e.isNewChunk() || !(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) {
             return;
         }
         ChunkPos pos = e.getChunk().getPos();
-        Pending pending = Pending.of(level);
-        if (e.isNewChunk()) {
-            if (!carsOf(level, pos.x, pos.z).isEmpty()) {
-                pending.add(pos.toLong());
-                QUEUE.add(pos.toLong());
-            }
-        } else if (pending.contains(pos.toLong())) {
-            QUEUE.add(pos.toLong());
+        if (!carsOf(level, pos.x, pos.z).isEmpty()) {
+            Pending.of(level).add(pos.toLong());
         }
     }
 
     static void onLevelTick(LevelTickEvent.Post e) {
-        if (!(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD || QUEUE.isEmpty()
+        if (!(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD
                 || level.getGameTime() % EVERY != 0) {
             return;
         }
         Pending pending = Pending.of(level);
-        for (long chunk : QUEUE.toLongArray()) {
+        if (pending.size() == 0) {
+            return;
+        }
+        for (long chunk : pending.toArray()) {
             int cx = ChunkPos.getX(chunk);
             int cz = ChunkPos.getZ(chunk);
             if (level.getChunkSource().getChunkNow(cx, cz) == null) {
-                // unloaded: it stays pending and comes back when it loads
-                QUEUE.remove(chunk);
-                continue;
+                continue; // not loaded: it stays pending
             }
             boolean waiting = false;
+            List<Long> done = new ArrayList<>();
             for (Planned p : carsOf(level, cx, cz)) {
+                long key = resolvedKey(p);
+                if (RESOLVED.contains(key)) {
+                    continue;
+                }
                 if (!ready(level, p.car())) {
                     waiting = true;
                     continue;
                 }
                 place(level, p, "generated");
+                done.add(key);
             }
-            if (!waiting) {
+            if (waiting) {
+                RESOLVED.addAll(done);
+            } else {
                 pending.remove(chunk);
-                QUEUE.remove(chunk);
+                for (Planned p : carsOf(level, cx, cz)) {
+                    RESOLVED.remove(resolvedKey(p));
+                }
             }
         }
     }
 
     static void onServerStopped(ServerStoppedEvent e) {
-        QUEUE.clear();
+        RESOLVED.clear();
+    }
+
+    /** A key of a drawn car: its copy (lot seed) and bay. */
+    static long resolvedKey(Planned p) {
+        return Draw.mix(p.structure().seed() ^ Draw.mix(p.bay() + 1L));
     }
 
     /**
@@ -151,7 +167,7 @@ public final class Generation {
         List<Spots.Bay> bays = Spots.of(s.def().model());
         List<Planned> out = new ArrayList<>();
         for (int k = 0; k < bays.size(); k++) {
-            Draw.Car d = Draw.car(s.seed(), k, s.police());
+            Draw.Car d = Draw.car(s.seed(), bays.get(k).key(), s.police());
             if (d == null) {
                 continue;
             }
@@ -162,9 +178,5 @@ public final class Generation {
             out.add(new Planned(s, k, car, d));
         }
         return out;
-    }
-
-    static int queued() {
-        return QUEUE.size();
     }
 }

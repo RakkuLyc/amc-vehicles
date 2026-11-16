@@ -21,6 +21,14 @@ public final class Spots {
      * {@code facing} in the template: 'N' (-Z), 'S' (+Z), 'E' (+X) or 'W' (-X).
      */
     public record Bay(int x0, int y, int z0, int x1, int z1, char facing) {
+        /**
+         * The key of the bay in the draw: its corner and floor in the template, so that adding or reordering bays of a
+         * model in spots.txt does not change the draw of the others.
+         */
+        public long key() {
+            return ((long) (x0 & 0xFFFF) << 32) | ((long) (y & 0xFFFF) << 16) | (z0 & 0xFFFF);
+        }
+
         /** Unit vector {dx, dz} of the nose in the template. */
         public int[] dir() {
             return switch (facing) {

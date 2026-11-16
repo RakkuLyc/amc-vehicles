@@ -50,6 +50,10 @@ public final class Pending extends SavedData {
         }
     }
 
+    long[] toArray() {
+        return chunks.toLongArray();
+    }
+
     int size() {
         return chunks.size();
     }

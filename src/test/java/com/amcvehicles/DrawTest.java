@@ -137,7 +137,7 @@ class DrawTest {
                                 m[1] += list.size();
                                 for (int k = 0; k < list.size(); k++) {
                                     bays++;
-                                    if (Draw.car(lot.seed, k, police) != null) {
+                                    if (Draw.car(lot.seed, list.get(k).key(), police) != null) {
                                         cars++;
                                         inCity++;
                                         m[2]++;

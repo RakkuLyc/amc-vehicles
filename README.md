@@ -14,7 +14,8 @@ gerado (3% por vaga), por enquanto só na garagem subterrânea do prédio largo;
 - Painel: velocímetro no mostrador do meio e marcador de combustível à direita dele.
 - Cores: as 15 civis com a mesma chance; as 2 de polícia só na delegacia (que ganha vagas na etapa 4).
 - Raridade: **3% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento).
-  Hoje: ~0,93 carro por prédio largo e 0,33 por cidade (77,8% das cidades sem carro).
+  Hoje: ~0,92 carro por prédio largo e 0,32 por cidade (77,2% das cidades sem carro). Uma vaga com algo no caminho
+  (por exemplo, um baú que o AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor da Mercedes (tipo `gasoline`): sem um mod de
   gasolina, lava.
 

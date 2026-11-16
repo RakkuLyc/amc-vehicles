@@ -7,6 +7,7 @@ import com.abandonedmoderncity.core.WorldPlan;
 import com.abandonedmoderncity.gen.Plans;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,6 +15,9 @@ import net.minecraft.world.phys.AABB;
 
 /** The AMC plan read from the world: which structure stands at a column, and whether a car fits in the world. */
 public final class AmcWorld {
+    /** The Minecraft entity of IV's vehicles (and of its other "existing" entities). */
+    static final ResourceLocation VEHICLE = ResourceLocation.fromNamespaceAndPath("mts", "builder_existing");
+
     private AmcWorld() {
     }
 
@@ -51,7 +55,8 @@ public final class AmcWorld {
     /**
      * Why the car cannot stand where it is planned, or null when it fits: under every column of its body a floor
      * (a block with a collision shape) and 2 blocks free over it (no collision: air, carpets, grass and vines), and no
-     * Immersive Vehicles entity there already (a car of an earlier {@code /amcv fill}).
+     * Immersive Vehicles vehicle there already ({@code mts:builder_existing}: a car of an earlier {@code /amcv fill} or of
+     * the generation; not IV's helper entities, such as the ones that follow the players).
      */
     public static String blocked(ServerLevel level, Placement.Car car) {
         int y = (int) Math.round(car.y());
@@ -67,7 +72,7 @@ public final class AmcWorld {
         }
         AABB box = new AABB(minX, y, minZ, maxX + 1, y + 2, maxZ + 1);
         for (Entity e : level.getEntities((Entity) null, box,
-                e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getNamespace().equals("mts"))) {
+                e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).equals(VEHICLE))) {
             return "occupied by a vehicle at " + e.getBlockX() + " " + e.getBlockY() + " " + e.getBlockZ();
         }
         for (int[] c : car.cells()) {
