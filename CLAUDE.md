@@ -50,11 +50,10 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
 as peças que ficam, o combustível, os instrumentos gravados, os valores de `door_hood`/`door_trunk`, o ângulo
 gravado, e que o carro nasce **destrancado** (sem a variável `locked`; o IV não guarda dono).
-**Visto pelo usuário no jogo (0.1.0):** o nariz para o lado anunciado (sul) e o porta-malas aberto.
-**Hipóteses, a conferir no cliente do usuário:** que o valor 1 de `door_hood` e das portas aparece aberto; as outras
-direções do nariz; que a origem é o eixo traseiro; que um cliente conectado vê os
-instrumentos e não vê motor (no teste não havia cliente para receber os pacotes de "motor posto" e "motor tirado";
-se aparecer um motor fantasma, a alternativa é pôr só as peças permanentes em vez de pôr tudo e tirar o motor).
+**Visto pelo usuário no jogo:** na 0.1.0, o nariz para o lado anunciado (sul) e o porta-malas aberto; na 0.1.1,
+"está tudo funcionando" (16 Nov 2026). **Teste de unidade** (`NoseYawTest`, com a matemática de rotação do próprio
+IV): o nariz aponta para sul, oeste, norte e leste com os ângulos 0, 90, 180 e 270. Se algum dia aparecer um motor
+fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de pôr tudo e tirar o motor.
 
 - `new EntityVehicleF_Physics(world, null, item, null)`: dados `null` = carro novo, como de um item recém-feito. O
   pack põe `door_l`, `door_r` e `door_hood` em 1 (abertos) pelas `initialVariables`; o mod então põe `door_hood`,
@@ -96,7 +95,8 @@ se aparecer um motor fantasma, a alternativa é pôr só as peças permanentes e
   `ChunkBuilder` do AMC) e o carro fica em cima dele.
 - **No mundo** (`AmcWorld`): a estrutura de uma coluna vem do plano do AMC (`Plans.get(level).chunk(cx, cz).lot[i]`).
   Antes de pôr um carro, todas as colunas sob o corpo (5,45 × 2) precisam de piso (bloco com colisão) e 2 blocos sem
-  colisão em cima (ar, tapetes, grama, cipós); senão a vaga é pulada e o motivo vai na resposta do comando e no log.
+  colisão em cima (ar, tapetes, grama, cipós) e nenhuma entidade do IV ali (um carro de um `fill` anterior: não
+  empilha); senão a vaga é pulada e o motivo vai na resposta do comando e no log.
   As estruturas postas com `/amcs spawn` não estão no plano: o `/amcv fill` não as reconhece.
 
 ## Arquitetura

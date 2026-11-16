@@ -32,8 +32,7 @@ Conferido nos dados salvos (`save-all flush` e `data get entity`), **e de novo d
 **Teste do usuário no jogo (0.1.0):** `Mercedes_salmon`, nariz para o sul (o lado anunciado), capô fechado e
 porta-malas aberto como na resposta do comando; porta lateral aberta (padrão do pack na 0.1.0).
 
-**Ainda não visto no jogo:** o resto da aparência (o capô aberto na animação, os instrumentos no painel) e o
-nariz nas outras direções (oeste, norte, leste).
+**Teste do usuário no jogo (0.1.1):** "está tudo funcionando" (16 Nov 2026); etapa 1 aprovada.
 
 ## Versão 0.1.1 — portas sorteadas e marcador à direita (16 Nov 2026)
 Servidor de teste, nariz para o sul:
@@ -75,6 +74,17 @@ nariz S), das quais x 43..45 e 47..49 (z 21..27) BLOCKED pela escada. Imagem: `d
   branca** nas duas colunas a 2 blocos de cada lado do meio do corpo, ao longo dos 5 blocos do corpo, em todos; a
   fileira de x 342,57 com o nariz para o leste e a de x 329,93 para o oeste: os dois para a borda da caixa (x 351 e
   321), ou seja, de frente para a parede.
+
+### Vaga bloqueada e `fill` repetido (0.2.0)
+- Segundo `/amcv fill` com os 34 carros lá: **0 carros, 34 pulados** ("occupied by a vehicle at 342 59 1166"...):
+  não empilha.
+- `kill` dos carros, `setblock 343 60 1170 minecraft:stone` (dentro da vaga 2) e `fill`: **33 carros, 1 pulado**
+  ("bay 2: Stone at 343 60 1170"); a resposta em várias linhas aparece inteira no console.
+
+### Direção do nariz (`NoseYawTest`, com o jar do IV no classpath dos testes)
+`RotationMatrix.setToAngles(0, -yaw, 0)` aplicado ao +Z do modelo (a frente do merc230): yaw 0 → +Z (sul), 90 → -X
+(oeste), 180 → -Z (norte), 270 → +X (leste); e `Placement.yaw` concorda com isso nas 4 direções. Assim o "nariz para
+o leste/oeste" do `check_bays.py` (que lê `anglesy` com a mesma regra) não depende só da suposição do sinal.
 
 **Não visto no jogo:** a aparência na garagem (o carro inteiro dentro da vaga, sem atravessar paredes ou pilares) e
 a garagem de outras rotações no mundo (só a rotação 1 foi testada no mundo; as 4 nos testes de unidade).

@@ -6,8 +6,11 @@ import com.abandonedmoderncity.core.Structures;
 import com.abandonedmoderncity.core.WorldPlan;
 import com.abandonedmoderncity.gen.Plans;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 /** The AMC plan read from the world: which structure stands at a column, and whether a car fits in the world. */
 public final class AmcWorld {
@@ -47,10 +50,26 @@ public final class AmcWorld {
 
     /**
      * Why the car cannot stand where it is planned, or null when it fits: under every column of its body a floor
-     * (a block with a collision shape) and 2 blocks free over it (no collision: air, carpets, grass and vines).
+     * (a block with a collision shape) and 2 blocks free over it (no collision: air, carpets, grass and vines), and no
+     * Immersive Vehicles entity there already (a car of an earlier {@code /amcv fill}).
      */
     public static String blocked(ServerLevel level, Placement.Car car) {
         int y = (int) Math.round(car.y());
+        int minX = Integer.MAX_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        for (int[] c : car.cells()) {
+            minX = Math.min(minX, c[0]);
+            minZ = Math.min(minZ, c[1]);
+            maxX = Math.max(maxX, c[0]);
+            maxZ = Math.max(maxZ, c[1]);
+        }
+        AABB box = new AABB(minX, y, minZ, maxX + 1, y + 2, maxZ + 1);
+        for (Entity e : level.getEntities((Entity) null, box,
+                e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getNamespace().equals("mts"))) {
+            return "occupied by a vehicle at " + e.getBlockX() + " " + e.getBlockY() + " " + e.getBlockZ();
+        }
         for (int[] c : car.cells()) {
             BlockPos floor = new BlockPos(c[0], y - 1, c[1]);
             if (!level.isLoaded(floor)) {
