@@ -121,9 +121,8 @@ public final class Generation {
         }
         Draw.Car d = p.drawn();
         Placement.Car c = p.car();
-        Mercedes.spawn(level, c.x(), c.y(), c.z(), c.noseYaw(), d.color(), d.hoodOpen(), d.trunkOpen(),
-                d.doorLeftOpen(), d.doorRightOpen());
-        AmcVehicles.LOG.info("[AMCV] Mercedes{} in {} bay {} at {} {} {} ({})", d.color(), name, p.bay() + 1,
+        Vehicles.spawn(level, c.x(), c.y(), c.z(), c.noseYaw(), d);
+        AmcVehicles.LOG.info("[AMCV] {}{} in {} bay {} at {} {} {} ({})", d.model().key(), d.color(), name, p.bay() + 1,
                 (int) Math.floor(c.x()), (int) Math.floor(c.y()), (int) Math.floor(c.z()), why);
         return "placed";
     }
@@ -171,7 +170,7 @@ public final class Generation {
             if (d == null) {
                 continue;
             }
-            Placement.Car car = s.car(bays.get(k).oriented(d.flip()));
+            Placement.Car car = s.car(bays.get(k).oriented(d.flip()), d.model());
             if (cx != null && (((int) Math.floor(car.x())) >> 4 != cx || ((int) Math.floor(car.z())) >> 4 != cz)) {
                 continue;
             }

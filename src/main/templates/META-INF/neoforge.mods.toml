@@ -45,3 +45,11 @@ description='''${mod_description}'''
     versionRange="[0.1.0,)"
     ordering="AFTER"
     side="BOTH"
+
+# Official Automobile Pack: the Cagouille, Camaro, Escargot, Highwayman and Station Wagon
+[[dependencies.${mod_id}]]
+    modId="oamp"
+    type="required"
+    versionRange="[3,)"
+    ordering="AFTER"
+    side="BOTH"

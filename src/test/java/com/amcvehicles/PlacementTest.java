@@ -149,12 +149,13 @@ class PlacementTest {
         for (Map.Entry<String, List<Spots.Bay>> e : Spots.all().entrySet()) {
             Structures.Def def = def(e.getKey());
             for (Spots.Bay drawnBay : e.getValue()) {
+                for (Cars.Model model : Cars.ALL)
                 for (Spots.Bay bay : ways(drawnBay))
                 for (int rot = 0; rot < 4; rot++) {
                     int lotX = 1000;
                     int lotZ = -2000;
                     int base = 64;
-                    Placement.Car car = Placement.car(def, lotX, lotZ, rot, base, bay);
+                    Placement.Car car = Placement.car(def, lotX, lotZ, rot, base, bay, model);
                     // the corners of the bay, turned: the body must lie inside them
                     double[] a = Placement.turn(def, rot, bay.x0() - def.ox(), bay.z0() - def.oz());
                     double[] b = Placement.turn(def, rot, bay.x1() + 1 - def.ox(), bay.z1() + 1 - def.oz());
@@ -164,7 +165,7 @@ class PlacementTest {
                     double maxZ = lotZ + Math.max(a[1], b[1]);
                     for (int[] c : car.cells()) {
                         assertTrue(c[0] >= minX && c[0] + 1 <= maxX && c[1] >= minZ && c[1] + 1 <= maxZ,
-                                e.getKey() + " " + bay + " rot " + rot + ": body cell " + c[0] + "," + c[1]
+                                e.getKey() + " " + bay + " rot " + rot + " " + model.key() + ": body cell " + c[0] + "," + c[1]
                                         + " out of the bay " + minX + ".." + maxX + ", " + minZ + ".." + maxZ);
                     }
                     // the nose runs along the long side of the bay
@@ -172,7 +173,7 @@ class PlacementTest {
                     float yaw = car.noseYaw();
                     assertEquals(longX, yaw == 90f || yaw == 270f, e.getKey() + " " + bay + " rot " + rot);
                     // floor: the layer of the bay is the floor (a block, not air) and the car stands on top of it
-                    assertEquals(base + bay.y() - def.oy() - def.ground() + 1 + Placement.CAR_LIFT, car.y(), 1e-9);
+                    assertEquals(base + bay.y() - def.oy() - def.ground() + 1 + model.lift(), car.y(), 1e-9);
                 }
             }
         }

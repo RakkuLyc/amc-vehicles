@@ -12,23 +12,11 @@ import java.util.List;
  * No Minecraft classes: tested with JUnit against {@code Def.code}.
  */
 public final class Placement {
-    /** merc230: the body runs from {@link #CAR_REAR} behind the rear axle (the origin) to {@link #CAR_FRONT} ahead. */
-    public static final double CAR_REAR = 1.3;
-    public static final double CAR_FRONT = 4.15;
-    public static final double CAR_HALF_WIDTH = 1.0;
-    /**
-     * Height of the origin over the floor: merc230 without wheels rests on the 4 support blocks of its model
-     * ({@code cube_fl/fr/rl/rr}, shown when the wheel of that corner is missing; their bottom, and the lowest collision
-     * boxes, at y -0.46875 of the model). With the origin on the floor the car was half sunk into it (seen by the user).
-     */
-    public static final double CAR_LIFT = 0.46875;
-    /** Highest point of the model (the light bars of the police colours, 1.625; the body 1.5625). */
-    public static final double CAR_TOP = 1.625;
-    /** Free blocks the car needs over the floor: its top is at CAR_LIFT + CAR_TOP = 2.09 over the floor. */
-    public static final int HEADROOM = (int) Math.ceil(CAR_LIFT + CAR_TOP);
+    /** Free blocks a car needs over the floor (the tallest model on its support blocks: {@link Cars#HEADROOM}). */
+    public static final int HEADROOM = Cars.HEADROOM;
 
     /**
-     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor + {@link #CAR_LIFT}), the nose to the Minecraft yaw
+     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor + the model's lift), the nose to the Minecraft yaw
      * {@code noseYaw} (0 south, 90 west, 180 north, 270 east), and the columns its body covers.
      */
     public record Car(double x, double y, double z, float noseYaw, List<int[]> cells) {
@@ -85,7 +73,7 @@ public final class Placement {
      * The car of a bay, for the structure {@code def} with its box corner at (lotX0, lotZ0), turned {@code rot},
      * whose city ground (layer {@code ground} of the box) lies at y = {@code base}.
      */
-    public static Car car(Structures.Def def, int lotX0, int lotZ0, int rot, int base, Spots.Bay bay) {
+    public static Car car(Structures.Def def, int lotX0, int lotZ0, int rot, int base, Spots.Bay bay, Cars.Model m) {
         // middle of the bay, in the box (the template less the offset of its solid blocks)
         double cx = (bay.x0() + bay.x1() + 1) / 2.0 - def.ox();
         double cz = (bay.z0() + bay.z1() + 1) / 2.0 - def.oz();
@@ -93,22 +81,23 @@ public final class Placement {
         int[] dir = bay.dir();
         int[] wd = turnDir(def, rot, dir[0], dir[1]);
         // the body is centred in the bay: the origin (rear axle) sits back from the middle
-        double back = (CAR_FRONT - CAR_REAR) / 2.0;
+        double back = (m.front() - m.rear()) / 2.0;
         double x = lotX0 + c[0] - wd[0] * back;
         double z = lotZ0 + c[1] - wd[1] * back;
         // the floor block of the bay is at layer y of the template; the car rests on its support blocks over it
         int floorY = base + (bay.y() - def.oy() - def.ground());
-        return new Car(x, floorY + 1 + CAR_LIFT, z, yaw(wd[0], wd[1]), cells(x, z, wd));
+        return new Car(x, floorY + 1 + m.lift(), z, yaw(wd[0], wd[1]), cells(x, z, wd, m));
     }
 
     /** Columns (x, z) under the body of a car with its origin at (x, z), the nose to {@code wd}. */
-    static List<int[]> cells(double x, double z, int[] wd) {
-        double ax0 = -CAR_REAR;
-        double ax1 = CAR_FRONT;
-        double minX = wd[0] != 0 ? x + Math.min(ax0 * wd[0], ax1 * wd[0]) : x - CAR_HALF_WIDTH;
-        double maxX = wd[0] != 0 ? x + Math.max(ax0 * wd[0], ax1 * wd[0]) : x + CAR_HALF_WIDTH;
-        double minZ = wd[1] != 0 ? z + Math.min(ax0 * wd[1], ax1 * wd[1]) : z - CAR_HALF_WIDTH;
-        double maxZ = wd[1] != 0 ? z + Math.max(ax0 * wd[1], ax1 * wd[1]) : z + CAR_HALF_WIDTH;
+    static List<int[]> cells(double x, double z, int[] wd, Cars.Model m) {
+        double ax0 = -m.rear();
+        double ax1 = m.front();
+        double hw = m.halfWidth();
+        double minX = wd[0] != 0 ? x + Math.min(ax0 * wd[0], ax1 * wd[0]) : x - hw;
+        double maxX = wd[0] != 0 ? x + Math.max(ax0 * wd[0], ax1 * wd[0]) : x + hw;
+        double minZ = wd[1] != 0 ? z + Math.min(ax0 * wd[1], ax1 * wd[1]) : z - hw;
+        double maxZ = wd[1] != 0 ? z + Math.max(ax0 * wd[1], ax1 * wd[1]) : z + hw;
         List<int[]> out = new ArrayList<>();
         // a cell counts when the body covers more than a sliver of it
         for (int ix = (int) Math.floor(minX + 0.01); ix <= (int) Math.floor(maxX - 0.01); ix++) {

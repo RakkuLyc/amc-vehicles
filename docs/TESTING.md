@@ -235,3 +235,44 @@ uma variante de cada).
   `CHANCE_PER_BAY = 1.0d`, `CAR_LIFT = 0.46875d`); o jar normal tem `CHANCE_PER_BAY = 0.03d`.
 
 **Não visto no jogo:** a aparência corrigida (precisa do cliente do usuário).
+
+## Etapa 5 — 8 modelos (16 Nov 2026, versão 0.5.0)
+
+### Prova da bomba (para a etapa 6)
+- `/amcv pump` no servidor: `execute positioned -320 69 330 rotated 0 0 run amcv pump 2` e `... -325 69 330 rotated 90
+  0 run amcv pump 0`: as duas postas; `data get block`: `id: "mts:builder_fluidtank"`, `packID: "mtsofficialpack"`,
+  `systemName: "fuelpump"`, `anglesy` -180 e 90, `tank` com `currentFluid: "lava"`, `currentFluidMod: "minecraft"`,
+  `fluidLevel: 2000.0` na primeira e vazio na segunda. Depois de reiniciar o servidor: iguais. A reflexão nos dois
+  membros `protected` do IV funcionou.
+
+### Testes de unidade (15, todos passam)
+- `CarsTest.tableMatchesThePacks`: a tabela de `Cars` contra os jars (lidos como zip): cada cor existe, as de polícia
+  são todas as do pack, as variáveis das portas e do porta-malas existem (o Mustang não tem `door_trunk`), o capô
+  existe, `lift` = base dos blocos de apoio e `top` = ponto mais alto do `.obj` (até 1e-4), e cabem em 3 blocos.
+- `DrawTest.chancesModelsAndColours` (4.000.000 vagas): 3,00% com carro; os 8 modelos entre 14.838 e 15.152 (1/8 ±
+  0,6%); cada cor civil de cada modelo perto de 1/n do modelo; nenhuma de polícia; capô 50,1%, porta-malas 50,1% (só
+  nos modelos com porta-malas), portas 50,1%.
+- `DrawTest.policeOnlyPoliceModelsAndColours` (300.000): `cagouille_police` 100.105, `mustang_police` 99.956,
+  `mercedes_police` 49.779, `mercedes_police2` 50.160 (1/3, 1/3, 1/6, 1/6).
+- `PlacementTest.carInsideItsBayAndAlongIt`: os **8 modelos** dentro de todas as 63 vagas, nas 4 rotações e nos dois
+  sentidos das vagas sorteadas (o Mustang, 2,97 de largura, e a Cagouille, 6,38 de comprimento, os mais justos).
+- A projeção por cidade não muda (o índice 0, "a vaga tem carro", é o mesmo): 599 carros, 1,22 por cidade.
+
+### No mundo (semente 20261027)
+- `/amcv lineup` (de -335, 69, 305, nariz para o sul): **12 carros**. Respostas: só o motor tirado em cada um (no
+  Escargot também o estepe `wheellarge`); combustível 1.500 (Mercedes, Cagouille, Escargot, Station Wagon, Scout), 1.000
+  (Camaro, Highwayman), 800 (Mustang), lava; mostradores: Mercedes e Cagouille 1 e 2, Camaro e Highwayman 0 e 1, Escargot
+  2 e 1, Station Wagon 0 e 2, Mustang e Scout 2 e 3; portas por modelo (a Station Wagon com as 4, o Mustang sem
+  porta-malas, o Scout com `door_tailgate`).
+- Dados salvos (`save-all`, `data get entity`): em todos, **só** `instrument_car_spedometer_kph` e
+  `instrument_car_fuelqty` nos mostradores acima (sem conta-giros, relógio ou temperatura); peças: as permanentes, mais
+  a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Altura 30 s depois, piso em y 69: Mercedes, Escargot
+  69,460; Cagouille, Highwayman 69,429; Camaro 69,491; Mustang 69,4375; Station Wagon e Scout 69,46875 (chunk sem tick):
+  cada um no `lift` dele.
+- Geração (`check_generation.py`, num mundo onde algumas áreas já tinham sido geradas pela 0.4.2): as 3 caixas geradas
+  agora batem (prédios largos -1300,-1976: `mustang_whitestripe`; 385,1857: `highwayman_blue`, `camaro_brown`,
+  `scout_tan`; posto 2593,-351: nenhum); as 2 geradas antes (prédio largo 1000,-2410 e delegacia) têm os carros do
+  `fill` antigo e não contam.
+- `/amcv fill` na delegacia: `[mustang_police, cagouille_police, mercedes_police, cagouille_police]`, só viaturas.
+
+**Não visto no jogo:** a aparência dos 7 modelos novos (altura, portas, painel), que só o cliente do usuário mostra.

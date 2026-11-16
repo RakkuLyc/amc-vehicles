@@ -30,8 +30,8 @@ public final class AmcWorld {
      * at y = {@code base}; {@code seed} = the seed AMC gives its lot (the copy), which the draw of the cars uses.
      */
     public record Placed(Structures.Def def, int x0, int z0, int rot, int base, long seed) {
-        public Placement.Car car(Spots.Bay bay) {
-            return Placement.car(def, x0, z0, rot, base, bay);
+        public Placement.Car car(Spots.Bay bay, Cars.Model m) {
+            return Placement.car(def, x0, z0, rot, base, bay, m);
         }
 
         public boolean police() {

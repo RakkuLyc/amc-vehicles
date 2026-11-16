@@ -9,7 +9,9 @@ usage: python3 -I tools/find_spots.py <file.nbt> <floor y of the template> [--st
                                        [--png out.png] [--out spots.txt] [--model name]
        python3 -I tools/find_spots.py <file.nbt> <floor y> --bays spots.txt [--model name] [--png out.png]
          checks and draws the bays written (by hand) for that model and floor in a spots file instead of detecting
-         them: each must have a floor and 2 free cells over every cell; covered floor (a roof over it) is drawn blue.
+         them: each must have a floor and 3 free cells over every cell; covered floor (a roof over it) is drawn blue.
+         Lines `<model> pump <x> <y> <z> <facing>` (a fuel pump standing at x, y, z, its front to facing) are drawn as
+         orange squares with a line to the front, and checked: free (or a plant) with a floor under it and room over it.
 Output lines (template coordinates of the .nbt, as the structure block shows them), the format of
 src/main/resources/amcvehicles/spots.txt:
   <model> bay <x0> <y> <z0> <x1> <z1> <facing>
@@ -111,7 +113,7 @@ def blocked(blocks, y, bay):
     return bad
 
 
-def render(path, size, blocks, y, result):
+def render(path, size, blocks, y, result, pumps=()):
     from PIL import Image, ImageDraw
     S = 12
     sx, _, sz = size
@@ -150,6 +152,12 @@ def render(path, size, blocks, y, result):
             mx, mz = cx - dx * (half_len - 0.4), cz - dz * (half_len - 0.4)
             d.ellipse([40 + mx * S - 4, 40 + mz * S - 4, 40 + mx * S + 4, 40 + mz * S + 4], fill=(255, 60, 60))
         d.text((40 + (cx - 0.4) * S, 40 + (cz - 0.5) * S), str(i + 1), fill=(255, 255, 0))
+    for x, py, z, face in pumps:
+        d.rectangle([40 + x * S + 1, 40 + z * S + 1, 40 + x * S + S - 2, 40 + z * S + S - 2], fill=(255, 140, 0),
+                    outline=(0, 0, 0))
+        fx, fz = {'N': (0, -1), 'S': (0, 1), 'E': (1, 0), 'W': (-1, 0)}[face]
+        cx, cz = 40 + x * S + S / 2, 40 + z * S + S / 2
+        d.line([cx, cz, cx + fx * S * 0.6, cz + fz * S * 0.6], fill=(0, 0, 0), width=2)
     img.save(path)
 
 
@@ -166,7 +174,16 @@ def main():
     size, blocks = load(a.nbt)
     model = a.model or os.path.splitext(os.path.basename(a.nbt))[0]
     result = []
+    pumps = []
     if a.bays:
+        for line in open(a.bays):
+            f = line.split()
+            if len(f) == 6 and f[0] == model and f[1] == 'pump':
+                px, py, pz = int(f[2]), int(f[3]), int(f[4])
+                ok = free(blocks, px, py, pz) and not free(blocks, px, py - 1, pz) and free(blocks, px, py + 1, pz)
+                print('pump %d %d %d facing %s%s' % (px, py, pz, f[5], '' if ok else '  BLOCKED (%s on %s)' % (
+                    blocks.get((px, py, pz), 'air'), blocks.get((px, py - 1, pz), 'air'))))
+                pumps.append((px, py, pz, f[5]))
         for line in open(a.bays):
             f = line.split()
             if len(f) == 8 and f[0] == model and f[1] == 'bay' and int(f[3]) == a.y:
@@ -185,7 +202,7 @@ def main():
             lines.append('%s bay %d %d %d %d %d %s' % (model, x0, a.y, z0, x1, z1, face))
     print('%d bays, %d free' % (len(result), len(lines)))
     if a.png:
-        render(a.png, size, blocks, a.y, result)
+        render(a.png, size, blocks, a.y, result, pumps)
     if a.out:
         with open(a.out, 'w') as f:
             f.write('\n'.join(lines) + '\n')

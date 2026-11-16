@@ -9,9 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** The draw of the cars, and the projection of cars per city with AMC's real planner (flat terrain). */
@@ -42,13 +45,15 @@ class DrawTest {
     }
 
     @Test
-    void chancesAndColours() {
-        int n = 2_000_000;
+    void chancesModelsAndColours() {
+        int n = 4_000_000;
         int cars = 0;
         int hood = 0;
         int trunk = 0;
-        int left = 0;
-        int right = 0;
+        int withTrunk = 0;
+        int doors = 0;
+        int doorsOpen = 0;
+        Map<String, Integer> models = new TreeMap<>();
         Map<String, Integer> colors = new HashMap<>();
         for (int i = 0; i < n; i++) {
             Draw.Car c = Draw.car(i * 7919L + 17, i % 40, false);
@@ -56,41 +61,60 @@ class DrawTest {
                 continue;
             }
             cars++;
+            Cars.Model m = c.model();
+            models.merge(m.key(), 1, Integer::sum);
+            colors.merge(m.key() + c.color(), 1, Integer::sum);
+            assertTrue(m.civilian().contains(c.color()), "a police or unknown colour outside the police station: "
+                    + m.key() + c.color());
             hood += c.hoodOpen() ? 1 : 0;
-            trunk += c.trunkOpen() ? 1 : 0;
-            left += c.doorLeftOpen() ? 1 : 0;
-            right += c.doorRightOpen() ? 1 : 0;
-            colors.merge(c.color(), 1, Integer::sum);
+            if (m.trunk() != null) {
+                withTrunk++;
+                trunk += c.trunkOpen() ? 1 : 0;
+            } else {
+                assertFalse(c.trunkOpen(), m.key() + " has no trunk");
+            }
+            assertEquals(m.doors().size(), c.doorsOpen().size());
+            for (boolean d : c.doorsOpen()) {
+                doors++;
+                doorsOpen += d ? 1 : 0;
+            }
         }
         double p = (double) cars / n;
-        System.out.printf("draw: %d cars in %d bays = %.4f; hood %.3f trunk %.3f left %.3f right %.3f; colours %s%n",
-                cars, n, p, (double) hood / cars, (double) trunk / cars, (double) left / cars, (double) right / cars,
-                new TreeMap<>(colors));
+        System.out.printf("draw: %d cars in %d bays = %.4f; models %s; hood %.3f trunk %.3f doors %.3f%n", cars, n, p,
+                models, (double) hood / cars, (double) trunk / withTrunk, (double) doorsOpen / doors);
         assertEquals(Draw.CHANCE_PER_BAY, p, 0.001);
+        assertEquals(Cars.ALL.size(), models.size());
+        for (Cars.Model m : Cars.ALL) {
+            int k = models.get(m.key());
+            assertEquals(1.0 / Cars.ALL.size(), (double) k / cars, 0.006, m.key());
+            for (String col : m.civilian()) {
+                Integer v = colors.get(m.key() + col);
+                assertNotNull(v, m.key() + col + " never drawn");
+                assertEquals(1.0 / m.civilian().size(), (double) v / k, 0.04, m.key() + col);
+            }
+        }
         assertEquals(0.5, (double) hood / cars, 0.01);
-        assertEquals(0.5, (double) trunk / cars, 0.01);
-        assertEquals(0.5, (double) left / cars, 0.01);
-        assertEquals(0.5, (double) right / cars, 0.01);
-        assertEquals(Draw.CIVILIAN.size(), colors.size());
-        for (String c : Draw.POLICE) {
-            assertTrue(!colors.containsKey(c), "police colour outside the police station");
-        }
-        for (int v : colors.values()) {
-            assertEquals(1.0 / Draw.CIVILIAN.size(), (double) v / cars, 0.005);
-        }
+        assertEquals(0.5, (double) trunk / withTrunk, 0.01);
+        assertEquals(0.5, (double) doorsOpen / doors, 0.01);
     }
 
     @Test
-    void policeOnlyPoliceColours() {
-        int seen = 0;
-        for (int i = 0; i < 200_000; i++) {
-            Draw.Car c = Draw.car(i * 31L + 5, i % 20, true);
-            if (c != null) {
-                seen++;
-                assertTrue(Draw.POLICE.contains(c.color()), c.color());
-            }
+    void policeOnlyPoliceModelsAndColours() {
+        Random r = new Random(7);
+        Map<String, Integer> seen = new TreeMap<>();
+        int n = 300_000;
+        for (int i = 0; i < n; i++) {
+            Draw.Car c = Draw.car(what -> r.nextDouble(), true);
+            assertTrue(c.model().police().contains(c.color()), c.model().key() + c.color());
+            seen.merge(c.model().key() + c.color(), 1, Integer::sum);
         }
-        assertTrue(seen > 0);
+        System.out.println("police: " + seen);
+        // by model: 1/3 each (Mercedes, Cagouille, Mustang); the Mercedes split between _police and _police2
+        assertEquals(1.0 / 3, seen.get("cagouille_police") / (double) n, 0.01);
+        assertEquals(1.0 / 3, seen.get("mustang_police") / (double) n, 0.01);
+        assertEquals(1.0 / 6, seen.get("mercedes_police") / (double) n, 0.01);
+        assertEquals(1.0 / 6, seen.get("mercedes_police2") / (double) n, 0.01);
+        assertEquals(4, seen.size());
     }
 
     /**

@@ -18,9 +18,11 @@ Mod de integração (NeoForge 1.21.1, Java) entre o **Abandoned Modern City** (A
 **Immersive Vehicles** (IV, mod id `mts`) com o **Official Content Pack** (`mtsofficialpack`). Mod id `amcvehicles`,
 pacote `com.amcvehicles`, pasta `Projetos Claude/AMCVehicles`. Criado em 16 Nov 2026.
 
-Objetivo da fase de testes: a **Mercedes 230** do Official Pack (`mtsofficialpack:merc230`) aparecendo de forma
-aleatória e rara nos estacionamentos e garagens das estruturas do AMC (respeitando as vagas, inclusive as
-subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao lado das bombas: lá não há vaga pintada).
+Objetivo: carros abandonados aparecendo de forma aleatória e rara nos estacionamentos e garagens das estruturas do
+AMC (respeitando as vagas, inclusive as subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao
+lado das bombas: lá não há vaga pintada). Até a 0.4.2 só a **Mercedes 230** do Official Pack; desde a 0.5.0 (etapa 5)
+**8 modelos**: Mercedes 230, Mustang 69 e Scout do Official Pack (`mtsofficialpack`) e Cagouille, Camaro, Escargot,
+Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`, dependência obrigatória).
 
 ## Decisões do usuário (16 Nov 2026)
 - **Estado da Mercedes, sempre**: sem motor, sem rodas, sem bancos, **10% de gasolina**, **velocímetro (km/h) e
@@ -35,6 +37,15 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
 - Nome AMC Vehicles, repositório privado, documentação em português.
 - **Só chunks novos** recebem carros (16 Nov 2026, etapa 3): as áreas geradas antes de instalar o mod (ou antes desta
   versão) ficam sem carros; para elas, e para testar, `/amcv draw` aplica o sorteio real na estrutura onde se está.
+- **Etapa 5 (16 Nov 2026)**: os 8 modelos com a **mesma chance**, depois a cor com a mesma chance entre as civis do
+  modelo; **as variantes police são exclusivas da delegacia** (lembrado pelo usuário), e lá o sorteio é **por modelo**
+  (Mercedes, Cagouille e Mustang, 1/3 cada; na Mercedes `_police` ou `_police2` a 50%); o mesmo estado da Mercedes em
+  todos (sem motor, rodas e bancos, 10% de combustível, capô, porta-malas e cada porta a 50%); painel **só velocímetro
+  km/h + marcador de combustível** em todos (escolha dele, entre manter os mostradores do pack ou não).
+- **Etapa 6 (pedida junto, ainda não aplicada)**: as bombas de combustível `mtsofficialpack:fuelpump` nos postos, 2 por
+  ilha, sempre presentes, cada uma com **0 a 3 baldes de lava** sorteados (leitura minha de "sorteie um número de 0 a 3
+  para o número do combustível (lava)": 0, 1, 2 ou 3 baldes = 0 a 3.000 mB, a mesma chance; a confirmar). Proposta das
+  posições: `docs/spots/bombas_propostas.png`.
 
 ## Etapas
 1. **(aprovada pelo usuário, 16 Nov 2026)** Comando `/amcv mercedes`: uma Mercedes no estado pedido na frente de
@@ -50,9 +61,46 @@ subterrâneas), dentro das oficinas (nunca fora) e nos postos de gasolina (ao la
    (`docs/spots/etapa4_propostas.png`) aprovada pelo usuário ("Aprovar todas"), com o nariz **sorteado** nos postos
    (escolha dele) e a **farmácia grande** acrescentada por ele (vagas da frente). Ver "Vagas" abaixo. Na 0.4.1 o
    usuário apontou as garagens da **casa abandonada** e do **prédio pequeno** (proposta
-   `docs/spots/garagens_propostas.png`, "Aprovar as 6").
+   `docs/spots/garagens_propostas.png`, "Aprovar as 6"). Na 0.4.2 os carros passaram a ficar apoiados nos blocos de
+   apoio do modelo (o usuário os viu meio enterrados com um jar de teste a 100%).
+5. **(feita na 0.5.0, aguardando o teste do usuário)** Os 8 modelos (ver "Modelos" abaixo); `/amcv car` e
+   `/amcv lineup` no lugar de `/amcv mercedes`.
+6. **(proposta, aguardando aprovação)** As bombas de combustível dos postos. Prova feita na 0.5.0: `/amcv pump`
+   (comando de teste) põe uma bomba do IV sem jogador (ver "Bombas" abaixo).
 
-## Como a Mercedes é montada (`Mercedes.spawn`)
+## Modelos (`Cars`, `Vehicles`; etapa 5)
+- **Tabela** (`Cars.java`, sem classes do Minecraft): para cada modelo a chave dos comandos, o pack e o nome, as cores
+  civis e as de polícia, as medidas do modelo `.obj` (carroceria atrás e à frente da origem, meia largura, altura dos
+  blocos de apoio = `lift`, ponto mais alto = `top`) e as variáveis das portas e do porta-malas. Tirada dos jars por
+  `python3 -I tools/car_info.py <pack.jar> <pack id> <nomes...>` e conferida contra os jars pelo `CarsTest`.
+
+  | Chave | Pack:nome | Civis | Polícia | Comprimento | Largura | lift | top | Portas | Porta-malas |
+  |---|---|---|---|---|---|---|---|---|---|
+  | mercedes | mtsofficialpack:merc230 | 15 | _police, _police2 | 5,77 | 2,50 | 0,469 | 1,625 | door_l, door_r | door_trunk |
+  | cagouille | oamp:cagouille | 18 | _police | 6,38 | 2,38 | 0,438 | 1,688 | door_l, door_r | door_trunk |
+  | camaro | oamp:camaro | 14 | - | 6,32 | 2,45 | 0,500 | 1,193 | door_l, door_r | door_trunk |
+  | escargot | oamp:escargot | 16 | - | 6,35 | 2,44 | 0,469 | 1,506 | door_l, door_r | door_trunk |
+  | highwayman | oamp:highwayman | 9 | - | 5,56 | 2,25 | 0,438 | 1,250 | door_left, door_right | door_trunk |
+  | station_wagon | oamp:stationmerc | 14 | - | 5,82 | 2,50 | 0,469 | 1,406 | door_fl, door_fr, door_rl, door_rr | door_trunk |
+  | mustang | mtsofficialpack:fordmustang69 | 12 | _police | 6,21 | 2,97 | 0,438 | 1,813 | door_l, door_r | (nenhum) |
+  | scout | mtsofficialpack:scout | 14 | - | 5,00 | 2,64 | 0,469 | 1,647 | door_l, door_r | door_tailgate (a tampa da caçamba) |
+
+  Todos têm os blocos de apoio `cube_fl/fr/rl/rr`. O mais alto apoiado é o Mustang (2,25): `Cars.HEADROOM` = 3 blocos
+  livres. Os 8 cabem em todas as 63 vagas nas 4 rotações (`PlacementTest.carInsideItsBayAndAlongIt`).
+- **Montagem** (`Vehicles.spawn`, a antiga `Mercedes.spawn` para qualquer modelo): carro novo (dados `null`), capô,
+  porta-malas e cada porta no valor sorteado; **painel**: velocímetro `instrument_car_spedometer_kph` no lugar do
+  velocímetro do pack (um mostrador padrão com "spedometer" no nome), senão no do meio (pela posição `hudX`); marcador
+  `instrument_car_fuelqty` no lugar do do pack ("fuelqty"), senão no primeiro à direita do velocímetro (o menor `hudX`
+  acima), senão o mais perto à esquerda; os outros mostradores do pack saem (`removeIntrument`, o método do IV, com o
+  erro de grafia dele). Na Mercedes isso dá o mesmo de antes (meio e direita). Peças: as padrão do pack, depois saem os
+  motores, **todas as rodas** (o estepe do Escargot também) e os bancos não permanentes; ficam o porta-luvas, o assento
+  invisível do porta-malas, a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Combustível: 10% do
+  `fuelCapacity` do modelo (Camaro e Highwayman 1.000, Mustang 800, os outros 1.500), o fluido do tipo do motor padrão
+  dele (gasoline: lava, sem mod de gasolina).
+- **Sorteio** (`Draw`): índices novos, sem mudar o 0 (a vaga tem carro): 7 o modelo, 8 e 9 as portas de trás da
+  Station Wagon; o 1 (cor) passa a sortear entre as cores do modelo.
+
+## Como a Mercedes é montada (`Mercedes.spawn`, até a 0.4.2; desde a 0.5.0 `Vehicles.spawn`, ver "Modelos")
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
 as peças que ficam, o combustível, os instrumentos gravados, os valores de `door_hood`/`door_trunk`, o ângulo
 gravado, e que o carro nasce **destrancado** (sem a variável `locked`; o IV não guarda dono).
@@ -158,7 +206,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   salvar.
 - **Limite conhecido**: `Pending` é salvo com o mundo; se o chunk novo for salvo (ao descarregar) e o servidor cair
   antes de o mundo salvar `Pending`, os carros daquele chunk se perdem (ele não é "novo" de novo).
-- **Log**: cada carro posto (`[AMCV] Mercedes<cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
+- **Log**: cada carro posto (`[AMCV] <modelo><cor> in <estrutura> bay <n> at x y z (generated)`) e cada vaga
   descartada, com o motivo.
 - **Projeção** (`DrawTest.projectionPerCity`: o planejador real do AMC num terreno plano, 5 sementes, 492 cidades,
   com o sorteio real; 0.4.1, as 63 vagas): 40,5 vagas por cidade, **1,22 carro por cidade**; 32,9% das cidades sem
@@ -166,27 +214,46 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   abandonada, casa moderna e suburbana 0,07, posto pequeno e oficina pequena 0,06, casa com garagem 0,04, oficina média
   0,03. (0.4.0: 1,01 por cidade; até a 0.3.0, só o prédio largo: 0,32.)
 
+## Bombas (`FuelPumps`; prova da etapa 6)
+- A bomba do Official Pack é um bloco decorativo do IV (`decor.type` `fuel_pump`, tanque de 15.000 mB). O
+  `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
+  `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
+  `BuilderBlock.blockMap`), cria o tile entity com dados que levam o ângulo (`angles`, lido pelo construtor antes de
+  medir a caixa da bomba) e o tanque (`currentFluid` `lava`, `currentFluidMod` `minecraft`, o que o IV grava quando um
+  jogador despeja um balde, e `fluidLevel`), e o liga ao bloco (`BuilderTileEntity.setTileEntity`). Dois membros do IV
+  são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
+  bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
+
 ## Arquitetura
 ```
 AmcVehicles    o @Mod: registra os comandos
-Mercedes       monta a Mercedes abandonada (estado, cores, instrumentos, combustível)
+Cars           os 8 modelos: cores, medidas, portas, porta-malas (puro; conferido contra os jars)
+Vehicles       monta um carro abandonado de qualquer modelo (estado, painel, peças, combustível)
+FuelPumps      põe uma bomba de combustível do IV (sem jogador) com lava
 Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
 Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem classes do Minecraft; testado)
 AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
-Draw           o sorteio dos carros (3% por vaga, cor, capô, porta-malas, portas), puro; cores e chances
+Draw           o sorteio dos carros (3% por vaga, modelo, cor, capô, porta-malas, portas), puro
 Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro estão prontos
 Pending        os chunks com carro sorteado ainda não posto (salvo no mundo; percorrido a cada 10 ticks)
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
 ## Comandos (op 2)
-- `/amcv mercedes [cor] [capô porta-malas [porta-esquerda porta-direita]]`: uma Mercedes com o eixo traseiro 3
-  blocos à frente de quem executa, o nariz para onde ele olha (arredondado para N, S, L ou O). Cor sem o `_` (`white`, `police`...); capô e
-  porta-malas e portas `true` (aberto) ou `false`; o que faltar é sorteado (a cor entre as civis). Do console:
-  `execute positioned X Y Z rotated YAW 0 run amcv mercedes ...`. Responde com a cor, a posição, o capô, o
-  porta-malas, as portas, o combustível, o fluido, os motores tirados e as peças que ficaram.
-- `/amcv fill`: uma Mercedes em **cada vaga** da estrutura do AMC onde quem executa está (dentro do lote dela, em
-  qualquer altura; na garagem também); cor, capô, porta-malas e portas sorteados (na delegacia, as cores de polícia).
+- `/amcv car <modelo> [cor] [capô porta-malas]` (0.5.0; até a 0.4.2 `/amcv mercedes`): um carro com o eixo traseiro
+  3 blocos à frente de quem executa, apoiado nos blocos de apoio, o nariz para onde ele olha (arredondado para N, S, L
+  ou O). Modelo pela chave (`mercedes`, `cagouille`, `camaro`, `escargot`, `highwayman`, `station_wagon`, `mustang`,
+  `scout`); cor sem o `_` (as de polícia também); capô e porta-malas `true`/`false`; o que faltar é sorteado (as portas
+  sempre). Do console: `execute positioned X Y Z rotated YAW 0 run amcv car ...`. Responde com a posição, o modelo e a
+  cor, o capô, o porta-malas, cada porta, o combustível, o fluido, os mostradores usados, as peças tiradas e as que
+  ficaram.
+- `/amcv lineup` (0.5.0): os 8 modelos lado a lado (4 blocos entre eles, para a direita de quem olha), cor civil
+  sorteada, e depois as 4 viaturas (`mercedes_police`, `mercedes_police2`, `cagouille_police`, `mustang_police`):
+  para olhar altura, portas e painel de todos. Responde uma linha por carro.
+- `/amcv pump [baldes]` (0.5.0, teste da etapa 6): uma bomba de combustível do Official Pack 3 blocos à frente, a frente
+  dela para quem executa, com tantos baldes de lava (0 a 15).
+- `/amcv fill`: um carro em **cada vaga** da estrutura do AMC onde quem executa está (dentro do lote dela, em
+  qualquer altura; na garagem também); modelo, cor, capô, porta-malas e portas sorteados (na delegacia, as viaturas).
   Responde com a estrutura, o canto da caixa, a rotação, a altura do chão, quantas vagas, quantos carros e as vagas
   puladas com o motivo. Para tirar os carros: `/kill @e[type=mts:builder_existing,distance=..80]`.
 - `/amcv draw`: o **sorteio real** (o mesmo da geração) na estrutura onde quem executa está: põe agora os carros
@@ -198,12 +265,12 @@ AmcvCommands   /amcv (op 2): comandos de teste
 - Build (Java 21; o Java padrão do sistema é o 27, que o Gradle não aceita):
   `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME`
   → `build/libs/amcvehicles-<versão>.jar`.
-- `libs/` (não versionada) precisa de `Immersive Vehicles-1.21.1-24.0.0.jar`, `MTS Official Pack-1.21.1-V29.jar`
-  (cópias em `AbandonedModernCity/libs/`) e `abandonedmoderncity-0.1.0.jar` (o jar do AMC, de
+- `libs/` (não versionada) precisa de `Immersive Vehicles-1.21.1-24.0.0.jar`, `MTS Official Pack-1.21.1-V29.jar`,
+  `OAmP-1.21.1-V3.jar` (cópias em `AbandonedModernCity/libs/`; os dois packs para o `CarsTest`) e `abandonedmoderncity-0.1.0.jar` (o jar do AMC, de
   `AbandonedModernCity/build/libs/`; o usado na 0.2.0 é o de 16 Nov 2026, 02:40). O build compila contra eles e os
   testes usam o código puro do AMC (estruturas e `Def.code`); nenhum vai dentro do jar deste mod.
 - Testes de unidade: `./gradlew test` (mesmo `JAVA_HOME`; ~15 s, o AMC carrega as 52 estruturas).
-- Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV, do pack e do AMC em `run/mods`;
+- Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV, dos dois packs e do AMC em `run/mods`;
   mundo normal na semente 20261027, RCON na porta 25576 (senha `teste`), `python3 -I tools/rcon.py "comando" ...`;
   `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas;
   `python3 -I tools/check_generation.py [--load] "x0,z0 .. x1,z1" ...` compara os carros de cada caixa (as que o
