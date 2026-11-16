@@ -189,5 +189,17 @@ do jogador é o caso "completo sem tick", testado acima).
   0, meio em x -313,0, z 176,5; o carro está em x -313,00, z 175,075 (= 176,5 - 1,425, nariz para o sul). Exato.
 - **Postos**: narizes misturados como pedido (posto: 3 N e 1 S; posto pequeno: 1 E e 1 W).
 
+- **O segundo carro do `kill`** (2 apagados, 1 nas 9 caixas): `Mercedes_blue in gas_station_small_yellow bay 2 at 309
+  70 338 (generated)`, um posto pequeno vizinho, num chunk da borda da área carregada.
+- **Geração em todas as vagas novas (chance trocada para 100% só neste teste, depois devolvida a 3%: `git diff` vazio
+  e `javap -constants` do jar com `CHANCE_PER_BAY = 0.03d`, build com `--rerun-tasks`)**: mundo novo, as mesmas 9
+  caixas: **23 carros, 23 sorteados, 23 no lugar**, nenhuma vaga pulada; 28 linhas `(generated)` (as 23 e 5 de
+  estruturas vizinhas nos chunks da borda), nenhuma repetida; narizes do posto 2 N e 2 S, do posto pequeno 1 E e 1 W
+  (o caminho do nariz sorteado na geração); `pending chunks 0`.
+- **Carros sobre o tapete de musgo**: os 2 da casa moderna, segundos depois, em y 69,991 (o piso da camada do chão
+  está em y 69 e o carro fica em cima dele, como os outros: ~0,01 abaixo do topo do bloco); os tapetes continuam lá
+  (`execute if block 242 70 184 minecraft:moss_carpet` passou).
+
 **Não visto no jogo:** a aparência nestas estruturas (o carro dentro da garagem sem atravessar parede, ao lado da ilha
-sem atravessar a bomba).
+sem atravessar a bomba, antes da sebe da farmácia); as outras variantes de cor só nos testes de unidade (no mundo,
+uma variante de cada).

@@ -96,9 +96,15 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   frente entre as faixas amarelas gastas, nariz para a loja, até a sebe da fachada), delegacia 4 (vagas da frente entre
   as linhas brancas gastas, nariz para o prédio, só cores de polícia), casa com garagem 1, casa moderna com garagem 2 e
   casa suburbana 2 (dentro da garagem). As coordenadas e o porquê de cada uma estão nos comentários de `spots.txt`.
-  Olhados e sem vagas: a torre (a grade de concreto branco é o piso do saguão), o prédio azulado e o apocalíptico
-  (desenhos do piso), o prédio das rampas (salas no térreo), a farmácia pequena e as outras casas (o usuário confirmou:
-  só a farmácia grande a mais).
+  Imagem das vagas aplicadas, gerada de `spots.txt`: `docs/spots/etapa4_vagas.png` (a proposta aprovada, sem a
+  farmácia grande e com os narizes do posto ainda fixos: `docs/spots/etapa4_propostas.png`). Olhados e sem vagas: a
+  torre (a grade de concreto branco é o piso do saguão), o prédio azulado e o apocalíptico (desenhos do piso), o prédio
+  das rampas (salas no térreo). Mapas de piso coberto/aberto da camada do chão das outras 9 casas, da farmácia pequena
+  e do subsolo da delegacia (`docs/spots/levantamento.png`): nenhuma garagem ou estacionamento evidente (o subsolo da
+  delegacia são salas pequenas); nas casas de piso elevado (mansão, piscina, torre, vitoriana, grande) a camada do chão
+  sai bloqueada e o mapa não é conclusivo. O detector só vê faixas pintadas inteiras: não acha vagas de pintura gasta
+  (a farmácia grande e a delegacia foram vistas a olho) nem garagens sem pintura. O usuário acrescentou a farmácia
+  grande; outras estruturas com vagas entram quando ele apontar.
 - **Prédio largo** (`abandoned_wide_building`, garagem com o piso na camada 0 do `.nbt`, 8 camadas enterradas, 7 de
   altura livre; faixas de `white_concrete`, linhas amarelas no corredor): 36 vagas achadas, **34 na lista**; as 2 da
   fileira sul em x 43..45 e 47..49 ficam de fora (a escada está nelas). Vagas de 3 × 8 (fileira norte, nariz N) e
