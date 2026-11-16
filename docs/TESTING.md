@@ -31,8 +31,8 @@ Conferido nos dados salvos (`save-all flush` e `data get entity`), **e de novo d
 **Teste do usuário no jogo (0.1.0):** `Mercedes_salmon`, nariz para o sul (o lado anunciado), capô fechado e
 porta-malas aberto como na resposta do comando; porta lateral aberta (padrão do pack na 0.1.0).
 
-**Ainda não visto no jogo:** o resto da aparência (capô e porta-malas abertos na animação, ausência das
-rodas e bancos no modelo, os instrumentos no painel) e se o nariz aponta mesmo para o lado anunciado.
+**Ainda não visto no jogo:** o resto da aparência (o capô aberto na animação, os instrumentos no painel) e o
+nariz nas outras direções (oeste, norte, leste).
 
 ## Versão 0.1.1 — portas sorteadas e marcador à direita (16 Nov 2026)
 Servidor de teste, nariz para o sul:
