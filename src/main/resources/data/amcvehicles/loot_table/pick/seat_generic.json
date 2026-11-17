@@ -7,62 +7,52 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge",
+          "name": "mts:mtsofficialpack.seatblack",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_chain",
+          "name": "mts:mtsofficialpack.seatblue",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_gold",
+          "name": "mts:mtsofficialpack.seatbrown",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_goth",
+          "name": "mts:mtsofficialpack.seatcyan",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_holering",
+          "name": "mts:mtsofficialpack.seatgrey",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_holes",
+          "name": "mts:mtsofficialpack.seatolive",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_rusty",
+          "name": "mts:mtsofficialpack.seatpink",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_spokes",
+          "name": "mts:mtsofficialpack.seatred",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_spokes2",
+          "name": "mts:mtsofficialpack.seatwhite",
           "weight": 1
         },
         {
           "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_spokescopper",
-          "weight": 1
-        },
-        {
-          "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_whiterim",
-          "weight": 1
-        },
-        {
-          "type": "minecraft:item",
-          "name": "mts:mtsofficialpack.wheellarge_whitewall",
+          "name": "mts:mtsofficialpack.seatyellow",
           "weight": 1
         }
       ]

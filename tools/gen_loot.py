@@ -42,19 +42,17 @@ STRUCTURES = {"oficina média": ("workshop", 1, 61, 0.70), "oficina pequena": ("
 def ids(pack, system, subs):
     return ["mts:%s.%s%s" % (pack, system, s) for s in subs]
 
-SEATS = {  # 3 modelos de banco de carro com a mesma chance, depois a cor
+SEATS = {  # 4 modelos de banco (o genérico entrou a pedido do usuário, 16 Nov 2026) com a mesma chance, depois a cor
+    "generic": ids("mtsofficialpack", "seat", ["black", "blue", "brown", "cyan", "grey", "olive", "pink", "red", "white",
+                                               "yellow"]),   # as cores do banco genérico vêm sem o "_" no id
     "car": ids("mtsofficialpack", "carseat", ["_black", "_brown", "_grey", "_maroon", "_red", "_tan", "_white"]),
     "sport": ids("oamp", "sportseat", ["_beige", "_blackbrown", "_brown", "_coffee", "_cream", "_gray", "_red"]),
     "vintage": ids("oamp", "vintageseat", ["_beige", "_blue", "_brown", "_gray", "_green", "_joepeach", "_light",
                                            "_maroon", "_purple", "_red"]),
 }
-# 5 tipos de roda (diâmetro 0,4 a 1,0 que os 8 carros aceitam) com a mesma chance, depois a variante; sem `_legacy`
-# (texturas antigas) e sem `_police` (polícia é exclusiva da delegacia); a `wheelhuge` (1,625) não serve aos carros.
+# Só as rodas offroad e vintage (pedido do usuário, 16 Nov 2026), com a mesma chance, depois a variante; o diâmetro de
+# ambas (1,0) é aceito pelos 8 carros (0,4 a 1,0); sem `wheelvintage_police` (polícia é exclusiva da delegacia).
 WHEELS = {
-    "small": ids("mtsofficialpack", "wheelsmall", [""]),
-    "medium": ids("mtsofficialpack", "wheelmedium", [""]),
-    "large": ids("mtsofficialpack", "wheellarge", ["", "_chain", "_gold", "_goth", "_holering", "_holes", "_rusty",
-                                                    "_spokes", "_spokes2", "_spokescopper", "_whiterim", "_whitewall"]),
     "offroad": ids("oamp", "wheeloffroad", ["_default"]),
     "vintage": ids("oamp", "wheelvintage", ["_lightblue", "_mint", "_sinty"]),
 }

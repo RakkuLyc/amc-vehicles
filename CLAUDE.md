@@ -295,8 +295,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 
   | Item | Classe | Onde | Detalhe |
   |---|---|---|---|
-  | Banco | Comum | oficinas | 3 modelos (`carseat`, `sportseat`, `vintageseat`) com a mesma chance, depois a cor (24 ids) |
-  | Roda | Comum | oficinas | 5 tipos (pequena, média, grande, offroad, vintage) com a mesma chance, depois a variante (18 ids); 1 por vez; sem `_legacy`, sem `_police` (polícia é exclusiva da delegacia) e sem a `wheelhuge` (1,625, os carros aceitam 0,4 a 1,0) |
+  | Banco | Comum | oficinas | 4 modelos com a mesma chance, depois a cor (34 ids): `carseat` (7 cores), `sportseat` (7), `vintageseat` (10) e o genérico `seat` (10 cores, ids sem `_`: `mts:mtsofficialpack.seatblack`...; incluído a pedido do usuário em 16 Nov 2026); fora o `seat_harness` (avião) |
+  | Roda | Comum | oficinas | **só offroad e vintage** (pedido do usuário, 16 Nov 2026), com a mesma chance, depois a variante (`wheeloffroad_default`; `wheelvintage_lightblue`, `_mint`, `_sinty`: 4 ids); 1 por vez; sem `wheelvintage_police` (polícia é exclusiva da delegacia); diâmetro 1,0, aceito pelos 8 carros (0,4 a 1,0); as rodas pequena, média e grande não entram |
   | Motor | Raro | oficinas | os 5 motores dos 8 carros (M102, FE428, AMC I4, Escargot I6, Camaro V8) |
   | Blowtorch | Incomum | oficinas | `mtsofficialpack:blowtorch` (conserta 50) |
   | Repair kit | Raro | oficinas | `mtsofficialpack:repairkit` (conserta carro destruído) |

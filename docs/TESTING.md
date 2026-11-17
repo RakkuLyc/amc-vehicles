@@ -387,3 +387,13 @@ se enche numa bomba (`TileEntityFuelPump.interact`: bomba com 1.000 mB ou mais e
 **Não visto no jogo:** usar um galão cheio do loot num carro com motor (confirmado só pela leitura do código acima); a Sorte (o console não a aplica; `quality` = 25%
 do peso como no AMC TACZ Loot) e abrir os containers num mundo gerado de verdade; e a lista de ids foi conferida nos
 jars, não no registro de itens do jogo (que o servidor de teste usou nas amostras).
+
+## Versão 0.7.1 — banco genérico no loot e só rodas offroad e vintage (16 Nov 2026)
+- Pedido do usuário: incluir o banco genérico `seat` (10 cores, ids `mts:mtsofficialpack.seat<cor>`, sem `_`) e deixar
+  só as rodas offroad e vintage. `tools/gen_loot.py --write`; 53 entradas de item (eram 57), todas nos jars; 25 testes de
+  unidade passam.
+- Servidor (`workshop/chest`, 12.000 containers): banco 9,46% (esperado 9,20; +1,0 desvio), roda 8,97% (-0,9), motor
+  2,09, blowtorch 4,32, repair kit 2,26 (+2,0), jumper pack 1,89; nenhum além de 3 desvios. Bancos por modelo: genérico
+  258, sport 280, vintage 293, car 304 (de 1.135): os 4 com a mesma chance; 34 cores distintas vistas (7 + 7 + 10 +
+  10). Rodas vistas: só `wheeloffroad_default` e `wheelvintage_lightblue`, `_mint`, `_sinty`. As 8 tabelas e o resto
+  não mudaram (só a escolha dentro de banco e roda).

@@ -35,8 +35,9 @@ carros abandonados nas estruturas do AMC.
 ## Loot de oficinas e postos
 Complementa o AMC TACZ Loot (soma às tabelas do AMC, não substitui nada; vasos ficam sem nada). Chance por container
 (barril tem a metade): Comum 9,2% baú / 4,6% barril; Incomum 4,4% / 2,2%; Raro 2,0% / 1,0%.
-- **Oficinas**: bancos e rodas (Comum), blowtorch (Incomum), motor, repair kit e jumper pack (Raro). Os bancos, as rodas
-  e os motores são os que servem aos 8 carros; rodas e bancos de polícia ficam de fora.
+- **Oficinas**: bancos e rodas (Comum), blowtorch (Incomum), motor, repair kit e jumper pack (Raro). Bancos: Car Seat,
+  Sport Seat, Vintage Seat e o banco genérico (34 cores); rodas: só offroad e vintage; motores: os 5 dos 8 carros;
+  nada de polícia.
 - **Postos**: galão do IV vazio e galão cheio com 1 balde de lava, os dois Incomum.
 - Em média, por cidade: ~4,4 bancos, ~4,4 rodas, ~2 blowtorch, ~1 motor, ~1 repair kit, ~1 jumper pack e ~1,2 galões.
 
