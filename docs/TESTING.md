@@ -441,3 +441,11 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
 - Servidor (mundo novo, semente 20261027, 6 prédios largos gerados): carros nas caixas 6, 4, 4, 3, 3 e 3 = 23, sorteados
   23, no lugar 23, nenhuma vaga pulada (25 linhas `(generated)` no log: 2 de estruturas vizinhas nos chunks da borda).
 - O jar de teste a 100% continua existindo (`CHANCE_PER_BAY = 1.0d`, só local).
+
+## Versão 0.7.3 — carros com a bateria descarregada (17 Nov 2026)
+- Pedido do usuário. Antes: `electricPower` 12,0001 de capacidade 14 (85,7%, o padrão do IV), medido em 3 carros gerados
+  (Mercedes, Camaro, Mustang). Agora `Vehicles.spawn` põe `electricPower = batteryCapacity * 0` (0%).
+- **NÃO TESTADO** (o usuário pediu para ignorar os testes desta mudança): nem os testes de unidade, nem o servidor. Só foi
+  compilado (`./gradlew build -x test`). Não sei se o IV recarrega o campo na primeira atualização do carro nem se o
+  painel ou o jumper pack se comportam como esperado. Para conferir: `/amcv car mercedes` e
+  `execute as @e[type=mts:builder_existing,limit=1,sort=nearest] run data get entity @s electricPower` (esperado 0.0).

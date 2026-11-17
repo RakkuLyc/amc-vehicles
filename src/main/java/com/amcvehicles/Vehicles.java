@@ -34,6 +34,12 @@ import java.util.Map;
 public final class Vehicles {
     /** Fuel left in the tank: 10% of the car's {@code motorized.fuelCapacity}. */
     public static final double FUEL_FRACTION = 0.10;
+    /**
+     * Charge of the battery: 0 (flat; the user's choice, 17 Nov 2026), so the jumper pack matters. IV's new car has 85.7%
+     * ({@code batteryCapacity * 0.85715}, set in its constructor for a vehicle with no saved data); {@code electricPower}
+     * is the field IV saves and reads.
+     */
+    public static final double BATTERY_FRACTION = 0.0;
     static final String INSTRUMENTS = "mtsofficialpack";
     static final String SPEEDOMETER = "instrument_car_spedometer_kph";
     static final String FUEL_GAUGE = "instrument_car_fuelqty";
@@ -60,6 +66,7 @@ public final class Vehicles {
         // data null = a new car, as from a fresh item: the pack's initialVariables (some doors and the hood open, set
         // again below) and default instruments (replaced below); the parts come with addPartsPostAddition
         EntityVehicleF_Physics v = new EntityVehicleF_Physics(world, null, item, null);
+        v.electricPower = item.definition.motorized.batteryCapacity * BATTERY_FRACTION;
         v.position.set(x, y, z);
         v.prevPosition.set(v.position);
         // IV turns by its own yaw, which is Minecraft's with the sign flipped (WrapperEntity.getYaw)

@@ -116,6 +116,12 @@ lava a 0,35 vale também para `diesel` e `avgas` (hoje vale).
 - **Sorteio** (`Draw`): índices novos, sem mudar o 0 (a vaga tem carro): 7 o modelo, 8 e 9 as portas de trás da
   Station Wagon; o 1 (cor) passa a sortear entre as cores do modelo.
 
+- **Bateria** (0.7.3, 17 Nov 2026, pedido do usuário): os carros nascem com a **bateria descarregada** (0%;
+  `Vehicles.BATTERY_FRACTION`, que multiplica a capacidade do modelo e vai para `electricPower`, o campo que o IV grava).
+  O IV põe 85,7% num carro novo; medido em 17 Nov 2026 num carro gerado pelo mod: `electricPower` 12,0001 de capacidade
+  14. Com isso o jumper pack (Raro no loot das oficinas) passa a ser necessário para ligar um carro. **Sem teste**: o
+  usuário mandou ignorar os testes desta mudança.
+
 ## Como a Mercedes é montada (`Mercedes.spawn`, até a 0.4.2; desde a 0.5.0 `Vehicles.spawn`, ver "Modelos")
 **Confirmado** (código do IV 24.0.0 descompilado + dados salvos no servidor de teste, antes e depois de reiniciar):
 as peças que ficam, o combustível, os instrumentos gravados, os valores de `door_hood`/`door_trunk`, o ângulo

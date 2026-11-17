@@ -12,7 +12,7 @@ carros abandonados nas estruturas do AMC.
   Automobile Pack, **Cagouille**, **Camaro**, **Escargot**, **Highwayman** e **Station Wagon**. Depois a cor, com a
   mesma chance entre as cores civis do modelo.
 - **Viaturas só na delegacia** (e lá só elas): Mercedes (`_police`/`_police2`), Cagouille e Mustang, 1/3 cada.
-- Sempre: **sem motor, sem rodas** (nem estepe), **sem bancos**, **10% de combustível** do tanque de cada modelo e, no
+- Sempre: **bateria descarregada** (0.7.3; precisa de jumper pack), **sem motor, sem rodas** (nem estepe), **sem bancos**, **10% de combustível** do tanque de cada modelo e, no
   painel, **só velocímetro (km/h) e marcador de combustível**. Apoiados nos blocos de apoio que o próprio modelo mostra
   quando faltam as rodas.
 - Sorteados: capô, porta-malas (no Scout, a tampa da caçamba; o Mustang não tem) e cada porta lateral (a Station Wagon
