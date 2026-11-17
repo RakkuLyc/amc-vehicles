@@ -456,3 +456,14 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   Station Wagon e Scout 2.250 (1.500).
 - **NÃO TESTADO** (por pedido do usuário): só compilado (`./gradlew build -x test`); a constante dentro do jar foi lida com
   `javap`. A 0.7.3 (bateria 0%) também continua sem teste.
+
+## Versão 0.7.5 — lava volta a render 1,0 (17 Nov 2026)
+- Pedido do usuário: remover a configuração que faz o combustível ser drenado mais rápido (a lava a 0,35 do `FuelBalance`).
+  Apagadas `FuelBalance` e `ClientHooks` e os ganchos em `AmcVehicles`.
+- Testes: 25 de unidade passam. Servidor (mundo novo): 0 linhas "Lava as a fuel" no log (antes havia uma ao iniciar e outra ao
+  parar), 0 erros do mod, `/amcv car mercedes` responde `fuel 2250/15000 mB (lava)` (15%), `mtsconfig.json` do servidor de
+  teste com `"lava": 1.0` nos 5 tipos.
+- **Achado**: o `config/mtsconfig.json` da instância "MAZ 2.0.0 (TESTE)" (gravado em 17 Nov 2026, 01:09) tem `gasoline`,
+  `diesel` e `avgas` em **0,35**: o IV gravou a própria configuração com o valor do mod em memória (o limite documentado
+  na 0.6.0). Remover o mod não desfaz isso. Pendente: voltar esses três a 1,0 (precisa do OK do usuário e do jogo fechado).
+- Não testado no jogo: o consumo com a lava a 1,0 (depende do arquivo acima).

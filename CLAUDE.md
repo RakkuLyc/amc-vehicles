@@ -51,8 +51,8 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 - **Balanceamento do combustível (16 Nov 2026)**: o usuário mediu que 5 baldes de lava levam um carro por 6 a 7
   cidades (~1,3 cidade por balde) e pediu um balanço. Conta: com 0 a 3 baldes por bomba seriam ~11 baldes por cidade
   (~7 bombas por cidade: 0,61 posto × 8 + 1,21 posto pequeno × 2), e a lava é infinita nos lagos. Escolhas dele:
-  **lava rende 0,35** como combustível de motor (cerca de 0,45 cidade por balde; 5 baldes ≈ 2 cidades), **aplicado pelo
-  mod ao iniciar** (não pela config); **bombas 70% vazias, 30% com 1 balde** (~2 baldes por cidade); **tanque dos carros
+  **lava rende 0,35** como combustível de motor (cerca de 0,45 cidade por balde; 5 baldes ≈ 2 cidades; **removido na
+  0.7.5**, ver "Balanceamento"), aplicado pelo mod ao iniciar; **bombas 70% vazias, 30% com 1 balde** (~2 baldes por cidade); **tanque dos carros
   continua 10%**.
 
 ## Etapas
@@ -79,8 +79,8 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
    As 6 vagas dos postos saíram de `spots.txt` (ficam num comentário); as bombas ficam.
 7. **(feita na 0.7.0, aguardando o teste do usuário)** Loot de oficinas e postos (ver "Loot de oficinas e postos").
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
-foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta); e a pergunta se a
-lava a 0,35 vale também para `diesel` e `avgas` (hoje vale).
+foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
+removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".
 
 ## Modelos (`Cars`, `Vehicles`; etapa 5)
 - **Tabela** (`Cars.java`, sem classes do Minecraft): para cada modelo a chave dos comandos, o pack e o nome, as cores
@@ -267,7 +267,14 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
   bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
 
-## Balanceamento (`FuelBalance`; etapa 6)
+## Balanceamento (REMOVIDO na 0.7.5, 17 Nov 2026; histórico da etapa 6)
+- **Removido a pedido do usuário** ("remover a configuração que faz o combustível ser drenado mais rápido"): apagadas as
+  classes `FuelBalance` e `ClientHooks` e os ganchos em `AmcVehicles`; o mod não mexe mais no consumo (a lava volta a
+  1,0 nos tipos de combustível do IV, ~1,3 cidade por balde pela medida dele). **Mas o arquivo ficou sujo**: em 17 Nov
+  2026, 01:09, o `config/mtsconfig.json` da instância "MAZ 2.0.0 (TESTE)" estava com `gasoline`, `diesel` e `avgas` em 0,35
+  (o IV gravou a configuração com o valor do mod em memória, o limite descrito abaixo). Remover o mod não desfaz isso:
+  o arquivo precisa voltar a `"lava": 1.0` nesses três tipos (`furnace` e `brewing_stand` já estão em 1,0).
+- Como era: (texto original abaixo)
 - Ao iniciar um servidor (`ServerAboutToStartEvent`, o mundo single-player também) e, num cliente, ao entrar num
   servidor (`ClientHooks`, só carregada no cliente), o mod põe a potência da lava em **0,35** nos tipos de combustível
   de motor do IV que a aceitam (`gasoline`, `diesel`, `avgas` por padrão; `furnace` e `brewing_stand`, que não são de
@@ -324,8 +331,6 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 ```
 AmcVehicles    o @Mod: registra os comandos
 Cars           os 8 modelos: cores, medidas, portas, porta-malas (puro; conferido contra os jars)
-FuelBalance    a lava rende 0,35 como combustível de motor (na memória, ao iniciar o servidor / entrar num servidor)
-ClientHooks    só no cliente: o FuelBalance ao entrar num servidor
 Vehicles       monta um carro abandonado de qualquer modelo (estado, painel, peças, combustível)
 FuelPumps      põe uma bomba de combustível do IV (sem jogador) com lava
 Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
