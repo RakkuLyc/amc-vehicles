@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.enginemercedesm102",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.enginefordfe428",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.engineamci4",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.engineescargoti6",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.enginecamarov8",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_black",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_brown",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_grey",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_maroon",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_red",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_tan",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.carseat_white",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.wheelsmall",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:mtsofficialpack.wheelmedium",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "amcvehicles:pick/wheel_large",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.wheeloffroad_default",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "amcvehicles:pick/wheel_vintage",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

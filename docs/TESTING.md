@@ -339,3 +339,51 @@ lava (precisa dirigir) e o mod carregando no cliente (`ClientHooks` é nova).
   10,636 (esperado 32/3 = 10,67).
 - Mundo novo: posto grande e posto pequeno gerados; as 10 bombas com a lava do sorteio (posto: 0, 1, 1, 0, 0, 0, 0, 0
   baldes; posto pequeno: 2 e 0), `fluidLevel` 1000 e 2000 onde há, sem nível nas vazias.
+
+## Versão 0.7.0 — loot de oficinas e postos (16 Nov 2026)
+
+### Testes de unidade (`LootDataTest`, 25 no total, todos passam)
+- `everyItemExistsAndNothingExcluded`: as 57 entradas de item existem nos jars (IV base e os dois packs) e nenhuma é de
+  polícia, `_legacy`, `huge` ou de arnês. **Pega erro**: com `blowtorchh` falhou ("no item
+  mts:mtsofficialpack.blowtorchh"); o arquivo foi devolvido e regerado.
+- `referencedTablesExist`, `everyPoolAddsUpToTenThousand` (cada sorteio = peso + vazio = 10.000),
+  `modifiersAreRegisteredAndPointAtTheAmcTables` (8 modificadores, a lista global confere, cada um aponta para a tabela
+  certa do AMC).
+
+### No servidor (mundo novo, AMC + AMC TACZ Loot + TACZ + LesRaisins + First Aid + AMC Vehicles juntos)
+- Nenhum erro de carregamento de loot no log. `tools/sample_loot.py` gera a tabela do AMC N vezes num baú (Sorte 0) e
+  compara cada item com o esperado (desvio em desvios-padrão da binomial). Resultados:
+  - `workshop/chest` (16.000): banco 9,38% (esperado 9,20), roda 9,34, motor 2,04 (2,00), blowtorch 4,29 (4,40), repair
+    kit 2,10, jumper pack 1,98; todos entre -0,7 e +0,9 desvio.
+  - `workshop/barrel` (16.000): banco 4,74 (4,60), roda 4,49, motor 1,03 (1,00), blowtorch 2,24 (2,20), repair kit 1,19
+    (1,00; +2,4 desvios, o único acima de 2), jumper pack 1,04.
+  - `gas_station/chest` (8.000): galão vazio 4,55 (4,40), cheio 4,58; `gas_station/barrel` (16.000): vazio 2,11 (2,20),
+    cheio 2,24; em todos os galões cheios o fluido foi `lava` (366 no baú de 8.000 e 359 no barril de 16.000).
+  - As 4 tabelas "difíceis" (4.000 cada): todos dentro de 2 desvios.
+  - Nenhum item além de 3 desvios. Com amostras de 8.000, dois itens (roda no baú, jumper pack no barril) tinham saído
+    perto de -2,4 desvios e voltaram ao esperado com 16.000: ruído (com 36 comparações, 1 a 2 acima de 1,96 desvio são
+    esperados só por acaso).
+- **Soma, não substitui**: com o meu loot ligado, os itens do AMC TACZ Loot (`tacz:`, `lrtactical:`, `firstaid:`)
+  continuam saindo em ~57% dos baús e ~34% dos barris de oficina e posto. Não comparei com uma rodada sem o meu mod
+  (o servidor de teste carrega o AMC Vehicles pelo código-fonte, não da pasta `mods`); o argumento é que as tabelas e
+  modificadores do AMC TACZ Loot não foram tocados.
+- **Vasos** (`workshop/pot`, `gas_station/pot` e as versões difíceis, 6.000 vasos): 0 itens do AMC Vehicles.
+- **Variantes excluídas**: nas amostras das 4 tabelas "difíceis", nenhum id com `police`, `legacy`, `huge` ou `harness`.
+
+### Defeitos do amostrador achados e corrigidos no caminho (não eram das tabelas)
+- Ele cortava o texto dos itens esperando `count` primeiro: o galão cheio (que tem `components`) era atribuído ao item
+  vizinho. Agora separa pelas chaves `{...}` da lista.
+- A chave `id` era procurada como `id: "...`, que também casa com o fim de `jerrycanFluid: "lava"`: o galão cheio
+  virava item "lava". Agora só casa `id` inteiro.
+- Efeito: nas primeiras rodadas o galão cheio saiu 0% e alguns itens "fora" do intervalo; depois das correções, tudo
+  dentro do esperado.
+
+**Lido no código do IV** (`ItemPartInteractable.doEntityInteraction`, não rodado): um galão com `jerrycanFluid` despeja
+no carro com `fuelTank.fill(fluido, "wildcard", 1000)`: o `wildcard` passa pela checagem de mod do tanque (então o tanque
+dos carros do AMC Vehicles, marcado `minecraft`, não atrapalha); precisa de **um motor instalado** (sem motor o IV avisa
+"sem motor" e não despeja), de fluido compatível com o motor (a lava é) e de espaço de 1.000 mB no tanque. O galão vazio
+se enche numa bomba (`TileEntityFuelPump.interact`: bomba com 1.000 mB ou mais e galão sem `jerrycanFluid`).
+
+**Não visto no jogo:** usar um galão cheio do loot num carro com motor (confirmado só pela leitura do código acima); a Sorte (o console não a aplica; `quality` = 25%
+do peso como no AMC TACZ Loot) e abrir os containers num mundo gerado de verdade; e a lista de ids foi conferida nos
+jars, não no registro de itens do jogo (que o servidor de teste usou nas amostras).

@@ -76,6 +76,10 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
    e o balanceamento da lava (ver "Bombas" e "Balanceamento" abaixo). Depois de testar, o usuário pediu (0.6.1) para
    **tirar os carros dos postos**: os carros estacionados ao lado das bombas atrapalhavam abastecer um carro montado.
    As 6 vagas dos postos saíram de `spots.txt` (ficam num comentário); as bombas ficam.
+7. **(feita na 0.7.0, aguardando o teste do usuário)** Loot de oficinas e postos (ver "Loot de oficinas e postos").
+**Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
+foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta); e a pergunta se a
+lava a 0,35 vale também para `diesel` e `avgas` (hoje vale).
 
 ## Modelos (`Cars`, `Vehicles`; etapa 5)
 - **Tabela** (`Cars.java`, sem classes do Minecraft): para cada modelo a chave dos comandos, o pack e o nome, as cores
@@ -271,6 +275,43 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   com o mundo aberto, leva 0,35 para o `mtsconfig.json` (para desfazer: editar o arquivo). O usuário aprovou a lava a
   0,35 citando `fuels.gasoline.lava`; o mod aplica também a `diesel` e `avgas` (senão um motor a diesel seria uma brecha;
   a confirmar com ele).
+
+## Loot de oficinas e postos (`tools/gen_loot.py`; etapa 7, 0.7.0, 16 Nov 2026)
+- **Pedido**: loot para a oficina (peças de carro, blowtorch, repair kit, jumper pack) e para o posto (galão de
+  combustível vazio e cheio), **complementando** o AMC TACZ Loot, sem substituir nada. O usuário sugeriu os itens e as
+  raridades de blowtorch (Incomum), repair kit e jumper pack (Raro) e dos galões (Épico e Incomum, depois **os dois
+  Incomum**: "1 balde não faz tanta diferença"); as de bancos, rodas (Comum) e motor (Raro) são propostas minhas que ele
+  aprovou, junto com "aumentar as chances no geral": **todas x2** (aprovado em 16 Nov 2026).
+- **Mecanismo**: um modificador de loot `neoforge:add_table` por tabela do AMC (`abandonedmoderncity:chests/<tema>/<tier>`),
+  o mesmo do AMC TACZ Loot; vários mods somam à mesma tabela e a lista `global_loot_modifiers.json` de cada mod é lida.
+  Temas `workshop` (as duas oficinas, todas as cores) e `gas_station` (os dois postos); tiers `chest`, `chest_hard`,
+  `barrel`, `barrel_hard` (o difícil usa a mesma tabela do comum: como no AMC TACZ Loot, a chance de item não sobe no
+  difícil); **vasos não recebem nada**. 12 tabelas em `data/amcvehicles/loot_table` (4 de loot e 8 de escolha em `pick/`)
+  e 8 modificadores em `data/amcvehicles/loot_modifiers`. O mod não substitui nenhuma tabela.
+- **Formato (o do AMC TACZ Loot)**: cada item tem um sorteio próprio e independente: peso em 10.000 e um "vazio" com o
+  resto; `quality` = 25% do peso (a Sorte funciona como lá, o `/loot` do console não aplica Sorte).
+- **Chances por container** (classes do AMC TACZ Loot x2; barril = metade do baú): Comum 9,2% baú / 4,6% barril; Incomum
+  4,4% / 2,2%; Raro 2,0% / 1,0%. Tudo no topo do `gen_loot.py` (`BASE_CHEST`, `FATOR`, `BARREL_MULT`).
+
+  | Item | Classe | Onde | Detalhe |
+  |---|---|---|---|
+  | Banco | Comum | oficinas | 3 modelos (`carseat`, `sportseat`, `vintageseat`) com a mesma chance, depois a cor (24 ids) |
+  | Roda | Comum | oficinas | 5 tipos (pequena, média, grande, offroad, vintage) com a mesma chance, depois a variante (18 ids); 1 por vez; sem `_legacy`, sem `_police` (polícia é exclusiva da delegacia) e sem a `wheelhuge` (1,625, os carros aceitam 0,4 a 1,0) |
+  | Motor | Raro | oficinas | os 5 motores dos 8 carros (M102, FE428, AMC I4, Escargot I6, Camaro V8) |
+  | Blowtorch | Incomum | oficinas | `mtsofficialpack:blowtorch` (conserta 50) |
+  | Repair kit | Raro | oficinas | `mtsofficialpack:repairkit` (conserta carro destruído) |
+  | Jumper pack | Raro | oficinas | `mts:jumperpack` |
+  | Galão vazio | Incomum | postos | `mts:jerrycan` |
+  | Galão cheio | Incomum | postos | `mts:jerrycan` com `{jerrycanFluid:"lava"}` em `minecraft:custom_data` (o que o IV grava ao encher na bomba: 1.000 mB, 1 balde) |
+- **Esperado por estrutura** (containers medidos em `docs/containers.json` do AMC TACZ Loot; barril difícil conta como
+  barril): oficina média (1 baú, 61 barris) banco e roda 2,9, blowtorch 1,4, motor/repair kit/jumper 0,63; oficina
+  pequena (2 baús, 39 barris) 2,0, 0,95, 0,43; posto (4 baús, 26 barris) 0,75 de cada galão; posto pequeno (1 baú, 3
+  barris) 0,11. **Por cidade** (cópias por cidade do `DrawTest`): 4,4 bancos e 4,4 rodas, 2,1 blowtorch, 0,97 de motor,
+  de repair kit e de jumper pack, 0,59 galão vazio e 0,59 galão cheio.
+- **Ids**: `mts:<pack>.<nome><variante>` (ex.: `mts:mtsofficialpack.carseat_grey`, `mts:mts.jerrycan`); o gerador confere
+  cada id contra o modelo de item nos jars de `libs/` e o `LootDataTest` também.
+- **Uso**: `python3 -I tools/gen_loot.py` (prévia), `--write` regrava `src/main/resources/data/...`.
+  `python3 -I tools/sample_loot.py <tema>/<tier> [N]` amostra no servidor de teste e compara com o esperado.
 
 ## Arquitetura
 ```

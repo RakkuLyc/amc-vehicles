@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "entries": [
+    "amcvehicles:gas_station_barrel",
+    "amcvehicles:gas_station_barrel_hard",
+    "amcvehicles:gas_station_chest",
+    "amcvehicles:gas_station_chest_hard",
+    "amcvehicles:workshop_barrel",
+    "amcvehicles:workshop_barrel_hard",
+    "amcvehicles:workshop_chest",
+    "amcvehicles:workshop_chest_hard"
+  ]
+}

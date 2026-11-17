@@ -1,0 +1,61 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_beige",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_blue",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_brown",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_gray",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_green",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_joepeach",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_light",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_maroon",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_purple",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.vintageseat_red",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

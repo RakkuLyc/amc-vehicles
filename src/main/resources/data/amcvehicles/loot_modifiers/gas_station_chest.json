@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "abandonedmoderncity:chests/gas_station/chest"
+    }
+  ],
+  "table": "amcvehicles:gas_station/chest"
+}

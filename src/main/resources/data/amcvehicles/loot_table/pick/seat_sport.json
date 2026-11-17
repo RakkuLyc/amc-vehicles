@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_beige",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_blackbrown",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_brown",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_coffee",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_cream",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_gray",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "mts:oamp.sportseat_red",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}
