@@ -29,7 +29,7 @@ ITEM_MULT = {"repairkit": 1.1}
 
 # Que classe cada item tem (escolha do usuário para blowtorch, repair kit, jumper pack e os dois galões; minha proposta,
 # aprovada, para bancos, rodas e motor).
-WORKSHOP = [("seat", "Comum"), ("wheel", "Comum"), ("engine", "Raro"), ("blowtorch", "Incomum"),
+WORKSHOP = [("seat", "Comum"), ("wheel", "Comum"), ("wrench", "Comum"), ("engine", "Raro"), ("blowtorch", "Incomum"),
             ("repairkit", "Raro"), ("jumperpack", "Raro")]
 GAS = [("jerrycan_empty", "Incomum"), ("jerrycan_full", "Incomum")]
 FULL_JERRYCAN_FLUID = "lava"     # 1 balde (1.000 mB) de lava, o combustível do modpack
@@ -64,7 +64,7 @@ WHEELS = {
 ENGINES = ids("mtsofficialpack", "enginemercedesm102", [""]) + ids("mtsofficialpack", "enginefordfe428", [""]) \
     + ids("mtsofficialpack", "engineamci4", [""]) + ids("oamp", "engineescargoti6", [""]) \
     + ids("oamp", "enginecamarov8", [""])
-SINGLE = {"blowtorch": "mts:mtsofficialpack.blowtorch", "repairkit": "mts:mtsofficialpack.repairkit",
+SINGLE = {"wrench": "mts:mts.wrench", "blowtorch": "mts:mtsofficialpack.blowtorch", "repairkit": "mts:mtsofficialpack.repairkit",
           "jumperpack": "mts:mts.jumperpack", "jerrycan_empty": "mts:mts.jerrycan", "jerrycan_full": "mts:mts.jerrycan"}
 
 

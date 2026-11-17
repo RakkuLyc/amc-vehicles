@@ -31,6 +31,7 @@ def group(chunk):
         if "seat" in iid: return "seat"
         if "wheel" in iid: return "wheel"
         if ".engine" in iid: return "engine"
+        if iid == "mts:mts.wrench": return "wrench"
         if "blowtorch" in iid: return "blowtorch"
         if "repairkit" in iid: return "repairkit"
         if "jumperpack" in iid: return "jumperpack"

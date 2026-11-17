@@ -477,3 +477,13 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   desvio), motor 0,92 (1,00), jumper pack 0,89 (1,00); baú repair kit 2,27% (2,20; +0,6), motor 2,12, jumper pack 1,93.
   Nenhum item além de 3 desvios; 0 erros de loot. A diferença de 10% é menor que o ruído de uma amostra pequena: aparece
   só na média de muitos containers (esperado por oficina média: repair kit 0,69, motor e jumper pack 0,63).
+
+## Versão 0.7.7 — wrench no loot das oficinas; `mtsconfig.json` corrigido (17 Nov 2026)
+- **`mtsconfig.json`** (pedido do usuário, jogo fechado: `ps` sem processo do jogo): backup `~/backups/mtsconfig-2026-11-17/`,
+  troca de `"lava": 0.35` por `"lava": 1.0` (3 linhas: `gasoline`, `diesel`, `avgas`), conferido com `json.load`
+  (lava 1,0 nos 5 tipos) e `diff` contra o backup (só essas 3 linhas). Para reverter: `cp -p` do backup sobre o arquivo.
+- **Wrench** (`mts:mts.wrench`, IV base) Comum nas oficinas (baú 9,2% / barril 4,6%), como bancos e rodas. Prévia: 2,90 por
+  oficina média, 1,98 por pequena, 4,44 por cidade. 25 testes de unidade passam (55 entradas de item, todas nos jars).
+- Servidor (mundo novo, 0 erros de loot): `workshop/barrel` (16.000) wrench 4,92% (esperado 4,60; +1,9 desvio);
+  `workshop/chest` (16.000) 8,74% (9,20; -2,0); `workshop/barrel_hard` (4.000) 4,58%; os outros itens inalterados; nenhum
+  além de 3 desvios. `gas_station/barrel` (3.000): nenhum wrench.

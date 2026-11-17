@@ -274,6 +274,9 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   2026, 01:09, o `config/mtsconfig.json` da instância "MAZ 2.0.0 (TESTE)" estava com `gasoline`, `diesel` e `avgas` em 0,35
   (o IV gravou a configuração com o valor do mod em memória, o limite descrito abaixo). Remover o mod não desfaz isso:
   o arquivo precisa voltar a `"lava": 1.0` nesses três tipos (`furnace` e `brewing_stand` já estão em 1,0).
+- **Arquivo corrigido** em 17 Nov 2026 (com o jogo fechado, a pedido do usuário): `config/mtsconfig.json` da instância
+  "MAZ 2.0.0 (TESTE)", as 3 linhas `"lava": 0.35` (`gasoline`, `diesel`, `avgas`) voltaram a `1.0`; backup em
+  `~/backups/mtsconfig-2026-11-17/mtsconfig.json`; a única diferença para o backup são essas 3 linhas.
 - Como era: (texto original abaixo)
 - Ao iniciar um servidor (`ServerAboutToStartEvent`, o mundo single-player também) e, num cliente, ao entrar num
   servidor (`ClientHooks`, só carregada no cliente), o mod põe a potência da lava em **0,35** nos tipos de combustível
@@ -312,15 +315,16 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   | Banco | Comum | oficinas | 4 modelos com a mesma chance, depois a cor (34 ids): `carseat` (7 cores), `sportseat` (7), `vintageseat` (10) e o genérico `seat` (10 cores, ids sem `_`: `mts:mtsofficialpack.seatblack`...; incluído a pedido do usuário em 16 Nov 2026); fora o `seat_harness` (avião) |
   | Roda | Comum | oficinas | **só offroad e vintage** (pedido do usuário, 16 Nov 2026), com a mesma chance, depois a variante (`wheeloffroad_default`; `wheelvintage_lightblue`, `_mint`, `_sinty`: 4 ids); 1 por vez; sem `wheelvintage_police` (polícia é exclusiva da delegacia); diâmetro 1,0, aceito pelos 8 carros (0,4 a 1,0); as rodas pequena, média e grande não entram |
   | Motor | Raro | oficinas | os 5 motores dos 8 carros (M102, FE428, AMC I4, Escargot I6, Camaro V8) |
+  | Wrench (chave) | Comum | oficinas | `mts:mts.wrench`, do IV base (0.7.7, pedido do usuário em 17 Nov 2026; nas oficinas, não nos postos) |
   | Blowtorch | Incomum | oficinas | `mtsofficialpack:blowtorch` (conserta 50) |
   | Repair kit | Raro, **x1,1** | oficinas | `mtsofficialpack:repairkit` (conserta carro destruído); a chance é a do Raro mais 10% (**baú 2,2% / barril 1,1%**, `ITEM_MULT` no `gen_loot.py`; pedido do usuário em 17 Nov 2026, 0.7.6) para ele ficar um pouco mais comum que o motor e o jumper pack. Os sorteios são independentes: um item não "compete" com outro, isto só os ordena |
   | Jumper pack | Raro | oficinas | `mts:jumperpack` |
   | Galão vazio | Incomum | postos | `mts:jerrycan` |
   | Galão cheio | Incomum | postos | `mts:jerrycan` com `{jerrycanFluid:"lava"}` em `minecraft:custom_data` (o que o IV grava ao encher na bomba: 1.000 mB, 1 balde) |
 - **Esperado por estrutura** (containers medidos em `docs/containers.json` do AMC TACZ Loot; barril difícil conta como
-  barril): oficina média (1 baú, 61 barris) banco e roda 2,9, blowtorch 1,4, motor e jumper 0,63, repair kit 0,69; oficina
+  barril): oficina média (1 baú, 61 barris) banco, roda e wrench 2,9, blowtorch 1,4, motor e jumper 0,63, repair kit 0,69; oficina
   pequena (2 baús, 39 barris) 2,0, 0,95, 0,43; posto (4 baús, 26 barris) 0,75 de cada galão; posto pequeno (1 baú, 3
-  barris) 0,11. **Por cidade** (cópias por cidade do `DrawTest`): 4,4 bancos e 4,4 rodas, 2,1 blowtorch, 0,97 de motor,
+  barris) 0,11. **Por cidade** (cópias por cidade do `DrawTest`): 4,4 bancos, 4,4 rodas e 4,4 wrenches, 2,1 blowtorch, 0,97 de motor,
   de repair kit e de jumper pack, 0,59 galão vazio e 0,59 galão cheio.
 - **Ids**: `mts:<pack>.<nome><variante>` (ex.: `mts:mtsofficialpack.carseat_grey`, `mts:mts.jerrycan`); o gerador confere
   cada id contra o modelo de item nos jars de `libs/` e o `LootDataTest` também.
