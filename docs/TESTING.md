@@ -424,3 +424,9 @@ NBT), então um carro nunca ticado pelo Minecraft não custa física, mas um que
 simulação continuaria registrado (e ticando) até o chunk descarregar. Teste que decide: no jogo, com um jar de teste a
 100% perto de uma garagem cheia, `/tick query` parado ao lado e depois a uma distância entre a simulação e a visão
 (`simulation-distance` menor que `view-distance`).
+
+### Custo do próprio mod ao criar carros (17 Nov 2026, 0.7.1)
+`/amcv fill` numa garagem do prédio largo (33-34 carros, tempo da resposta pelo RCON, inclui sorteio, checagem do
+mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 21, 16 e 15 ms = **~0,5 ms por carro**.
+`/amcv draw` (só conferir 34 vagas): 3 ms. Isso é um custo **único por carro**, na hora de gerar; o custo contínuo
+é o do IV (~0,05 ms por carro por tick, medido acima).
