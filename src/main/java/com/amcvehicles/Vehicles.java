@@ -32,8 +32,8 @@ import java.util.Map;
  * pickup bed and bumper sticker, the Mustang's mirror ornament).
  */
 public final class Vehicles {
-    /** Fuel left in the tank: 10% of the car's {@code motorized.fuelCapacity}. */
-    public static final double FUEL_FRACTION = 0.10;
+    /** Fuel left in the tank: 15% of the car's {@code motorized.fuelCapacity} (10% until 0.7.3; the user's choice, 17 Nov 2026). */
+    public static final double FUEL_FRACTION = 0.15;
     /**
      * Charge of the battery: 0 (flat; the user's choice, 17 Nov 2026), so the jumper pack matters. IV's new car has 85.7%
      * ({@code batteryCapacity * 0.85715}, set in its constructor for a vehicle with no saved data); {@code electricPower}

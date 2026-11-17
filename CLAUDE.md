@@ -25,7 +25,7 @@ lado das bombas: lá não há vaga pintada). Até a 0.4.2 só a **Mercedes 230**
 Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`, dependência obrigatória).
 
 ## Decisões do usuário (16 Nov 2026)
-- **Estado da Mercedes, sempre**: sem motor, sem rodas, sem bancos, **10% de gasolina**, **velocímetro (km/h) e
+- **Estado da Mercedes, sempre**: sem motor, sem rodas, sem bancos, **15% de gasolina** (10% até a 0.7.3; subiu a pedido do usuário em 17 Nov 2026), **velocímetro (km/h) e
   marcador de combustível** no painel.
 - **Sorteados**: capô aberto e porta-malas aberto (cada um à parte; 50% cada, valor meu, a confirmar) e **cada
   porta lateral aberta ou fechada, 50% a esquerda e 50% a direita, à parte** (pedido do usuário, 16 Nov 2026).
@@ -41,7 +41,7 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 - **Etapa 5 (16 Nov 2026)**: os 8 modelos com a **mesma chance**, depois a cor com a mesma chance entre as civis do
   modelo; **as variantes police são exclusivas da delegacia** (lembrado pelo usuário), e lá o sorteio é **por modelo**
   (Mercedes, Cagouille e Mustang, 1/3 cada; na Mercedes `_police` ou `_police2` a 50%); o mesmo estado da Mercedes em
-  todos (sem motor, rodas e bancos, 10% de combustível, capô, porta-malas e cada porta a 50%); painel **só velocímetro
+  todos (sem motor, rodas e bancos, 15% de combustível desde a 0.7.4, capô, porta-malas e cada porta a 50%); painel **só velocímetro
   km/h + marcador de combustível** em todos (escolha dele, entre manter os mostradores do pack ou não).
 - **Etapa 6 (16 Nov 2026)**: bombas de combustível nos postos, 2 por ilha, sempre presentes (posições aprovadas:
   `docs/spots/bombas_propostas.png`). Modelo: o usuário pediu `mts:fuelpump` (o do IV base) no lugar do
@@ -108,8 +108,8 @@ lava a 0,35 vale também para `diesel` e `avgas` (hoje vale).
   acima), senão o mais perto à esquerda; os outros mostradores do pack saem (`removeIntrument`, o método do IV, com o
   erro de grafia dele). Na Mercedes isso dá o mesmo de antes (meio e direita). Peças: as padrão do pack, depois saem os
   motores, **todas as rodas** (o estepe do Escargot também) e os bancos não permanentes; ficam o porta-luvas, o assento
-  invisível do porta-malas, a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Combustível: 10% do
-  `fuelCapacity` do modelo (Camaro e Highwayman 1.000, Mustang 800, os outros 1.500), o fluido do tipo do motor padrão
+  invisível do porta-malas, a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Combustível: 15% do
+  `fuelCapacity` do modelo (0.7.4; Camaro e Highwayman 1.500, Mustang 1.200, os outros 2.250; eram 10%: 1.000, 800 e 1.500), o fluido do tipo do motor padrão
   dele (gasoline: lava, sem mod de gasolina), gravado com o mod real do fluido (`minecraft` para a lava; 0.6.0): com
   `""`, como o IV faz nos carros novos, um balde despejado no carro (mod `minecraft`) seria recusado pelo
   `EntityFluidTank.fill`, que só junta o mesmo fluido do mesmo mod ou `wildcard` (o que a bomba manda).

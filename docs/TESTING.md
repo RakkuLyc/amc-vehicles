@@ -449,3 +449,10 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   compilado (`./gradlew build -x test`). Não sei se o IV recarrega o campo na primeira atualização do carro nem se o
   painel ou o jumper pack se comportam como esperado. Para conferir: `/amcv car mercedes` e
   `execute as @e[type=mts:builder_existing,limit=1,sort=nearest] run data get entity @s electricPower` (esperado 0.0).
+
+## Versão 0.7.4 — tanque dos carros a 15% (17 Nov 2026)
+- Pedido do usuário (junto com o da bateria, e na mesma instrução de ignorar os testes): `Vehicles.FUEL_FRACTION` de 0,10
+  para 0,15. Quantidades: Camaro e Highwayman 1.500 mB (eram 1.000), Mustang 1.200 (800), Mercedes, Cagouille, Escargot,
+  Station Wagon e Scout 2.250 (1.500).
+- **NÃO TESTADO** (por pedido do usuário): só compilado (`./gradlew build -x test`); a constante dentro do jar foi lida com
+  `javap`. A 0.7.3 (bateria 0%) também continua sem teste.
