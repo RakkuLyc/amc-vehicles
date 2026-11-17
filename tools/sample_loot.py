@@ -99,7 +99,11 @@ def main():
         ok &= inside
         print("  %-15s esperado %5.2f%%  observado %5.2f%% (%d de %d)  desvio %+.1f  %s" % (
             g, 100 * p, 100 * obs, have[g], n, z, "ok" if abs(z) <= 1.96 else ("limite (95%)" if inside else "FORA (3 desvios)")))
-    stray = sorted(g for g in have if g in ("mts_other",) or (g in gen_names(theme) is False))
+    # qualquer item do AMC Vehicles que NÃO devia sair nesta tabela (ex.: galão vazio, wrench no posto) é defeito
+    stray = sorted(g for g in have if g not in gen_names(theme) and g not in ("addon", "other"))
+    if stray:
+        ok = False
+        print("  ITENS QUE NÃO DEVIAM SAIR:", {g: have[g] for g in stray})
     print("  itens do AMC TACZ Loot (tacz/lrtactical/firstaid) em %.1f%% dos containers" % (100 * have["addon"] / n))
     print("  ids vistos:", dict(items_seen))
     if fluids:

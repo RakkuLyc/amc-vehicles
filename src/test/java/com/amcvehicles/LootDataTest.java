@@ -106,7 +106,7 @@ class LootDataTest {
                 }
             }
             assertEquals(-1, a, f.toString());
-            assertTrue(pools >= 2, f.toString());
+            assertTrue(pools >= 1, f.toString());
         }
     }
 

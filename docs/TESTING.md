@@ -487,3 +487,16 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
 - Servidor (mundo novo, 0 erros de loot): `workshop/barrel` (16.000) wrench 4,92% (esperado 4,60; +1,9 desvio);
   `workshop/chest` (16.000) 8,74% (9,20; -2,0); `workshop/barrel_hard` (4.000) 4,58%; os outros itens inalterados; nenhum
   além de 3 desvios. `gas_station/barrel` (3.000): nenhum wrench.
+
+## Versão 0.7.8 — galão sempre cheio no loot dos postos (17 Nov 2026)
+- Pedido do usuário: remover o galão vazio; o galão passa a sair sempre cheio, mantendo a raridade (Incomum: baú 4,4% / barril
+  2,2%). Consequência: de ~1,2 para ~0,6 galão por cidade. `GAS = [("jerrycan_full", "Incomum")]` em `tools/gen_loot.py`;
+  só `gas_station/chest.json` e `gas_station/barrel.json` mudaram (um sorteio em vez de dois).
+- Teste de unidade: `LootDataTest.everyPoolAddsUpToTenThousand` exigia 2 sorteios por tabela e passou a exigir 1 (o teste
+  estava desatualizado, não os dados); com uma tabela de posto sem sorteio nenhum ele falha (conferido). 25 testes passam.
+- `tools/sample_loot.py` agora acusa qualquer item do AMC Vehicles que não deveria sair na tabela amostrada.
+- Servidor (mundo novo, 0 erros de loot): `gas_station/chest` (12.000) galão cheio 4,22% (esperado 4,40; -1,0 desvio),
+  `barrel` (16.000) 2,34% (2,20; +1,2), `chest_hard` (4.000) 4,20%, `barrel_hard` (4.000) 2,38%; os 1.143 galões vistos
+  tinham `jerrycanFluid: "lava"`; nenhum item indevido (nem galão vazio, nem wrench) e `workshop/barrel` (3.000) sem item indevido.
+- Nota de método: uma primeira rodada passou "tabela N" como um argumento só (o zsh não separa `$t`) e o amostrador não
+  imprimiu nada; foi refeita com argumentos separados.

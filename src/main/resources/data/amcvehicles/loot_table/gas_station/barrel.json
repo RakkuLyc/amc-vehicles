@@ -8,23 +8,6 @@
         {
           "type": "minecraft:item",
           "name": "mts:mts.jerrycan",
-          "weight": 220,
-          "quality": 55
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 9780,
-          "quality": -55
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "mts:mts.jerrycan",
           "functions": [
             {
               "function": "minecraft:set_components",

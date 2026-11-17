@@ -31,7 +31,7 @@ ITEM_MULT = {"repairkit": 1.1}
 # aprovada, para bancos, rodas e motor).
 WORKSHOP = [("seat", "Comum"), ("wheel", "Comum"), ("wrench", "Comum"), ("engine", "Raro"), ("blowtorch", "Incomum"),
             ("repairkit", "Raro"), ("jumperpack", "Raro")]
-GAS = [("jerrycan_empty", "Incomum"), ("jerrycan_full", "Incomum")]
+GAS = [("jerrycan_full", "Incomum")]   # só o galão cheio (pedido do usuário, 17 Nov 2026): o vazio saiu do loot
 FULL_JERRYCAN_FLUID = "lava"     # 1 balde (1.000 mB) de lava, o combustível do modpack
 
 # Tabelas do AMC (tema/tier); o baú difícil e o barril difícil usam a tabela do baú e do barril.
@@ -65,7 +65,7 @@ ENGINES = ids("mtsofficialpack", "enginemercedesm102", [""]) + ids("mtsofficialp
     + ids("mtsofficialpack", "engineamci4", [""]) + ids("oamp", "engineescargoti6", [""]) \
     + ids("oamp", "enginecamarov8", [""])
 SINGLE = {"wrench": "mts:mts.wrench", "blowtorch": "mts:mtsofficialpack.blowtorch", "repairkit": "mts:mtsofficialpack.repairkit",
-          "jumperpack": "mts:mts.jumperpack", "jerrycan_empty": "mts:mts.jerrycan", "jerrycan_full": "mts:mts.jerrycan"}
+          "jumperpack": "mts:mts.jumperpack", "jerrycan_full": "mts:mts.jerrycan"}
 
 
 def all_ids():
