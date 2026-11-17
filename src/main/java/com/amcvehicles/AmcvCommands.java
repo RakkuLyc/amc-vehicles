@@ -30,7 +30,7 @@ import java.util.TreeSet;
  *   <li>{@code /amcv fill}: a car in every bay of the AMC structure you stand in (the debug of the bays); model, colour,
  *   hood, trunk and doors drawn, the police cars in the police station; a bay where the car does not fit in the world
  *   is skipped and listed.</li>
- *   <li>{@code /amcv draw}: the real draw (3% per bay, {@link Draw}) applied to the AMC structure you stand in: the
+ *   <li>{@code /amcv draw}: the real draw (9% per bay, {@link Draw}) applied to the AMC structure you stand in: the
  *   cars the generation gives that copy, placed now unless the bay is blocked or occupied (in a chunk generated with
  *   this mod they are already there). For structures of areas generated before the mod, and to test.</li>
  *   <li>{@code /amcv pump [buckets]}: a fuel pump 3 blocks ahead, its front to you, with that many buckets of lava.</li>

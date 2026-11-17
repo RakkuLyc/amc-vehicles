@@ -3,8 +3,8 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.7.0** (16 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
-**aparecem sozinhos** quando o mundo é gerado (3% por vaga) nas 57 vagas de 10 estruturas do AMC (lista abaixo; desde a
+**Versão 0.7.2** (17 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 57 vagas de 10 estruturas do AMC (lista abaixo; desde a
 0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
 ## Os carros abandonados
@@ -17,8 +17,9 @@ carros abandonados nas estruturas do AMC.
   quando faltam as rodas.
 - Sorteados: capô, porta-malas (no Scout, a tampa da caçamba; o Mustang não tem) e cada porta lateral (a Station Wagon
   tem 4), cada um aberto ou fechado com 50%, à parte.
-- Raridade: **3% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
-  média ~1,07 carro por cidade (38% das cidades sem nenhum). Uma vaga com algo no caminho (por exemplo, um baú que o
+- Raridade: **9% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
+  média ~3,2 carros por cidade (9% das cidades sem nenhum; com 3% eram ~1,1). Uma vaga com algo no caminho (por exemplo,
+  um baú que o AMC sorteou ali) fica sem o carro.
   AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
   lava.
@@ -76,6 +77,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.7.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.7.2.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

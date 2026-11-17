@@ -430,3 +430,14 @@ simulação continuaria registrado (e ticando) até o chunk descarregar. Teste q
 mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 21, 16 e 15 ms = **~0,5 ms por carro**.
 `/amcv draw` (só conferir 34 vagas): 3 ms. Isso é um custo **único por carro**, na hora de gerar; o custo contínuo
 é o do IV (~0,05 ms por carro por tick, medido acima).
+
+## Versão 0.7.2 — 9% por vaga (17 Nov 2026)
+- Pedido do usuário: a chance dos carros estacionados sobe de 3% para 9% (`Draw.CHANCE_PER_BAY`). O sorteio é o mesmo
+  (a vaga tem carro se o número de índice 0 < a chance): quem tinha carro com 3% continua tendo, e entram mais.
+- Testes de unidade: 25 passam. `DrawTest.chancesModelsAndColours` (4.000.000 vagas): 9,02% com carro, os 8 modelos entre
+  44.872 e 45.491, capô, porta-malas e portas 50%. `projectionPerCity` (492 cidades, as 57 vagas): 17.507 vagas, 1.575
+  carros = **3,20 por cidade** (9,00% das vagas); cidades sem carro 46 (9,3%), com 1: 15,2%, 2: 19,5%, 3: 18,5%, 4: 11,2%,
+  5: 10,2%, 6: 6,9%, 7: 3,9%, 8 a 11: 5,2% juntas.
+- Servidor (mundo novo, semente 20261027, 6 prédios largos gerados): carros nas caixas 6, 4, 4, 3, 3 e 3 = 23, sorteados
+  23, no lugar 23, nenhuma vaga pulada (25 linhas `(generated)` no log: 2 de estruturas vizinhas nos chunks da borda).
+- O jar de teste a 100% continua existindo (`CHANCE_PER_BAY = 1.0d`, só local).

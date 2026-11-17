@@ -30,8 +30,9 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 - **Sorteados**: capô aberto e porta-malas aberto (cada um à parte; 50% cada, valor meu, a confirmar) e **cada
   porta lateral aberta ou fechada, 50% a esquerda e 50% a direita, à parte** (pedido do usuário, 16 Nov 2026).
 - **Cores**: as 15 civis sorteadas com a mesma chance; `_police` e `_police2` **só na delegacia** (e lá só elas).
-- **Raridade**: **3% por vaga** (cada vaga sorteia sozinha). Com isso a garagem subterrânea do prédio largo (muitas
-  vagas) pode ter vários carros e as estruturas com poucas vagas quase nunca têm.
+- **Raridade**: **9% por vaga** desde a 0.7.2 (17 Nov 2026; era 3% até a 0.7.1; cada vaga sorteia sozinha). Com isso a
+  garagem subterrânea do prédio largo (muitas vagas) tem em média ~3 carros e as estruturas com poucas vagas, 0 ou 1.
+  Projeção com as 57 vagas: **3,20 carros por cidade**, 9,3% das cidades sem carro (com 3% eram 1,07 e 38%).
 - **Comando de debug** que põe um carro em **todas as vagas da estrutura onde o jogador está** (para conferir a
   detecção das vagas).
 - Nome AMC Vehicles, repositório privado, documentação em português.
@@ -62,7 +63,7 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 2. **(aprovada pelo usuário, 16 Nov 2026)** As vagas da garagem subterrânea do prédio largo
    (`abandoned_wide_building`) e o comando de debug `/amcv fill`, que enche todas as vagas da estrutura onde o
    jogador está.
-3. **(aprovada pelo usuário, 16 Nov 2026)** Geração no mundo: 3% por vaga, cores sorteadas, só chunks novos,
+3. **(aprovada pelo usuário, 16 Nov 2026)** Geração no mundo: 3% por vaga (9% desde a 0.7.2), cores sorteadas, só chunks novos,
    `/amcv draw`.
 4. **(feita na 0.4.0, aguardando o teste do usuário)** As outras estruturas: imagem das vagas propostas
    (`docs/spots/etapa4_propostas.png`) aprovada pelo usuário ("Aprovar todas"), com o nariz **sorteado** nos postos
@@ -199,7 +200,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - **Sorteio** (`Draw.car`): função pura da semente do lote (a cópia da estrutura; o AMC a tira da semente do mundo) e
   da **posição da vaga** no `.nbt` (`Spots.Bay.key`: x0, y, z0; não a ordem em `spots.txt`, para que acrescentar ou
   reordenar vagas de um modelo não mude o sorteio das outras), com um sal próprio (SplitMix64): a mesma vaga do mesmo mundo dá sempre o mesmo
-  resultado, em qualquer ordem de carregamento. **3% por vaga** (`CHANCE_PER_BAY`); depois, cada um à parte: cor (as
+  resultado, em qualquer ordem de carregamento. **9% por vaga** (`CHANCE_PER_BAY`; 3% até a 0.7.1); depois, cada um à parte: cor (as
   15 civis com a mesma chance; na delegacia, `type` `police_station`, só as 2 de polícia), capô 50%, porta-malas 50%,
   porta esquerda 50%, porta direita 50%. As cores e as chances moram em `Draw` (sem classes do Minecraft, para os
   testes); `Mercedes` as repete.
@@ -324,7 +325,7 @@ FuelPumps      põe uma bomba de combustível do IV (sem jogador) com lava
 Spots          as vagas de spots.txt, por modelo (sem classes do Minecraft)
 Placement      vaga do .nbt -> posição, nariz e colunas do carro no mundo (sem classes do Minecraft; testado)
 AmcWorld       lê o plano do AMC (a estrutura de uma coluna) e confere se o carro cabe no mundo
-Draw           o sorteio dos carros (3% por vaga, modelo, cor, capô, porta-malas, portas), puro
+Draw           o sorteio dos carros (9% por vaga, modelo, cor, capô, porta-malas, portas), puro
 Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro (ou em volta da
                bomba) estão prontos
 Pending        os chunks com carro sorteado ainda não posto (salvo no mundo; percorrido a cada 10 ticks)

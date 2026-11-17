@@ -9,8 +9,8 @@ import java.util.function.IntToDoubleFunction;
  * seed) and of the bay, never of the order in which chunks load. No Minecraft classes: tested with JUnit.
  */
 public final class Draw {
-    /** Chance of a car in each bay (the user's choice, 16 Nov 2026: 3% per bay). */
-    public static final double CHANCE_PER_BAY = 0.03;
+    /** Chance of a car in each bay (the user's choice: 3% on 16 Nov 2026, 9% on 17 Nov 2026). */
+    public static final double CHANCE_PER_BAY = 0.09;
     /** Chance of the hood being open, of the trunk, and of each side door (each drawn separately). */
     public static final double HOOD_OPEN_CHANCE = 0.5;
     public static final double TRUNK_OPEN_CHANCE = 0.5;
