@@ -313,12 +313,12 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   | Roda | Comum | oficinas | **só offroad e vintage** (pedido do usuário, 16 Nov 2026), com a mesma chance, depois a variante (`wheeloffroad_default`; `wheelvintage_lightblue`, `_mint`, `_sinty`: 4 ids); 1 por vez; sem `wheelvintage_police` (polícia é exclusiva da delegacia); diâmetro 1,0, aceito pelos 8 carros (0,4 a 1,0); as rodas pequena, média e grande não entram |
   | Motor | Raro | oficinas | os 5 motores dos 8 carros (M102, FE428, AMC I4, Escargot I6, Camaro V8) |
   | Blowtorch | Incomum | oficinas | `mtsofficialpack:blowtorch` (conserta 50) |
-  | Repair kit | Raro | oficinas | `mtsofficialpack:repairkit` (conserta carro destruído) |
+  | Repair kit | Raro, **x1,1** | oficinas | `mtsofficialpack:repairkit` (conserta carro destruído); a chance é a do Raro mais 10% (**baú 2,2% / barril 1,1%**, `ITEM_MULT` no `gen_loot.py`; pedido do usuário em 17 Nov 2026, 0.7.6) para ele ficar um pouco mais comum que o motor e o jumper pack. Os sorteios são independentes: um item não "compete" com outro, isto só os ordena |
   | Jumper pack | Raro | oficinas | `mts:jumperpack` |
   | Galão vazio | Incomum | postos | `mts:jerrycan` |
   | Galão cheio | Incomum | postos | `mts:jerrycan` com `{jerrycanFluid:"lava"}` em `minecraft:custom_data` (o que o IV grava ao encher na bomba: 1.000 mB, 1 balde) |
 - **Esperado por estrutura** (containers medidos em `docs/containers.json` do AMC TACZ Loot; barril difícil conta como
-  barril): oficina média (1 baú, 61 barris) banco e roda 2,9, blowtorch 1,4, motor/repair kit/jumper 0,63; oficina
+  barril): oficina média (1 baú, 61 barris) banco e roda 2,9, blowtorch 1,4, motor e jumper 0,63, repair kit 0,69; oficina
   pequena (2 baús, 39 barris) 2,0, 0,95, 0,43; posto (4 baús, 26 barris) 0,75 de cada galão; posto pequeno (1 baú, 3
   barris) 0,11. **Por cidade** (cópias por cidade do `DrawTest`): 4,4 bancos e 4,4 rodas, 2,1 blowtorch, 0,97 de motor,
   de repair kit e de jumper pack, 0,59 galão vazio e 0,59 galão cheio.

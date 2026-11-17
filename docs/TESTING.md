@@ -467,3 +467,13 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   `diesel` e `avgas` em **0,35**: o IV gravou a própria configuração com o valor do mod em memória (o limite documentado
   na 0.6.0). Remover o mod não desfaz isso. Pendente: voltar esses três a 1,0 (precisa do OK do usuário e do jogo fechado).
 - Não testado no jogo: o consumo com a lava a 1,0 (depende do arquivo acima).
+
+## Versão 0.7.6 — repair kit 10% mais comum (17 Nov 2026)
+- Pedido do usuário: repair kit de 1,0% para 1,1% (barril; baú 2,0% para 2,2%), "para evitar competir com o motor e o jumper
+  pack". Os sorteios são independentes (cada item tem o seu pool): não há competição; a mudança só ordena o repair kit
+  acima dos outros dois. `ITEM_MULT = {"repairkit": 1.1}` em `tools/gen_loot.py`; só `workshop/chest.json` e
+  `workshop/barrel.json` mudaram (pesos 220 e 110).
+- Testes: 25 de unidade passam. Servidor (16.000 containers de cada): barril repair kit 1,22% (esperado 1,10; +1,4
+  desvio), motor 0,92 (1,00), jumper pack 0,89 (1,00); baú repair kit 2,27% (2,20; +0,6), motor 2,12, jumper pack 1,93.
+  Nenhum item além de 3 desvios; 0 erros de loot. A diferença de 10% é menor que o ruído de uma amostra pequena: aparece
+  só na média de muitos containers (esperado por oficina média: repair kit 0,69, motor e jumper pack 0,63).

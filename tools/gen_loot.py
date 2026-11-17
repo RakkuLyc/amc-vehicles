@@ -22,6 +22,10 @@ FATOR = 2.0
 BARREL_MULT = 0.5
 QUALITY_SHARE = 0.25
 SCALE = 10000
+# Ajuste por item sobre a chance da classe (pedido do usuário, 17 Nov 2026): o repair kit é um pouco mais comum que o motor
+# e o jumper pack, que também são Raro (barril 1,1% contra 1,0%; baú 2,2% contra 2,0%). Os sorteios são independentes: não
+# há competição entre os itens, isto só os ordena.
+ITEM_MULT = {"repairkit": 1.1}
 
 # Que classe cada item tem (escolha do usuário para blowtorch, repair kit, jumper pack e os dois galões; minha proposta,
 # aprovada, para bancos, rodas e motor).
@@ -87,9 +91,9 @@ def check_ids():
 
 
 # ---------------------------------------------------------------------------------------- CHANCES
-def chance(cls, tier_kind):
-    """Peso (de SCALE) de uma classe num tipo de container: baú ou barril."""
-    w = BASE_CHEST[cls] * FATOR * (BARREL_MULT if tier_kind == "barrel" else 1.0)
+def chance(cls, tier_kind, group=None):
+    """Peso (de SCALE) de uma classe (e de um item, se dado) num tipo de container: baú ou barril."""
+    w = BASE_CHEST[cls] * FATOR * (BARREL_MULT if tier_kind == "barrel" else 1.0) * ITEM_MULT.get(group, 1.0)
     return int(round(w))
 
 
@@ -142,7 +146,7 @@ def build():
         tables["pick/%s.json" % n] = t
     for theme, groups in THEMES.items():
         for kind in ("chest", "barrel"):
-            pools = [pool(item_entry(g), chance(cls, kind)) for g, cls in groups]
+            pools = [pool(item_entry(g), chance(cls, kind, g)) for g, cls in groups]
             tables["%s/%s.json" % (theme, kind)] = {"type": "minecraft:chest", "pools": pools}
         for tier, kind in TIERS.items():
             mods["%s_%s.json" % (theme, tier)] = {
@@ -159,12 +163,12 @@ def preview():
     for name, (theme, chests, barrels, per_city) in STRUCTURES.items():
         row = []
         for g, cls in THEMES[theme]:
-            e = chests * chance(cls, "chest") / SCALE + barrels * chance(cls, "barrel") / SCALE
+            e = chests * chance(cls, "chest", g) / SCALE + barrels * chance(cls, "barrel", g) / SCALE
             row.append("%s %.2f" % (g, e))
         print("  %-16s (%d baús, %d barris): %s" % (name, chests, barrels, "; ".join(row)))
     for theme, groups in THEMES.items():
         for g, cls in groups:
-            e = sum(pc * (c * chance(cls, "chest") + b * chance(cls, "barrel")) / SCALE
+            e = sum(pc * (c * chance(cls, "chest", g) + b * chance(cls, "barrel", g)) / SCALE
                     for (th, c, b, pc) in STRUCTURES.values() if th == theme)
             print("  por cidade: %-15s %.2f" % (g, e))
 

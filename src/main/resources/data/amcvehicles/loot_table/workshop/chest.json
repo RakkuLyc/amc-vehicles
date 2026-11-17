@@ -76,13 +76,13 @@
         {
           "type": "minecraft:item",
           "name": "mts:mtsofficialpack.repairkit",
-          "weight": 200,
-          "quality": 50
+          "weight": 220,
+          "quality": 55
         },
         {
           "type": "minecraft:empty",
-          "weight": 9800,
-          "quality": -50
+          "weight": 9780,
+          "quality": -55
         }
       ]
     },

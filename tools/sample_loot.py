@@ -90,7 +90,7 @@ def main():
     print("tabela %s: %d containers (tipo %s)" % (table, n, kind))
     ok = True
     for g, cls in gen.THEMES[theme]:
-        p = gen.chance(cls, kind) / gen.SCALE
+        p = gen.chance(cls, kind, g) / gen.SCALE
         obs = have[g] / n
         sd = math.sqrt(p * (1 - p) / n)
         z = (obs - p) / sd
