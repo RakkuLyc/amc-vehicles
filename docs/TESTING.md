@@ -397,3 +397,30 @@ jars, não no registro de itens do jogo (que o servidor de teste usou nas amostr
   258, sport 280, vintage 293, car 304 (de 1.135): os 4 com a mesma chance; 34 cores distintas vistas (7 + 7 + 10 +
   10). Rodas vistas: só `wheeloffroad_default` e `wheelvintage_lightblue`, `_mint`, `_sinty`. As 8 tabelas e o resto
   não mudaram (só a escolha dentro de banco e roda).
+
+## Desempenho dos veículos parados (17 Nov 2026, versão 0.7.1)
+Pergunta do usuário: o que muda a longo prazo com muitos chunks carregados e carros gerados; os carros ficam longe do jogador?
+
+**Lido no código do IV** (`BuilderEntityExisting`, `EntityManager`, `AEntityVehicleD_Moving`; descompilado, não rodado):
+- O carro é uma entidade comum do Minecraft (`mts:builder_existing`) gravada no NBT do chunk (`saveWithoutId`) e
+  restaurada quando o chunk carrega (`loadFromSavedNBT`); sem distância de despawn. Só é descartado se o veículo ficar
+  inválido, cair abaixo do mundo ou sair da borda do mundo.
+- Chunk descarregado: o carro sai da memória (`onRemovedFromLevel` chama `remove()`) e fica só no disco.
+- Não há modo "dormindo" para carro parado: o `EntityManager.tickAll` roda o `update()` de todo veículo registrado a cada
+  tick, com a física completa (`getForcesAndMotions`, `moveVehicle`, caixas de colisão), exceto na configuração
+  `noclipVehicles`.
+
+**Medido** (servidor de teste, mundo novo, 4 áreas de prédio largo com `forceload`, tudo entidade-ticking, 20 s
+depois de cada `/amcv fill`, `tick query` 3 vezes): MSPT médio com 4 carros 1,4 ms; 36 carros 3,0; 67 carros 4,5; 98 carros
+6,0; 131 carros 7,8 (P99 de 5 a 12 ms). Crescimento **linear**, ~0,05 ms por carro (+1,5 ms a cada ~31 carros), sem sinal
+de custo quadrático até 131. O orçamento de um tick é 50 ms: ~300 carros ticando = ~15 ms.
+Disco (`run/world/entities`, depois de `save-all flush`): 81.175 bytes antes e 258.550 depois de 127 carros novos:
+~1,4 KB por carro.
+
+**Não medido:** o cliente (renderização, som, a cópia do cliente do `EntityManager`); carros em chunks carregados mas
+**fora da distância de simulação** (o servidor de teste sem jogador só tem chunks forçados, que tickam). Hipótese pelo
+código: o `EntityManager` do IV só registra o carro no primeiro tick da entidade (o `baseTick` restaura o IV a partir do
+NBT), então um carro nunca ticado pelo Minecraft não custa física, mas um que já foi ticado e depois ficou fora da
+simulação continuaria registrado (e ticando) até o chunk descarregar. Teste que decide: no jogo, com um jar de teste a
+100% perto de uma garagem cheia, `/tick query` parado ao lado e depois a uma distância entre a simulação e a visão
+(`simulation-distance` menor que `view-distance`).
