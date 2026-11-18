@@ -575,3 +575,14 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
 - Não testado no jogo: o aspecto visual (carro encostado em alguma coisa, a céu aberto no y=10 do prédio-rampa), a geração
   natural na casa de vidro (o `fill` a testou; o sorteio real só foi visto no prédio-rampa) e o tamanho do prédio-rampa
   (102 × 137 × 72) em desempenho com carros.
+
+## Versão 0.8.1 — prédio-rampa sem vagas, casa de vidro mantida (18 Nov 2026)
+- O usuário testou a 0.8.0: "pode manter as vagas da casa de vidro, mas do prédio-rampa pode remover". As 21 linhas
+  `abandoned_ramp_building bay ...` de `spots.txt` ficaram comentadas (não apagadas), com uma nota; nada mais mudou.
+- Testes: 25 de unidade passam. Projeção (planejador real do AMC, 5 sementes, 492 cidades): 18.549 vagas (37,7 por cidade),
+  **1.683 carros (3,42 por cidade, 9,07% das vagas)**, cidades com 0 carro 41 (8,3%). Jar: `spots.txt` com 59 vagas.
+- Servidor (mundo novo): `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados; no prédio-rampa: "abandoned_ramp_building
+  has no bays yet". O log tem 12 linhas ERROR/Exception, todas anteriores ao mundo e do IV (`MTSERROR` ao ler modelos dos
+  packs, como "roller2" e `engineikarus.obj`, e uma tag do Minecraft); nenhuma cita `amcvehicles`. (Uma primeira rodada
+  contou esses 12 e eu apaguei o log antes de lê-lo; refiz guardando o log.)
+- Só vale para chunks novos: um prédio-rampa que o mundo do usuário gerou com a 0.8.0 já pode ter carros nele (ficam).

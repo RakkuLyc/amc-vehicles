@@ -3,8 +3,8 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.8.0** (18 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
-**aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 80 vagas de 12 estruturas do AMC (lista abaixo; desde a
+**Versão 0.8.1** (18 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 59 vagas de 11 estruturas do AMC (lista abaixo; desde a
 0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
 ## Os carros abandonados
@@ -18,7 +18,7 @@ carros abandonados nas estruturas do AMC.
 - Sorteados: capô, porta-malas (no Scout, a tampa da caçamba; o Mustang não tem) e cada porta lateral (a Station Wagon
   tem 4), cada um aberto ou fechado com 50%, à parte.
 - Raridade: **9% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
-  média ~3,6 carros por cidade (8% das cidades sem nenhum; com 3% eram ~1,1; sem a casa de vidro e o prédio-rampa, 3,2). Uma vaga com algo no caminho (por exemplo,
+  média ~3,4 carros por cidade (8% das cidades sem nenhum; com 3% eram ~1,1; sem a casa de vidro, 3,2). Uma vaga com algo no caminho (por exemplo,
   um baú que o AMC sorteou ali) fica sem o carro.
   AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
@@ -59,10 +59,9 @@ Complementa o AMC TACZ Loot (soma às tabelas do AMC, não substitui nada; vasos
 | Casa abandonada | 2 | sala-garagem da frente |
 | Casa com garagem | 1 | dentro da garagem |
 | Casa de vidro | 2 | sala do canto nordeste (aberta para o oeste), lado a lado, nariz para a parede do fundo |
-| Prédio-rampa (especial, ~1 a cada 10 cidades) | 21 | salão comprido: 10 no andar pintado (y=10) e 11 no térreo (y=0), nariz para a parede norte |
 
 Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png` e
-`docs/spots/garagens_propostas.png` e `docs/spots/vidro_rampa_propostas.png` (as da 0.8.0). O carro fica centrado na vaga.
+`docs/spots/garagens_propostas.png` e `docs/spots/vidro_rampa_propostas.png` (a proposta da 0.8.0; as vagas do prédio-rampa saíram na 0.8.1). O carro fica centrado na vaga.
 
 ## Comandos (op 2)
 - `/amcv car <modelo> [cor] [capô porta-malas]`: um carro na sua frente (ex.: `/amcv car mustang police`). O que não for
@@ -82,6 +81,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.8.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.8.1.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

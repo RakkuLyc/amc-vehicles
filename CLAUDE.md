@@ -32,7 +32,7 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 - **Cores**: as 15 civis sorteadas com a mesma chance; `_police` e `_police2` **só na delegacia** (e lá só elas).
 - **Raridade**: **9% por vaga** desde a 0.7.2 (17 Nov 2026; era 3% até a 0.7.1; cada vaga sorteia sozinha). Com isso a
   garagem subterrânea do prédio largo (muitas vagas) tem em média ~3 carros e as estruturas com poucas vagas, 0 ou 1.
-  Projeção com as 57 vagas: **3,20 carros por cidade**, 9,3% das cidades sem carro (com 3% eram 1,07 e 38%); com as 80 vagas da 0.8.0: **3,63 por cidade**, 7,9% sem carro.
+  Projeção com as 57 vagas: **3,20 carros por cidade**, 9,3% das cidades sem carro (com 3% eram 1,07 e 38%); com as 80 vagas da 0.8.0: 3,63 por cidade, 7,9% sem carro; **com as 59 vagas da 0.8.1 (casa de vidro, sem o prédio-rampa): 3,42 por cidade**, 8,3% sem carro.
 - **Comando de debug** que põe um carro em **todas as vagas da estrutura onde o jogador está** (para conferir a
   detecção das vagas).
 - Nome AMC Vehicles, repositório privado, documentação em português.
@@ -181,13 +181,16 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   Imagem das vagas aplicadas, gerada de `spots.txt`: `docs/spots/etapa4_vagas.png` (a proposta aprovada, sem a
   farmácia grande e com os narizes do posto ainda fixos: `docs/spots/etapa4_propostas.png`). Olhados e sem vagas: a
   torre (a grade de concreto branco é o piso do saguão), o prédio azulado e o apocalíptico (desenhos do piso), o prédio
-  das rampas (salas no térreo; **ganhou vagas na 0.8.0**, no salão comprido, ver abaixo). Mapas de piso coberto/aberto da camada do chão das outras 9 casas, da farmácia pequena
+  das rampas (salas no térreo; ganhou vagas na 0.8.0 e as perdeu na 0.8.1, ver abaixo). Mapas de piso coberto/aberto da camada do chão das outras 9 casas, da farmácia pequena
   e do subsolo da delegacia (`docs/spots/levantamento.png`): nenhuma garagem ou estacionamento evidente (o subsolo da
   delegacia são salas pequenas); nas casas de piso elevado (mansão, piscina, torre, vitoriana, grande) a camada do chão
   sai bloqueada e o mapa não é conclusivo. O detector só vê faixas pintadas inteiras: não acha vagas de pintura gasta
   (a farmácia grande e a delegacia foram vistas a olho) nem garagens sem pintura. O usuário acrescentou a farmácia
   grande e, na 0.4.1, a casa abandonada e o prédio pequeno (que o levantamento não tinha visto como garagens); outras
   estruturas com vagas entram quando ele apontar.
+- **Prédio-rampa REMOVIDO na 0.8.1 (18 Nov 2026)**: o usuário testou a 0.8.0 e pediu para manter as vagas da casa de vidro e
+  tirar as do prédio-rampa. As 21 linhas ficam comentadas em `spots.txt` (para voltar). Hoje: **59 vagas em 11 modelos**, 3,42
+  carros por cidade, 8,3% sem carro. O texto abaixo é o histórico da 0.8.0.
 - **Casa de vidro e prédio-rampa (0.8.0, 18 Nov 2026, pedido do usuário; proposta `docs/spots/vidro_rampa_propostas.png`)**:
   **casa de vidro** (`abandoned_glass_house`) 2 vagas na sala do canto nordeste (a da foto que ele mandou: aberta para o
   oeste entre dois pilares em x 32, com bigorna, baú e barris na parede norte): `35 0 12 41 14 E` e `35 0 16 41 18 E`,
