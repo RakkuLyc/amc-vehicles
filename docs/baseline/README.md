@@ -17,11 +17,19 @@ sem querer. Tirada do código da 0.8.1 (commit `c1d134a`), antes de qualquer mud
   falha uma vez (para ela ser olhada); numa diferença, a saída vai para `build/golden/draw_golden.actual.txt` e a falha
   mostra a primeira linha diferente.
 
+- `src/test/resources/golden/pending_old_world.dat` e `pending_phase0_world.dat`: amostras do `Pending` gravadas por
+  versões reais (o mundo de teste anterior, feito até a 0.8.1: `chunks` vazio, 43 bytes; o mundo da Fase 0: 1 chunk
+  pendente, ChunkPos 18,71, um carro esperando os chunks sob o corpo). Para um teste futuro de "mundo antigo ainda abre".
+  O formato salvo é só `data.chunks` (um long array de ChunkPos). As chaves `Generation.resolvedKey` (que usam a ordem da
+  vaga em `spots.txt`) ficam só na memória (`RESOLVED`, limpo ao parar o servidor): não são gravadas.
+- O mundo de teste anterior foi guardado em `run/world_before_phase0` (fora do git).
+
 ## Números
 - Build (`./gradlew clean build --rerun-tasks`, Java 21): 25 testes passam em 21 s, nenhum aviso do compilador. Com o
   teste dourado: 26 testes em 40 s.
 - Projeção do `DrawTest.projectionPerCity`: 492 cidades, 18.549 vagas (37,7 por cidade), 1.683 carros (3,42 por cidade,
   9,07% das vagas), 41 cidades (8,3%) sem carro.
+- Compilador: nenhuma linha `warning:`, `Note:`, `deprecat` ou `unchecked` no log do build.
 - Loot: `python3 -I tools/gen_loot.py --write` seguido de `git diff --stat`: vazio.
 - Prova de que o teste dourado pega uma mudança: `DOOR_OPEN_CHANCE` de 0,5 para 0,51 fez o teste falhar na linha 205
   (uma porta `doors=01` virou `11`); com o arquivo de volta (`git checkout`), passou.
