@@ -551,3 +551,27 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   uma vez derrubou o servidor de teste (sobrecarga ao gerar tudo junto; o log foi apagado por engano, então a causa
   exata não foi lida).
 - Só valem para chunks novos: as bombas já geradas nos mundos do usuário não mudam.
+
+## Versão 0.8.0 — vagas na casa de vidro e no prédio-rampa (18 Nov 2026)
+- Pedido do usuário: "adicionar vaga de estacionamento na abandoned_glass_house e no prédio-rampa". Proposta em
+  `docs/spots/vidro_rampa_propostas.png` (gerada com `tools/find_spots.py --bays`). Respostas dele: andares y=10 e y=0 do
+  prédio-rampa (21 vagas), quantidade boa, e, na casa de vidro, uma foto que mostrou que o lugar é a sala do canto nordeste
+  (não a varanda da frente que eu tinha proposto); aplicadas as 2 vagas da sala depois da confirmação dele.
+- Detector: casa de vidro, as 2 vagas livres; prédio-rampa, 20 propostas por andar: y=10 10 livres, y=0 11 livres, y=5 0
+  livres (por isso fora). Entram só as livres.
+- Testes: 25 de unidade passam (inclui o `PlacementTest`, que põe os 8 modelos em todas as vagas nas 4 rotações, agora com
+  as 23 novas). Projeção com o planejador real do AMC (5 sementes, 492 cidades): 19.704 vagas (40,0 por cidade), **1.788
+  carros (3,63 por cidade, 9,07% das vagas)**; cidades com 0 carro 39 (7,9%); casa de vidro 521 cópias, 108 carros
+  (0,21 por cópia); prédio-rampa 55 cópias (0,11 por cidade), 105 carros (1,91 por cópia). Antes: 3,20 por cidade e 9,3%
+  sem carro.
+- Servidor (mundo novo, semente 20261027): `amcs locate` achou uma casa de vidro (x -351..-312, z 434..481, rotação 3) e
+  um prédio-rampa (x 172..243, z 1121..1222, rotação 3). `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados, nos
+  centros esperados pelo cálculo manual do `.nbt` (x -337,5 e -333,5; eixo traseiro em z 445), nariz para o norte (a parede
+  leste do modelo) e piso certo (y 69,4). No prédio-rampa: 21 vagas, 18 carros postos e 3 "occupied by a vehicle" (carros
+  do sorteio real de 9% feitos na geração do mundo, o que prova que a geração também vê as vagas novas); carros do y=10 em
+  y 78,4 e os do y=0 em y 68,4 (10 acima), em z a cada 4 blocos, todos com o nariz para oeste (o norte do modelo girado).
+- `tools/check_bays.py` não serve para estas vagas (procura faixas compridas ao lado do carro; no prédio-rampa as marcas
+  brancas são pontinhos nas bordas e na casa de vidro não há pintura): mostrou "0 cars between stripes", sem significado.
+- Não testado no jogo: o aspecto visual (carro encostado em alguma coisa, a céu aberto no y=10 do prédio-rampa), a geração
+  natural na casa de vidro (o `fill` a testou; o sorteio real só foi visto no prédio-rampa) e o tamanho do prédio-rampa
+  (102 × 137 × 72) em desempenho com carros.

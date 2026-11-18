@@ -89,6 +89,38 @@ abandoned_small_building bay 7 0 2 9 9 S
 abandoned_small_building bay 12 0 10 14 17 S
 abandoned_small_building bay 17 0 10 19 17 S
 
+# abandoned_glass_house (pointed out by the user with a photo, 18 Nov 2026): the room of the north-east corner, open to the
+# west between two pillars (x 32), with the anvil, a chest and barrels along the north wall. 2 cars side by side, nose to
+# the east wall, an aisle between them (z 15). A third one does not fit (the pillar at z 20 and the barrel at x 41, z 20).
+abandoned_glass_house bay 35 0 12 41 14 E
+abandoned_glass_house bay 35 0 16 41 18 E
+
+# abandoned_ramp_building (pointed out by the user, 18 Nov 2026): the long hall (x 8..92, z 49..57), 3 floors (y 0, 5, 10).
+# Only y 10 (open to the sky, painted white stripes and a yellow centre line) and y 0 (smooth ground floor) get bays; y 5
+# has none that fit. 3 x 7 cells, nose to the north wall, the tail over the yellow line. Proposed every 4 cells from x 10,
+# the free ones kept (the others have rubble on the floor): y 10 and y 0, 21 in all.
+abandoned_ramp_building bay 10 10 49 12 55 N
+abandoned_ramp_building bay 22 10 49 24 55 N
+abandoned_ramp_building bay 26 10 49 28 55 N
+abandoned_ramp_building bay 30 10 49 32 55 N
+abandoned_ramp_building bay 38 10 49 40 55 N
+abandoned_ramp_building bay 42 10 49 44 55 N
+abandoned_ramp_building bay 50 10 49 52 55 N
+abandoned_ramp_building bay 54 10 49 56 55 N
+abandoned_ramp_building bay 58 10 49 60 55 N
+abandoned_ramp_building bay 62 10 49 64 55 N
+abandoned_ramp_building bay 10 0 49 12 55 N
+abandoned_ramp_building bay 14 0 49 16 55 N
+abandoned_ramp_building bay 18 0 49 20 55 N
+abandoned_ramp_building bay 22 0 49 24 55 N
+abandoned_ramp_building bay 26 0 49 28 55 N
+abandoned_ramp_building bay 30 0 49 32 55 N
+abandoned_ramp_building bay 34 0 49 36 55 N
+abandoned_ramp_building bay 38 0 49 40 55 N
+abandoned_ramp_building bay 42 0 49 44 55 N
+abandoned_ramp_building bay 46 0 49 48 55 N
+abandoned_ramp_building bay 50 0 49 52 55 N
+
 # Stage 6 (16 Nov 2026, approved by the user from docs/spots/bombas_propostas.png): the fuel pumps, IV's own
 # mts:fuelpump, always there, 30% of them with 1 bucket of lava (Draw.PUMP_FUEL_CHANCE), the others empty.
 #   <model> pump <x> <y> <z> <facing>
