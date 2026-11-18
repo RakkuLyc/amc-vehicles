@@ -47,7 +47,9 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
   `docs/spots/bombas_propostas.png`). Modelo: o usuário pediu `mts:fuelpump` (o do IV base) no lugar do
   `mtsofficialpack:fuelpump` que tinha escolhido antes. Conteúdo: primeiro "0 a 3 baldes de lava" (confirmado por ele);
   depois do balanceamento abaixo, 70% vazias e 30% com 1 balde (0.6.0); na 0.6.2 o usuário mudou para **50% vazias e
-  50% com 1, 2 ou 3 baldes** (a mesma chance cada: 1/6), ~1 balde por bomba em média, ~7 por cidade.
+  50% com 1, 2 ou 3 baldes** (a mesma chance cada: 1/6), ~1 balde por bomba em média, ~7 por cidade; **na 0.7.13 (18 Nov
+  2026, pedido do usuário: "de 0 a 3 para 0 a 4") o máximo subiu para 4: 50% vazias e 1, 2, 3 ou 4 baldes com 12,5% cada,
+  1,25 balde por bomba, ~9 por cidade** (as ~7,3 bombas por cidade: 0,61 posto x 8 + 1,21 posto pequeno x 2).
 - **Balanceamento do combustível (16 Nov 2026)**: o usuário mediu que 5 baldes de lava levam um carro por 6 a 7
   cidades (~1,3 cidade por balde) e pediu um balanço. Conta: com 0 a 3 baldes por bomba seriam ~11 baldes por cidade
   (~7 bombas por cidade: 0,61 posto × 8 + 1,21 posto pequeno × 2), e a lava é infinita nos lagos. Escolhas dele:
@@ -244,7 +246,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   (x 8 e 12, z 9, frente N). Conferidas por `find_spots.py --bays` e pelo `PumpTest` (piso embaixo, a célula e a de
   cima livres, em toda cor e rotação; fora das vagas).
 - **Lava**: `Draw.buckets`, função pura da semente da cópia e da posição da bomba (`Spots.Pump.key`, com uma marca que
-  nunca coincide com a chave de uma vaga): 50% vazias (`Draw.PUMP_EMPTY_CHANCE`), as outras 1, 2 ou 3 baldes
+  nunca coincide com a chave de uma vaga): 50% vazias (`Draw.PUMP_EMPTY_CHANCE`), as outras 1 a `MAX_BUCKETS` (4 desde a 0.7.13; 3 antes) baldes
   (`MAX_BUCKETS`) com a mesma chance (o índice 0 decide se tem, o 1 quantos); independentes entre as bombas de um posto
   (testado).
 - **Geração**: como os carros. Um chunk novo com bomba entra em `Pending`. A bomba só é posta quando o chunk dela

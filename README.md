@@ -3,7 +3,7 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.7.12** (17 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**Versão 0.7.13** (18 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
 **aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 57 vagas de 10 estruturas do AMC (lista abaixo; desde a
 0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
@@ -26,8 +26,8 @@ carros abandonados nas estruturas do AMC.
 
 ## Bombas de combustível e combustível
 - Bombas `mts:fuelpump` (do IV) sempre presentes nos postos: 8 no posto (2 em cada ilha) e 2 no posto pequeno
-  (`docs/spots/bombas_propostas.png`). **50% vazias; as outras com 1, 2 ou 3 baldes de lava** (a mesma chance cada; ~1
-  balde por bomba, ~7 por cidade).
+  (`docs/spots/bombas_propostas.png`). **50% vazias; as outras com 1, 2, 3 ou 4 baldes de lava** (a mesma chance cada, 12,5%;
+  ~1,25 balde por bomba, ~9 por cidade; o máximo era 3 até a 0.7.12).
 - **A lava rende 0,05** como combustível de motor (gasolina, diesel e avgas) desde a 0.7.12: ~0,07 cidade por balde (no IV
   puro, ~1,3), ou seja, o consumo é muito rápido (escolha do usuário depois de testar). O mod aplica isso ao iniciar o
   servidor (ou ao entrar num servidor), só na memória, e devolve o valor do IV ao parar; o arquivo `config/mtsconfig.json`
@@ -80,6 +80,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.7.12.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.7.13.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

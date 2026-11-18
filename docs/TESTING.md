@@ -537,3 +537,17 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
 - Testes: 25 de unidade passam; `javap -constants`: `LAVA = 0.05d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to 0.05
   (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)` e a devolução ao parar; `mtsconfig.json` do servidor de teste
   em 1,0 depois de parar.
+
+## Versão 0.7.13 — bombas com 0 a 4 baldes (18 Nov 2026)
+- Pedido do usuário: "passar de 0 a 3 para 0 a 4 de lava nas bombas". Lido como: continua 50% vazias e o máximo sobe de 3
+  para 4 (`Draw.MAX_BUCKETS`): 1, 2, 3 ou 4 baldes com 12,5% cada, média 1,25 balde por bomba (era 1). Se ele quis 0 a 4 com a
+  mesma chance (20% cada), é outra regra: perguntado a ele na entrega.
+- Testes: 25 de unidade passam. `PumpTest.halfEmptyHalfOneToThree` (1.200.000): 0 balde 599.997 (50,0%) e 1, 2, 3, 4 baldes
+  149.791, 150.063, 149.697, 150.452 (12,5% cada). `pumpsOfAStationIndependent` (200.000 postos de 8 bombas): média 9,995
+  baldes (esperado 10) e variância 17,431 (esperado 17,5; antes eram 8 e 10,67); o teste foi atualizado para esses valores.
+- Servidor (mundo novo, 8 áreas de posto geradas uma a uma): 34 bombas, **o tanque de cada uma bate com o sorteado (0
+  diferenças)**; baldes sorteados: 0 em 20, 1 em 8, 3 em 5, 4 em 1 (uma bomba de 4 baldes, 4.000 mB, apareceu). 4 avisos
+  "Can't keep up" (2 a 4 s de atraso) enquanto gerava várias cidades; nenhuma exceção. Uma primeira tentativa com 21 postos de
+  uma vez derrubou o servidor de teste (sobrecarga ao gerar tudo junto; o log foi apagado por engano, então a causa
+  exata não foi lida).
+- Só valem para chunks novos: as bombas já geradas nos mundos do usuário não mudam.

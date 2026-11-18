@@ -87,8 +87,8 @@ class PumpTest {
     }
 
     /**
-     * The pumps of one station are drawn independently: a pump has 1 bucket on average (E[X] = 1, E[X^2] = 14/6,
-     * var 4/3), so a station of 8: mean 8, var 32/3.
+     * The pumps of one station are drawn independently: a pump has 1.25 buckets on average (E[X] = 1.25,
+     * E[X^2] = 0.5 * (1 + 4 + 9 + 16) / 4 = 3.75, var 2.1875), so a station of 8: mean 10, var 17.5.
      */
     @Test
     void pumpsOfAStationIndependent() {
@@ -108,8 +108,8 @@ class PumpTest {
         double mean = sum / n;
         double var = sq / n - mean * mean;
         System.out.printf("buckets per gas station: mean %.3f var %.3f%n", mean, var);
-        assertEquals(8.0, mean, 0.03);
-        assertEquals(32.0 / 3, var, 0.15);
+        assertEquals(10.0, mean, 0.03);
+        assertEquals(17.5, var, 0.2);
     }
 
     @Test

@@ -73,11 +73,11 @@ public final class Draw {
 
     /**
      * Lava in a fuel pump (the user's choice, 0.6.2): {@link #PUMP_EMPTY_CHANCE} empty, else 1 to {@link #MAX_BUCKETS}
-     * buckets with the same chance (1/6 each). History: 0 to 3 the same chance (first choice), then 70% empty and 30%
-     * with 1 bucket (0.6.0, after the balance of 16 Nov 2026).
+     * buckets with the same chance (1/8 each since 0.7.13, when the user raised 3 to 4; 1/6 each with 3). History: 0 to 3
+     * the same chance (first choice), then 70% empty and 30% with 1 bucket (0.6.0, after the balance of 16 Nov 2026).
      */
     public static final double PUMP_EMPTY_CHANCE = 0.5;
-    public static final int MAX_BUCKETS = 3;
+    public static final int MAX_BUCKETS = 4;
 
     /** Buckets of lava in a fuel pump, from the copy and the pump ({@link Spots.Pump#key}). */
     public static int buckets(long lotSeed, long pumpKey) {
