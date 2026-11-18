@@ -512,3 +512,13 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   5 tipos depois de parar.
 - Não testado no jogo: o consumo real com 0,60, e o `ClientHooks` num cliente (a parte de entrar e sair de um servidor).
   O `mtsconfig.json` da instância do usuário segue em 1,0 (corrigido na 0.7.7), a menos que o IV o grave de novo.
+
+## Versão 0.7.10 — lava a 0,45 (17 Nov 2026)
+- Pedido do usuário: reduzir de 0,60 para 0,45 (`FuelBalance.LAVA`). Nada mais mudou.
+- Testes: 25 de unidade passam; `javap -constants` no jar: `LAVA = 0.45d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to
+  0.45 (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; ao parar `... put back to IV's values (server
+  stopped)`; `mtsconfig.json` do servidor de teste com `"lava": 1.0` nos 5 tipos depois de parar.
+- Instância do usuário (lida, não alterada): `mtsconfig.json` com `gasoline`, `diesel` e `avgas` em 0,6, gravado pelo IV em
+  17 Nov 2026, 21:33 (0.7.9). Com o mod, o valor em memória (0,45) manda; o arquivo só muda se o IV o regravar. Com o 0,6
+  no arquivo, o mod guarda 0,6 como "valor do IV" e o devolve ao parar (a devolução não restaura 1,0).
+- Não testado no jogo: o consumo real com 0,45.
