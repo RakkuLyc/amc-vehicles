@@ -267,7 +267,10 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
   bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
 
-## Balanceamento (`FuelBalance`: 0,35 na 0.6.0 a 0.7.4; removido na 0.7.5; 0,60 na 0.7.9; **0,45 desde a 0.7.10**)
+## Balanceamento (`FuelBalance`: 0,35 na 0.6.0 a 0.7.4; removido na 0.7.5; 0,60 na 0.7.9; 0,45 na 0.7.10; **0,35 de novo desde a 0.7.11**)
+- **0.7.11 (17 Nov 2026, pedido do usuário: "diminuir novamente para 0,35")**: só a constante `LAVA` (0,45 para 0,35): cada
+  balde rende 35% do normal do IV, ~0,45 cidade por balde (pela medida dele de ~1,3 a 1,0; 5 baldes ≈ 2,3 cidades). O texto
+  abaixo vale com 0,35.
 - **0.7.10 (17 Nov 2026, pedido do usuário: "reduzir para 0,45")**: só a constante `LAVA` mudou (0,60 para 0,45): cada balde
   rende 45% do normal do IV, ~0,6 cidade por balde (pela medida dele de ~1,3 a 1,0; 5 baldes ≈ 2,9 cidades). O texto
   abaixo vale com 0,45. Na instância dele o `mtsconfig.json` estava com 0,6 gravado pelo IV (17 Nov 2026, 21:33); com o mod

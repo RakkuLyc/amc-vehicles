@@ -522,3 +522,10 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   17 Nov 2026, 21:33 (0.7.9). Com o mod, o valor em memória (0,45) manda; o arquivo só muda se o IV o regravar. Com o 0,6
   no arquivo, o mod guarda 0,6 como "valor do IV" e o devolve ao parar (a devolução não restaura 1,0).
 - Não testado no jogo: o consumo real com 0,45.
+
+## Versão 0.7.11 — lava a 0,35 de novo (17 Nov 2026)
+- Pedido do usuário: de 0,45 para 0,35 (`FuelBalance.LAVA`); nada mais mudou.
+- Testes: 25 de unidade passam; `javap -constants`: `LAVA = 0.35d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to 0.35
+  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; ao parar `... put back to IV's values`; `mtsconfig.json` do
+  servidor de teste com `"lava": 1.0` nos 5 tipos depois de parar.
+- Não testado no jogo: o consumo real com 0,35. O `mtsconfig.json` da instância do usuário não foi alterado nesta versão.
