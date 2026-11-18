@@ -415,6 +415,10 @@ AmcvCommands   /amcv (op 2): comandos de teste
   `AbandonedModernCity/build/libs/`; o usado na 0.2.0 é o de 16 Nov 2026, 02:40). O build compila contra eles e os
   testes usam o código puro do AMC (estruturas e `Def.code`); nenhum vai dentro do jar deste mod.
 - Testes de unidade: `./gradlew test` (mesmo `JAVA_HOME`; ~15 s, o AMC carrega as 52 estruturas).
+  26 testes desde 2026-11-18; o `GoldenDrawTest` compara o sorteio e a posição de cada carro e bomba com
+  `src/test/resources/golden/draw_golden.txt` (rede de segurança da preparação do 1.0.0; a foto da 0.8.1 está em
+  `docs/baseline/README.md`). Se ele falhar, o sorteio ou a posição mudou: só se regrava a referência (apagar o arquivo e
+  rodar de novo) quando a mudança for pedida pelo usuário.
 - Servidor de teste: `./gradlew runServer` (mesmo `JAVA_HOME`), com os jars do IV, dos dois packs e do AMC em `run/mods`;
   mundo normal na semente 20261027, RCON na porta 25576 (senha `teste`), `python3 -I tools/rcon.py "comando" ...`;
   `python3 -I tools/check_bays.py <x> <z> <raio>` confere se cada carro está entre duas faixas;

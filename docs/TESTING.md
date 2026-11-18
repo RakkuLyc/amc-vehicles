@@ -586,3 +586,12 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   packs, como "roller2" e `engineikarus.obj`, e uma tag do Minecraft); nenhuma cita `amcvehicles`. (Uma primeira rodada
   contou esses 12 e eu apaguei o log antes de lê-lo; refiz guardando o log.)
 - Só vale para chunks novos: um prédio-rampa que o mundo do usuário gerou com a 0.8.0 já pode ter carros nele (ficam).
+
+## Preparação do 1.0.0, Fase 0 — rede de segurança (2026-11-18, ainda 0.8.1)
+- Nenhuma mudança no mod: só o teste dourado novo (`GoldenDrawTest`, 26 testes no total, todos passam) e a foto da 0.8.1 em
+  `docs/baseline/` (hashes dos JSON, entradas do jar, constantes, projeção, servidor). Detalhes e números em
+  `docs/baseline/README.md`.
+- O teste dourado foi conferido contra uma mudança de propósito (`DOOR_OPEN_CHANCE` 0,5 para 0,51): falhou na linha 205;
+  desfeita a mudança, passou.
+- Servidor (mundo novo): 6 caixas geradas, 4 carros = 4 sorteados = 4 no lugar, 8 bombas com a lava sorteada, `/amcv fill`
+  na casa de vidro com 2 carros; nenhum ERROR ou WARN do mod no log.
