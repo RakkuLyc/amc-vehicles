@@ -267,7 +267,12 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
   bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
 
-## Balanceamento (`FuelBalance`: 0,35 na 0.6.0 a 0.7.4; removido na 0.7.5; 0,60 na 0.7.9; 0,45 na 0.7.10; **0,35 de novo desde a 0.7.11**)
+## Balanceamento (`FuelBalance`: 0,35 na 0.6.0 a 0.7.4; removido na 0.7.5; 0,60 na 0.7.9; 0,45 na 0.7.10; 0,35 na 0.7.11; **0,05 desde a 0.7.12**)
+- **0.7.12 (17 Nov 2026)**: o usuário testou um jar com a lava a 0,05 ("o consumo está muito rápido, funcionando normalmente.
+  Gostei dessa maneira, quero que seja o padrão"): só a constante `LAVA` (0,35 para 0,05). Cada balde rende 5% do normal do
+  IV: ~0,07 cidade por balde (pela medida dele de ~1,3 a 1,0), ~14 baldes por cidade de viagem; as bombas dão ~7 baldes
+  por cidade e os galões ~0,6, então o combustível fica bem escasso (nota ao usuário: talvez mais lava nas bombas). O tanque
+  de 15% de um carro (2.250 mB) rende ~0,15 cidade. O texto abaixo vale com 0,05.
 - **0.7.11 (17 Nov 2026, pedido do usuário: "diminuir novamente para 0,35")**: só a constante `LAVA` (0,45 para 0,35): cada
   balde rende 35% do normal do IV, ~0,45 cidade por balde (pela medida dele de ~1,3 a 1,0; 5 baldes ≈ 2,3 cidades). O texto
   abaixo vale com 0,35.

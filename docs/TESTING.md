@@ -529,3 +529,11 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; ao parar `... put back to IV's values`; `mtsconfig.json` do
   servidor de teste com `"lava": 1.0` nos 5 tipos depois de parar.
 - Não testado no jogo: o consumo real com 0,35. O `mtsconfig.json` da instância do usuário não foi alterado nesta versão.
+
+## Versão 0.7.12 — lava a 0,05 como padrão (17 Nov 2026)
+- O usuário testou um jar de teste com a lava a 0,05 (`amcvehicles-0.7.11-TESTE-100pct-lava0.05.jar`, não versionado) no
+  jogo dele: "o consumo está muito rápido, funcionando normalmente" (confirmação do consumo no jogo, feita por ele). Pediu
+  para ser o padrão: `FuelBalance.LAVA` de 0,35 para 0,05.
+- Testes: 25 de unidade passam; `javap -constants`: `LAVA = 0.05d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to 0.05
+  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)` e a devolução ao parar; `mtsconfig.json` do servidor de teste
+  em 1,0 depois de parar.
