@@ -267,7 +267,15 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   são `protected` e são usados por reflexão; funcionou no NeoForge (testado). Alternativa, se um dia falhar: pôr o
   bloco e carregar no block entity um NBT, que o IV reconstrói sozinho (`lastLoadedNBT`).
 
-## Balanceamento (REMOVIDO na 0.7.5, 17 Nov 2026; histórico da etapa 6)
+## Balanceamento (`FuelBalance`: 0,35 na 0.6.0 a 0.7.4; removido na 0.7.5; **de volta na 0.7.9 com 0,60**)
+- **0.7.9 (17 Nov 2026, pedido do usuário: "mudar a regra do FuelBalance de novo, dessa vez para 0,60")**: as classes
+  `FuelBalance` e `ClientHooks` voltaram do histórico do git (commit `36560dd`) com `LAVA = 0.60` e os ganchos em
+  `AmcVehicles`; o resto do texto abaixo vale com 0,60 no lugar de 0,35. Cada balde rende 60% do normal do IV: ~0,8 cidade
+  por balde (pela medida dele de ~1,3 a 1,0; 5 baldes ≈ 3,9 cidades). Mesmo comportamento: só na memória ao iniciar o
+  servidor e ao entrar num servidor, valores do IV de volta ao parar/sair, `gasoline`, `diesel` e `avgas`.
+  **Aviso**: se o IV gravar o `mtsconfig.json` com o mundo aberto (controles ou tela de configuração dele), o 0,60 vai
+  para o arquivo e fica depois de tirar o mod (aconteceu com o 0,35 em 17 Nov 2026 e foi corrigido à mão).
+- (Histórico abaixo: a remoção da 0.7.5 e o texto original.)
 - **Removido a pedido do usuário** ("remover a configuração que faz o combustível ser drenado mais rápido"): apagadas as
   classes `FuelBalance` e `ClientHooks` e os ganchos em `AmcVehicles`; o mod não mexe mais no consumo (a lava volta a
   1,0 nos tipos de combustível do IV, ~1,3 cidade por balde pela medida dele). **Mas o arquivo ficou sujo**: em 17 Nov

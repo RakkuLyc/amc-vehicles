@@ -500,3 +500,15 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   tinham `jerrycanFluid: "lava"`; nenhum item indevido (nem galão vazio, nem wrench) e `workshop/barrel` (3.000) sem item indevido.
 - Nota de método: uma primeira rodada passou "tabela N" como um argumento só (o zsh não separa `$t`) e o amostrador não
   imprimiu nada; foi refeita com argumentos separados.
+
+## Versão 0.7.9 — `FuelBalance` de volta, com a lava a 0,60 (17 Nov 2026)
+- Pedido do usuário: "mudar a regra do FuelBalance de novo, dessa vez para 0,60". A regra tinha sido removida na 0.7.5; as
+  classes `FuelBalance` e `ClientHooks` foram restauradas do commit `36560dd` (`git checkout 36560dd -- ...`) e os ganchos
+  de `AmcVehicles` religados; `LAVA = 0.60`.
+- Testes: 25 de unidade passam; a constante dentro do jar (`javap -constants`) é `LAVA = 0.6d`.
+- Servidor (mundo novo): log ao iniciar `[AMCV] Lava as a fuel set to 0.6 (server starting; was: diesel 1.0, avgas 1.0,
+  gasoline 1.0); IV's config file is not changed`; ao parar `[AMCV] Lava as a fuel put back to IV's values (server stopped)`;
+  `/amcv car mercedes` responde `fuel 2250/15000 mB (lava)`; `mtsconfig.json` do servidor de teste com `"lava": 1.0` nos
+  5 tipos depois de parar.
+- Não testado no jogo: o consumo real com 0,60, e o `ClientHooks` num cliente (a parte de entrar e sair de um servidor).
+  O `mtsconfig.json` da instância do usuário segue em 1,0 (corrigido na 0.7.7), a menos que o IV o grave de novo.
