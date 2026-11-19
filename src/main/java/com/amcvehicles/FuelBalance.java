@@ -22,7 +22,7 @@ import java.util.Set;
  * screen during a game: such a save writes 0.05 to the file (to undo it, edit the file). IV's engines read the map
  * every time they burn fuel ({@code PartEngine}), so the change applies at once.
  */
-final class FuelBalance {
+public final class FuelBalance {
     /**
      * Potency of lava as an engine fuel: 0.05 since 0.7.12 (the user's choice after testing it, 17 Nov 2026). Before:
      * 0.35 in 0.6.0 to 0.7.4, none in 0.7.5 to 0.7.8, 0.60 in 0.7.9, 0.45 in 0.7.10, 0.35 in 0.7.11.
@@ -58,6 +58,35 @@ final class FuelBalance {
         }
         AmcVehicles.LOG.info("[AMCV] Lava as a fuel put back to IV's values ({}): {}", when, ORIGINAL);
         ORIGINAL.clear();
+    }
+
+    /**
+     * Before IV writes its config file (ConfigSystemMixin, around {@code ConfigSystem.saveToDisk}): IV's own values
+     * back in memory, so the file never gets the mod's potency. {@link #afterIvSave} sets it again.
+     */
+    public static void beforeIvSave() {
+        put(ORIGINAL);
+    }
+
+    /** After IV wrote its config file: the mod's potency again in the types it had changed. */
+    public static void afterIvSave() {
+        Map<String, Double> lava = new HashMap<>();
+        ORIGINAL.keySet().forEach(type -> lava.put(type, LAVA));
+        put(lava);
+    }
+
+    /** Sets lava to the given potency in each fuel type of the map (types missing from IV's config are skipped). */
+    private static void put(Map<String, Double> potencyByType) {
+        if (potencyByType.isEmpty() || ConfigSystem.settings == null || ConfigSystem.settings.fuel == null
+                || ConfigSystem.settings.fuel.fuels == null) {
+            return;
+        }
+        for (Map.Entry<String, Double> e : potencyByType.entrySet()) {
+            Map<String, Double> m = ConfigSystem.settings.fuel.fuels.get(e.getKey());
+            if (m != null) {
+                m.put("lava", e.getValue());
+            }
+        }
     }
 
     /** Sets lava to {@link #LAVA} in every engine fuel type of IV's config that takes it; logs what changed. */

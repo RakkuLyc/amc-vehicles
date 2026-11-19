@@ -9,6 +9,10 @@ displayName="${mod_name}"
 authors="${mod_authors}"
 description='''${mod_description}'''
 
+# keeps the mod's lava potency out of IV's config file (ConfigSystemMixin)
+[[mixins]]
+config="amcvehicles.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

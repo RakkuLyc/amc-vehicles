@@ -3,7 +3,7 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.9.2** (19 Nov 2026; preparação do 1.0.0, Fase 3: segurança; corrige uma queda do servidor quando o IV recusa montar um carro na geração; aceita só o IV 24.x), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**Versão 0.9.3** (19 Nov 2026; preparação do 1.0.0, Fase 4: defeitos; o `mtsconfig.json` não recebe mais a lava do mod; sem carro duplicado logo depois de o servidor subir. Fase 3, 0.9.2: o servidor não cai mais quando o IV recusa montar um carro na geração; aceita só o IV 24.x), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
 **aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 59 vagas de 11 estruturas do AMC (lista abaixo; desde a
 0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
@@ -30,8 +30,10 @@ carros abandonados nas estruturas do AMC.
 - **A lava rende 0,05** como combustível de motor (gasolina, diesel e avgas) desde a 0.7.12: ~0,07 cidade por balde (no IV
   puro, ~1,3), ou seja, o consumo é muito rápido (escolha do usuário depois de testar). O mod aplica isso ao iniciar o
   servidor (ou ao entrar num servidor), só na memória, e devolve o valor do IV ao parar; o arquivo `config/mtsconfig.json`
-  não é alterado pelo mod. **Cuidado**: se o IV gravar a sua configuração com o mundo aberto, o 0,05 vai para o arquivo; para
-  desfazer, edite `"lava"` para `1.0` em `gasoline`, `diesel` e `avgas`.
+  não é alterado pelo mod. Desde a 0.9.3, quando o IV grava a configuração com o mundo aberto (telas de controles e de
+  configuração, primeira entrada de um jogador), o mod põe os valores do IV de volta só durante a gravação: o arquivo fica
+  com os valores do IV. **Arquivo sujo de versões antigas**: se o seu `mtsconfig.json` já tem `"lava": 0.05` (ou 0,35, 0,45,
+  0,6) em `gasoline`, `diesel` ou `avgas`, edite para `1.0` com o jogo fechado; o mod não tem como saber o valor original.
   (Histórico: 0,35 na 0.6.0 a 0.7.4, removido na 0.7.5, 0,60 na 0.7.9, 0,45 na 0.7.10, 0,35 na 0.7.11.)
 
 ## Loot de oficinas e postos
@@ -80,6 +82,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.9.2.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.9.3.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

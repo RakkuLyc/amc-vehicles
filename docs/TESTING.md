@@ -680,3 +680,39 @@ Modelo de ameaça: o mod não registra pacote de rede e só lê o `spots.txt` em
   subir (`count: 2` na vaga da delegacia).
 - Testes: 31 passam; teste dourado idêntico.
 
+## Versão 0.9.3 — Fase 4 do 1.0.0: defeitos (2026-11-19)
+- **`mtsconfig.json` sujo (corrigido)**. Causa, no código do IV 24.0.0 (`javap -c`): `ConfigSystem.saveToDisk` grava o arquivo
+  inteiro a partir da memória e é chamado com o mundo aberto por `GUIConfig` e `ControlSystem` (telas do cliente) e por
+  `WrapperWorld.onIVWorldTickPre` (o tick do servidor, quando um jogador entra pela primeira vez: o IV dá os itens iniciais,
+  põe o jogador em `general.joinedPlayers` e salva); fora disso, ao carregar (`InterfaceLoader`, `PackParser.parsePacks`),
+  antes de o mod mexer. Correção (aprovada pelo usuário antes: "pode aplicar direto" se o jogo não muda): `ConfigSystemMixin`
+  em volta de `saveToDisk` (início: valores do IV na memória; fim: a lava do mod de novo). Teste no servidor, com um comando
+  temporário (já removido) que chamava `saveToDisk`: resposta "lava in memory 0.05", o arquivo regravado às 10:24:27 com
+  `"lava": 1.0` nos 5 tipos; nenhum erro de mixin no log. Limite: um arquivo que já está sujo (de versões antigas) continua
+  sujo (`FuelBalanceTest.dirtyConfigStaysDirty`); o README explica como limpar. Não testado: as telas do cliente (só o servidor
+  foi testado; o caminho é o mesmo método).
+- **Carro duplicado (corrigido)**. Reproduzido na Fase 3: `/amcv draw` logo depois de o servidor subir pôs um segundo carro na
+  vaga da delegacia (`count: 2`). Causa: as entidades de um chunk carregam depois dele, e a checagem de veículo não as via.
+  Correção: `Generation.ready` exige `ServerLevel.areEntitiesLoaded` dos chunks sob o carro; `AmcWorld.blocked` responde
+  "entities of chunk -21,21 not loaded yet". Teste: o mesmo mundo, `/amcv draw` logo depois de subir: "entities of chunk -21,21
+  not loaded yet" (nada posto); 8 s depois: "occupied by a vehicle"; a contagem ficou em 2 (o duplicado antigo). A geração
+  segue igual: prédio largo e posto num mundo novo, 3 carros = 3 sorteados = 3 no lugar, 8 bombas.
+- **Estresse**: uma cidade inteira (a de -368,368, 4 × 225 = 900 chunks forçados de uma vez), o servidor parado no meio e
+  religado: 3 carros e 4 bombas `(generated)`, 3 veículos em 3 posições diferentes (nenhum duplicado), `Pending` vazio;
+  nenhum ERROR ou WARN do mod nos dois logs; um "Can't keep up" de 6,7 s ao gerar os 900 chunks (o mod pôs 7 itens nessa
+  hora, ~0,5 ms por carro; o resto é a geração do mundo, não medido à parte). Não foram "centenas de cidades": uma cidade.
+- **Nunca testados pelo usuário, conferidos no servidor**: tanque a 15% (Escargot gerado: `fluidLevel 2250` de 15.000, lava);
+  bateria a 0 (o campo `electricPower` não aparece, e o IV não grava zero; antes da 0.7.3 ele aparecia com 12,0); loot
+  (`sample_loot.py`, 400 baús de oficina: banco 7,25%, roda 8,75%, chave 11,5%, motor 1,5%, maçarico 4,0%, repair kit 1,75%,
+  jumper pack 1,0%, todos dentro de 3 desvios; 400 baús de posto: galão cheio 4,0% de 4,4%). Só o usuário pode confirmar no
+  jogo: a bateria descarregada na tela do carro, o jumper pack ligando o carro, o galão cheio despejando lava, o visual.
+- **A janela "chunk salvo antes do `Pending`"** (limite conhecido, não mudado): se o servidor cair depois de salvar um chunk
+  novo e antes de salvar `Pending`, os carros daquele chunk se perdem (nunca duplicam). Para fechar: (a) guardar a marca
+  "pendente" no próprio chunk (anexo de dados do NeoForge, salvo junto com ele; ~40 linhas, continuando a ler o `Pending` dos
+  mundos antigos); (b) salvar `Pending` a cada chunk novo com carro (custo de disco a cada um); (c) deixar como está (o
+  salvamento automático é a cada 5 minutos; perde-se no máximo um carro raro). Recomendação: (c) para o 1.0; decisão do
+  usuário.
+- **Mundo aberto sem o mod** (não testado, pela leitura): o Minecraft não lê arquivos desconhecidos de `data/`
+  (`amcvehicles_pending.dat` fica parado); os carros e as bombas são do IV e continuam; o mixin sai junto com o mod.
+- Testes: 31 passam; teste dourado idêntico.
+

@@ -97,6 +97,14 @@ na geração derrubava o servidor (e de novo a cada início, com o chunk pendent
 ruim do `spots.txt` com o número da linha; senha do RCON de teste por `AMCV_RCON_PASSWORD`; servidor de teste só em
 127.0.0.1; commits novos com o e-mail noreply do GitHub. Testes: 31 (novos `FuelBalanceTest` e `SpotsTest`; para eles o
 `build.gradle` põe `com.mojang:logging:1.2.7` e `slf4j-api:2.0.9` só na execução dos testes).
+Fase 4 (defeitos) **feita na 0.9.3**: (1) o IV grava `config/mtsconfig.json` com o mundo aberto em três lugares, todos por
+`ConfigSystem.saveToDisk` (`GUIConfig`, `ControlSystem` e `WrapperWorld.onIVWorldTickPre`, quando um jogador entra pela
+primeira vez: `joinedPlayers`); o `ConfigSystemMixin` (`com.amcvehicles.mixin`, `amcvehicles.mixins.json`, `[[mixins]]` no
+`neoforge.mods.toml`) põe os valores do IV na memória antes da gravação e a lava do mod depois (`FuelBalance.beforeIvSave`/
+`afterIvSave`): o arquivo fica limpo e o jogo continua com 0,05; um arquivo já sujo continua sujo (editar à mão). (2) Carro
+duplicado: as entidades de um chunk carregam depois dele; `Generation.ready` espera `ServerLevel.areEntitiesLoaded` dos
+chunks sob o carro e `AmcWorld.blocked` responde "entities of chunk x,z not loaded yet" (os comandos não põem o carro).
+Pendente para o usuário decidir: fechar a janela "chunk salvo antes do `Pending`" (ver `docs/TESTING.md`, 0.9.3).
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
 foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
 removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".

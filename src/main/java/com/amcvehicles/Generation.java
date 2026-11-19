@@ -261,10 +261,17 @@ final class Generation {
         return "placed";
     }
 
-    /** Whether every chunk under the body of the car is a loaded full chunk (no load is forced). */
+    /**
+     * Whether every chunk under the body of the car is a loaded full chunk with its entities loaded (no load is
+     * forced): the entities of a chunk load after it, and before that the check for a vehicle already there would
+     * miss one and place the car twice (seen on the test server, 2026-11-19).
+     */
     static boolean ready(ServerLevel level, Placement.Car car) {
         for (int[] cell : car.cells()) {
-            if (level.getChunkSource().getChunkNow(cell[0] >> 4, cell[1] >> 4) == null) {
+            int cx = cell[0] >> 4;
+            int cz = cell[1] >> 4;
+            if (level.getChunkSource().getChunkNow(cx, cz) == null
+                    || !level.areEntitiesLoaded(ChunkPos.asLong(cx, cz))) {
                 return false;
             }
         }

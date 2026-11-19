@@ -16,7 +16,7 @@ até ser testado na fase indicada.
   primeiro), os valores do IV voltam; a segunda aplicação já acha 0,05 e não grava nada como original.
 
 ## Fase 4 (defeitos)
-- **Carro duplicado logo depois de o servidor subir (confirmado, 2026-11-19)**: no mundo de teste, `/amcv draw` na delegacia
+- **[CONFIRMADO e CORRIGIDO na 0.9.3]** **Carro duplicado logo depois de o servidor subir**: no mundo de teste, `/amcv draw` na delegacia
   logo depois de subir o servidor disse "placed" para um carro que já estava lá; depois havia **2** veículos na vaga
   (`execute if entity ...` deu `count: 2`). Causa provável (hipótese): as entidades de um chunk carregam depois do chunk, e
   `AmcWorld.blocked` procura o veículo antes disso. O mesmo vale para `Generation` num chunk pendente depois de uma queda.

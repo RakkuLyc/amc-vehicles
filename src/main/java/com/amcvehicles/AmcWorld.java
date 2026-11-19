@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -70,6 +71,12 @@ final class AmcWorld {
      * generation; not IV's helper entities, such as the ones that follow the players).
      */
     public static String blocked(ServerLevel level, Placement.Car car) {
+        // a vehicle there is only seen once the entities of the chunks under the body are loaded (after the chunk)
+        for (int[] c : car.cells()) {
+            if (!level.areEntitiesLoaded(ChunkPos.asLong(c[0] >> 4, c[1] >> 4))) {
+                return "entities of chunk " + (c[0] >> 4) + "," + (c[1] >> 4) + " not loaded yet";
+            }
+        }
         // the first block over the floor (the car's origin is the model's lift over it)
         int y = (int) Math.floor(car.y());
         for (Entity e : level.getEntities((Entity) null, room(car, y),
