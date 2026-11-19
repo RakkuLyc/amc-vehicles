@@ -1,12 +1,15 @@
-"""Minimal RCON client for the test server (port 25576, password "teste": run/server.properties).
+"""Minimal RCON client for the test server (port 25576; the password of run/server.properties, from the environment
+variable AMCV_RCON_PASSWORD, else the old default "teste").
 
 The server splits a reply longer than 4096 bytes into packets of 4096; Rcon.cmd keeps reading while a packet comes
 full, so long replies come whole. One packet is sent at a time: the vanilla RCON reads one packet per read and closes
 the connection when a read returns a piece shorter than a packet header (two packets sent back to back broke it).
 """
+import os
 import socket, struct
 
-PORT, PASSWORD = 25576, "teste"
+PORT = 25576
+PASSWORD = os.environ.get("AMCV_RCON_PASSWORD", "teste")
 CMD_ID = 10
 CHUNK = 4096
 

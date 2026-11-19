@@ -123,8 +123,16 @@ final class Spots {
      * {@code <model> bay <x0> <y> <z0> <x1> <z1> <facing>}) into {@code bays} or {@code pumps}; a malformed line stops
      * the game with its number.
      */
-    private static void parseLine(String line, int n, Map<String, List<Bay>> bays, Map<String, List<Pump>> pumps) {
-        String[] f = line.split("\\s+");
+    static void parseLine(String line, int n, Map<String, List<Bay>> bays, Map<String, List<Pump>> pumps) {
+        try {
+            parseFields(line.split("\\s+"), line, n, bays, pumps);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("spots.txt line " + n + ": not a number in " + line, e);
+        }
+    }
+
+    private static void parseFields(String[] f, String line, int n, Map<String, List<Bay>> bays,
+                                    Map<String, List<Pump>> pumps) {
         if (f.length == 6 && f[1].equals("pump") && isFacing(f[5])) {
             pumps.computeIfAbsent(f[0], k -> new ArrayList<>()).add(new Pump(Integer.parseInt(f[2]),
                     Integer.parseInt(f[3]), Integer.parseInt(f[4]), f[5].charAt(0)));

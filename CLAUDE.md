@@ -90,6 +90,13 @@ sem formatador automático, só `.editorconfig` (escolha do usuário: 4 espaços
 divididos (`Vehicles.spawn`, `Generation.onLevelTick`, `FuelPumps.place`, os comandos), código repetido num lugar só
 (`AmcWorld.Placed.of`, `AmcvCommands.structureHere`/`spawn`/`forward`), números com nome; as classes, menos `AmcVehicles`,
 visíveis só no pacote. Achados para as Fases 3 a 5 (não corrigidos): `docs/baseline/ACHADOS.md`.
+Fase 2 **aprovada em 2026-11-19**; daí em diante o usuário pediu para seguir as Fases 3 a 6 sem parar, com as decisões
+dadas de uma vez (`docs/baseline/DECISOES_1.0.md`). Fase 3 (segurança) **feita na 0.9.2**: um erro do IV ao montar um carro
+na geração derrubava o servidor (e de novo a cada início, com o chunk pendente): agora vai para o log e o carro é pulado;
+`mts` aceito só em `[24.0.0,25)`; `LICENSE` (MIT, RakkuLyc, 2026); `distributionSha256Sum` no wrapper do Gradle; linha
+ruim do `spots.txt` com o número da linha; senha do RCON de teste por `AMCV_RCON_PASSWORD`; servidor de teste só em
+127.0.0.1; commits novos com o e-mail noreply do GitHub. Testes: 31 (novos `FuelBalanceTest` e `SpotsTest`; para eles o
+`build.gradle` põe `com.mojang:logging:1.2.7` e `slf4j-api:2.0.9` só na execução dos testes).
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
 foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
 removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".

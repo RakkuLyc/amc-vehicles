@@ -27,7 +27,8 @@ description='''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId="mts"
     type="required"
-    versionRange="[24.0.0,)"
+    # only the 24 series: FuelPumps reaches two protected members of IV by reflection (the user's choice, 2026-11-19)
+    versionRange="[24.0.0,25)"
     ordering="AFTER"
     side="BOTH"
 

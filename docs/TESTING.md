@@ -652,3 +652,31 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
 - Não conferido: parâmetros e variáveis locais sem uso foram procurados lendo cada classe (não por ferramenta); o jogo em si
   (visual) não foi testado.
 
+## Versão 0.9.2 — Fase 3 do 1.0.0: segurança (2026-11-19)
+Modelo de ameaça: o mod não registra pacote de rede e só lê o `spots.txt` embutido; quem pode causar dano é um operador
+(nível 2), um mundo com dado corrompido, outra versão do IV ou de um pack, a cadeia de build e o repositório publicado.
+
+| Achado | Evidência | Situação | Gravidade | Correção | Teste |
+|---|---|---|---|---|---|
+| Erro do IV ao montar um carro na geração derruba o servidor | build temporária com `Vehicles.spawn` sempre falhando, delegacia gerada: crash em 2 s (`crash-2026-11-19_09.50.40`); ao reiniciar, crash de novo em 12 s (`10.12.58`), pois o chunk segue pendente | confirmado | alta (o mundo fica inutilizável com o mod) | `Generation.place` pega o erro, registra (`could not spawn ..., the car is dropped`) e pula o carro (escolha do usuário) | o mesmo mundo e a mesma build quebrada: sem crash, o relógio do jogo avança, `pending chunks 0` |
+| `mts` aceito em qualquer versão futura (a reflexão em `FuelPumps` pode quebrar) | `versionRange="[24.0.0,)"` | confirmado | média | `[24.0.0,25)` (escolha do usuário) | build; o NeoForge recusa a 25 na tela (não testado com um IV 25, que não existe) |
+| Falha da reflexão em `FuelPumps` | leitura: o `catch (ReflectiveOperationException \| RuntimeException)` devolve o motivo; `resolve` conta a bomba como resolvida e o chunk sai de `Pending` | confirmado pela leitura | baixa | nenhuma | não testado no servidor |
+| `FuelBalance` restauraria o valor errado (cliente e servidor no single-player) | `FuelBalanceTest`: nas duas ordens os valores do IV voltam | refutado | - | nenhuma | 2 testes |
+| Arquivo `mtsconfig.json` já sujo fica sujo | `FuelBalanceTest.dirtyConfigStaysDirty` | confirmado (limite conhecido) | média | Fase 4 | 1 teste |
+| `Pending` corrompido | arquivo com `chunks` de tipo errado: o mundo abre, lista vazia, sem erro; arquivo aleatório: `Error loading saved data: amcvehicles_pending` e o mundo abre | sem defeito | - | nenhuma | 2 rodadas do servidor |
+| `Pending` sem limite / trabalho por passada | um chunk só fica pendente enquanto os chunks sob um carro dele não estão prontos; cada passada custa uma consulta por chunk pendente; criar um carro custa ~0,5 ms (medido na 0.7.1), uma garagem inteira ~17 ms num tick de 50 ms | sem defeito | - | nenhum limite (não é preciso) | medida existente |
+| Linha ruim do `spots.txt` | um número inválido dava `NumberFormatException` sem a linha | confirmado | baixa (o arquivo é embutido) | `IllegalStateException("spots.txt line N: ...")` | `SpotsTest` (7 linhas ruins, 2 boas) |
+| Comandos | `pump 16`: o Minecraft recusa ("must not be more than 15"); modelo e cor desconhecidos recusados com mensagem; `fill`/`draw` limitados às vagas da estrutura (no máximo 34); nível 2 | sem defeito | - | os números viraram constantes na Fase 2 | servidor |
+| Respostas de comando com `e.toString()` | `car`, `lineup`, `fill` mostram a classe da exceção ao operador | confirmado | baixa (só operador; sem stack trace) | nenhuma | - |
+| Cadeia de build | wrapper sem `distributionSha256Sum`; repositórios: NeoForged (releases e mojang-meta), Mojang libraries, Gradle plugin portal | confirmado | média | hash `72f44c9f...bc3f` (de `services.gradle.org/...sha256` e da página `gradle.org/release-checksums`) | o wrapper baixou numa pasta vazia e aceitou o hash (o caso de um hash errado não foi testado) |
+| Servidor de teste exposto na rede | `server-ip=` vazio, RCON com senha `teste`, `online-mode=false` | confirmado | média (só enquanto roda, na rede local) | `server-ip=127.0.0.1` (em `run/`, fora do git); `rconlib.py` lê `AMCV_RCON_PASSWORD` (padrão `teste`) | as ferramentas continuam conectando |
+| Ferramentas Python | `car_info.py` e `nbt.py` só leem; ninguém extrai arquivos de jar para o disco; tudo roda com `-I` | sem defeito | - | - | leitura |
+| Repositório | sem `LICENSE`; histórico: 0 caminhos pessoais, 0 segredos (só a senha `teste` do servidor local); e-mail pessoal nos commits antigos | confirmado | baixa | `LICENSE` MIT (RakkuLyc, 2026); commits novos com o e-mail noreply do GitHub (escolha do usuário; o histórico não foi reescrito) | `git log -p` |
+| Logs | as linhas do mod têm coordenadas, modelos e motivos; nada pessoal | sem defeito | - | - | log do servidor |
+
+- `libs/` (não versionada), SHA-256: `abandonedmoderncity-0.1.0.jar` `392639e5...20ec5e`, `Immersive Vehicles-1.21.1-24.0.0.jar`
+  `1d2f7512...78d251`, `MTS Official Pack-1.21.1-V29.jar` `f82e67f6...a0b5d8`, `OAmP-1.21.1-V3.jar` `74311b94...433769`.
+- Achado novo para a Fase 4 (no teste do `Pending`): carro **duplicado** quando `/amcv draw` roda logo depois de o servidor
+  subir (`count: 2` na vaga da delegacia).
+- Testes: 31 passam; teste dourado idêntico.
+

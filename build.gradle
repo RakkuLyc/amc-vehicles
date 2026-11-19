@@ -26,6 +26,9 @@ dependencies {
     // and IV's rotation math (pure Java) for the direction of the nose
     testImplementation files('libs/Immersive Vehicles-1.21.1-24.0.0.jar')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+    // Minecraft's logging (the versions of 1.21.1), only to run the tests of classes that log (FuelBalanceTest)
+    testRuntimeOnly 'com.mojang:logging:1.2.7'
+    testRuntimeOnly 'org.slf4j:slf4j-api:2.0.9'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
 }
 

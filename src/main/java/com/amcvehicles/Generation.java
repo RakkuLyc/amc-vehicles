@@ -247,7 +247,15 @@ final class Generation {
         }
         Draw.Car d = p.drawn();
         Placement.Car c = p.car();
-        Vehicles.spawn(level, c.x(), c.y(), c.z(), c.noseYaw(), d);
+        try {
+            Vehicles.spawn(level, c.x(), c.y(), c.z(), c.noseYaw(), d);
+        } catch (RuntimeException e) {
+            // IV refused the car (a pack item gone or renamed, say): out of the tick an error stops the server, and
+            // the chunk, still pending, would stop it again at every start. The car is dropped (the user's choice).
+            AmcVehicles.LOG.error("[AMCV] {} bay {}: could not spawn {}{} ({}), the car is dropped", name, p.bay() + 1,
+                    d.model().key(), d.color(), why, e);
+            return "could not spawn: " + e.getMessage();
+        }
         AmcVehicles.LOG.info("[AMCV] {}{} in {} bay {} at {} {} {} ({})", d.model().key(), d.color(), name, p.bay() + 1,
                 (int) Math.floor(c.x()), (int) Math.floor(c.y()), (int) Math.floor(c.z()), why);
         return "placed";
