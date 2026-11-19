@@ -774,3 +774,17 @@ repository.
 - Build: 31 tests pass; golden test identical; the compiled constants of 0.9.5 equal to 0.9.3's. Jars in `run/jars/`:
   `amcvehicles-0.9.5.jar` and `amcvehicles-0.9.5-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, only local). Not run on the
   server: this version changes no code that runs (comments, documents, tool messages).
+
+## Version 1.0.0 — release (2026-11-19)
+- The user approved phases 3 to 6 and asked for 1.0.0, with my recommendations applied (no code change: the window "chunk
+  saved before `Pending`" stays, the images keep their captions, the mixin stays required).
+- Changes: `neoforge.mods.toml` with `displayURL`, `issueTrackerURL` and `credits` (no `logoFile`: there is no logo
+  image); `CHANGELOG.md`; `mod_version=1.0.0`.
+- Build: 31 tests pass; golden test identical. `amcvehicles-1.0.0.jar` SHA-256 `5b5b165d...2f00502f0`; its
+  `neoforge.mods.toml` has `version="1.0.0"` and the new fields. Test server: the mod loads ("amcvehicles (version 0.9.3 ->
+  1.0.0)" on the world of the previous tests), `/amcv car escargot` builds the car (2,250/15,000 mB of lava), no WARN or
+  ERROR of the mod.
+- Not tested: a clean install on a game client (the test server loads the mod from the source code); the user's first
+  test is that the game opens with this jar (the mixin is required).
+- The user's instance "MAZ 2.0.0 (TESTE)": `mtsconfig.json` with `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read,
+  not changed); "McWW3" at 1.0.

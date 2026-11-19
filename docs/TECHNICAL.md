@@ -1,7 +1,7 @@
 # AMC Vehicles — technical overview
 
 Integration mod for NeoForge 1.21.1 between **Abandoned Modern City** (AMC) and **Immersive Vehicles** (IV): abandoned
-cars in the AMC structures. Version 0.9.5 (2026-11-19; the 1.0.0 work, phase 6: documents in English). Stage 6 content:
+cars in the AMC structures. Version 1.0.0 (2026-11-19; the release after the six phases of the 1.0.0 work). Stage 6 content:
 8 car models and fuel pumps at the gas stations. The cars **appear by themselves** when the world is generated (9% per
 bay) in the 59 parking bays of 11 AMC structures (list below; since 0.6.1 no car at the gas stations, so they do not get
 in the way of a player who comes to fill up), and the pumps at every gas station. Only areas generated after the mod is
@@ -86,6 +86,6 @@ are explained in `docs/spots/README.md`. The car stands centred in the bay.
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.9.5.jar` (it also runs the tests). The folder `libs/` (outside git) needs the jars of
+`build/libs/amcvehicles-1.0.0.jar` (it also runs the tests). The folder `libs/` (outside git) needs the jars of
 Immersive Vehicles, of the two packs and of AMC (their SHA-256 are in `docs/TESTING.md`, version 0.9.2).
 Technical details, decisions and tests: `CLAUDE.md` and `docs/TESTING.md`.

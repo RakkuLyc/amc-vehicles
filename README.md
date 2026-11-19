@@ -2,7 +2,8 @@
 
 A NeoForge 1.21.1 mod that puts abandoned **Immersive Vehicles** cars in the structures of **Abandoned Modern City**:
 in the underground garage of the wide building, the parking lots, the garages of the houses and inside the workshops,
-plus fuel pumps at the gas stations and car parts in the workshops' loot. Version 0.9.5 (2026-11-19), MIT license.
+plus fuel pumps at the gas stations and car parts in the workshops' loot. Version 1.0.0 (2026-11-19), MIT license.
+Changes: `CHANGELOG.md`.
 
 ## Requirements
 - Minecraft 1.21.1 with NeoForge 21.1.219 or newer.
@@ -12,7 +13,7 @@ plus fuel pumps at the gas stations and car parts in the workshops' loot. Versio
 - Abandoned Modern City 0.1.0 (build of 2026-11-16 or newer).
 
 ## Installation
-Put `amcvehicles-0.9.5.jar` in the `mods` folder next to the four mods above. Only **areas generated after** the mod is
+Put `amcvehicles-1.0.0.jar` in the `mods` folder next to the four mods above. Only **areas generated after** the mod is
 installed get cars and fuel pumps; for an area generated before, an operator can run `/amcv draw` inside a structure.
 
 ## What it does

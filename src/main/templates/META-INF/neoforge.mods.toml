@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
+issueTrackerURL="https://github.com/RakkuLyc/amc-vehicles/issues"
 
 [[mods]]
 modId="${mod_id}"
@@ -8,6 +9,8 @@ version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
 description='''${mod_description}'''
+displayURL="https://github.com/RakkuLyc/amc-vehicles"
+credits="Abandoned Modern City; Immersive Vehicles (MTS) with its Official Content Pack and the Official Automobile Pack, whose cars and fuel pump it uses."
 
 # keeps the mod's lava potency out of IV's config file (ConfigSystemMixin)
 [[mixins]]

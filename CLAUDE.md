@@ -115,6 +115,12 @@ Phase 6 (documents in English) **done in 0.9.5**: a short `README.md` for player
 `docs/TESTING.md`, `docs/diagnostic_iv.md` (was `diagnostico_iv.md`), the notes of `docs/baseline/` and the Python tools'
 messages in English; terms in `docs/GLOSSARY.md`; the captions drawn inside the images of `docs/spots/` stay in
 Portuguese, explained in `docs/spots/README.md`.
+Phases 3 to 6 **approved on 2026-11-19**, with my recommendations applied (no code change): the window "chunk saved
+before `Pending`" stays as it is (option c), the images keep their Portuguese captions, `ConfigSystemMixin` stays required.
+**1.0.0 released on 2026-11-19** (the user's OK): `neoforge.mods.toml` with `displayURL`, `issueTrackerURL` and `credits`
+(no logo: there is no image for it), `CHANGELOG.md`, tag `v1.0.0` and a GitHub release with the jar. The user's instance
+"MAZ 2.0.0 (TESTE)" had `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read on 2026-11-19, saved 09:03; not changed:
+it needs his OK and the game closed).
 **Pending (2026-11-16):** the diagnosis of Immersive Vehicles' problems (sound and fuel, `docs/diagnostic_iv.md`) was
 left pending by the user (it waits for his tests and his 4 answers; no fix proposed). Lava at 0.35 was removed in 0.7.5
 (2026-11-17), but the `mtsconfig.json` of his instance kept 0.35 written by IV: see "Balance".
