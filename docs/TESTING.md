@@ -1,729 +1,753 @@
-# AMC Vehicles — testes
+# AMC Vehicles — tests
 
-## Servidor de teste
-- `run/` (fora do git): `server.properties` com RCON na porta 25576 e senha `teste`, servidor na 25598. Etapa 1:
-  mundo plano (`level-type=minecraft:flat`); desde a etapa 2: mundo normal, semente `20261027` (a mesma da bateria
-  do AMC). `run/mods` com `Immersive Vehicles-1.21.1-24.0.0.jar`, `MTS Official Pack-1.21.1-V29.jar` e (desde a
-  etapa 2) `abandonedmoderncity-0.1.0.jar`.
-- Subir: `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew runServer -Dorg.gradle.java.installations.paths=$JAVA_HOME`.
-- Comandos: `python3 -I tools/rcon.py "comando 1" "comando 2"`.
-- As linhas `MTSERROR: Welcome to MTS...`, `Could not do model-based legacy compats on mtsofficialpack:engineamci4` e
-  `For input string: "roller2"` no log são mensagens do próprio IV ao carregar o pack, antes de este mod fazer qualquer coisa (não testei o
-  servidor sem este mod).
+## Test server
+- `run/` (outside git): `server.properties` with RCON on port 25576 and password `teste`, server on 25598. Stage 1: flat
+  world (`level-type=minecraft:flat`); since stage 2: normal world, seed `20261027` (the same as AMC's test battery).
+  `run/mods` with `Immersive Vehicles-1.21.1-24.0.0.jar`, `MTS Official Pack-1.21.1-V29.jar` and (since stage 2)
+  `abandonedmoderncity-0.1.0.jar`. Since 0.9.2 the server listens only on 127.0.0.1 and the tools read the password from
+  `AMCV_RCON_PASSWORD` (default `teste`).
+- Start: `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew runServer -Dorg.gradle.java.installations.paths=$JAVA_HOME`.
+- Commands: `python3 -I tools/rcon.py "command 1" "command 2"`.
+- The lines `MTSERROR: Welcome to MTS...`, `Could not do model-based legacy compats on mtsofficialpack:engineamci4` and
+  `For input string: "roller2"` in the log are messages of IV itself while it loads the pack, before this mod does
+  anything (I did not test the server without this mod).
 
-## Etapa 1 — a Mercedes (16 Nov 2026, versão 0.1.0)
-Rodado no servidor de teste, do console, em (0, -60, 0) e vizinhanças, com o chão plano em y -61:
+## Stage 1 — the Mercedes (2026-11-16, version 0.1.0)
+Run on the test server, from the console, at (0, -60, 0) and around, with the flat ground at y -61:
 
-| Comando | Resposta |
+| Command | Reply |
 |---|---|
-| `execute positioned 0 -60 0 rotated 0 0 run amcv mercedes white true false` | `_white`, nariz para o sul, capô aberto, porta-malas fechado, 1500/15000 mB (lava), 1 motor tirado, peças `9:mts:invisible_standing`, `11:mtsofficialpack:gloveboxscout` |
-| `... positioned 10 -60 0 rotated 90 0 run amcv mercedes police false true` | `_police`, oeste, capô fechado, porta-malas aberto, idem |
-| `... positioned 20 -60 0 rotated 180 0 run amcv mercedes` | `_beige` (sorteada), norte, capô aberto, porta-malas fechado (sorteados), idem |
-| `... positioned -10 -60 0 rotated 270 0 run amcv mercedes salmon true true` | `_salmon`, leste, capô e porta-malas abertos, idem |
+| `execute positioned 0 -60 0 rotated 0 0 run amcv mercedes white true false` | `_white`, nose to the south, hood open, trunk closed, 1500/15000 mB (lava), 1 engine taken out, parts `9:mts:invisible_standing`, `11:mtsofficialpack:gloveboxscout` |
+| `... positioned 10 -60 0 rotated 90 0 run amcv mercedes police false true` | `_police`, west, hood closed, trunk open, the same |
+| `... positioned 20 -60 0 rotated 180 0 run amcv mercedes` | `_beige` (drawn), north, hood open, trunk closed (drawn), the same |
+| `... positioned -10 -60 0 rotated 270 0 run amcv mercedes salmon true true` | `_salmon`, east, hood and trunk open, the same |
 
-Conferido nos dados salvos (`save-all flush` e `data get entity`), **e de novo depois de reiniciar o servidor**:
-- só as peças `part_9` (`mts:invisible_standing`) e `part_11` (`gloveboxscout`): sem motor, rodas ou bancos;
+Checked in the saved data (`save-all flush` and `data get entity`), **and again after restarting the server**:
+- only the parts `part_9` (`mts:invisible_standing`) and `part_11` (`gloveboxscout`): no engine, wheels or seats;
 - `fuelTank`: `currentFluid: "lava"`, `fluidLevel: 1500.0`;
 - `instrument0_systemName: "instrument_car_fuelqty"`, `instrument1_systemName: "instrument_car_spedometer_kph"`;
-- `door_hood: 1.0` na branca (capô aberto); ausente na de polícia (fechado = 0, o IV não grava zero);
-  `door_trunk: 1.0` na de polícia; `door_l` e `door_r` 1,0 nas duas (portas abertas, padrão do pack);
-- `anglesy: -90.0` na de polícia (nariz para o oeste, ângulo do Minecraft 90 com o sinal trocado).
+- `door_hood: 1.0` on the white one (hood open); absent on the police one (closed = 0, IV does not save zero);
+  `door_trunk: 1.0` on the police one; `door_l` and `door_r` 1.0 on both (doors open, the pack's default);
+- `anglesy: -90.0` on the police one (nose to the west, Minecraft angle 90 with the sign flipped).
 
-**Teste do usuário no jogo (0.1.0):** `Mercedes_salmon`, nariz para o sul (o lado anunciado), capô fechado e
-porta-malas aberto como na resposta do comando; porta lateral aberta (padrão do pack na 0.1.0).
+**The user's test in the game (0.1.0):** `Mercedes_salmon`, nose to the south (the announced side), hood closed and trunk
+open as in the command's reply; side door open (the pack's default in 0.1.0).
 
-**Teste do usuário no jogo (0.1.1):** "está tudo funcionando" (16 Nov 2026); etapa 1 aprovada.
+**The user's test in the game (0.1.1):** "everything is working" (2026-11-16); stage 1 approved.
 
-## Versão 0.1.1 — portas sorteadas e marcador à direita (16 Nov 2026)
-Servidor de teste, nariz para o sul:
+## Version 0.1.1 — drawn doors and the gauge to the right (2026-11-16)
+Test server, nose to the south:
 
-| Comando | Resposta |
+| Command | Reply |
 |---|---|
-| `amcv mercedes red false false true false` | porta esquerda aberta, direita fechada |
-| `amcv mercedes` (3 vezes) | `_brown` as duas fechadas; `_silver` e `_black` só a direita aberta |
+| `amcv mercedes red false false true false` | left door open, right closed |
+| `amcv mercedes` (3 times) | `_brown` both closed; `_silver` and `_black` only the right one open |
 
-Dados salvos da vermelha: `door_l: 1.0`, sem `door_r` (fechada = 0), `instrument1_systemName:
-"instrument_car_spedometer_kph"` (meio) e `instrument2_systemName: "instrument_car_fuelqty"` (direita), sem
-instrumento no 0.
+Saved data of the red one: `door_l: 1.0`, no `door_r` (closed = 0), `instrument1_systemName:
+"instrument_car_spedometer_kph"` (middle) and `instrument2_systemName: "instrument_car_fuelqty"` (right), no instrument in
+0.
 
-## Etapa 2 — vagas do prédio largo e `/amcv fill` (16 Nov 2026, versão 0.2.0)
+## Stage 2 — bays of the wide building and `/amcv fill` (2026-11-16, version 0.2.0)
 
-### Detecção (`tools/find_spots.py`)
-`python3 -I tools/find_spots.py <abandoned_wide_building.nbt> 0`: 36 vagas entre as faixas de `white_concrete` do
-piso (camada 0), 34 livres: fileira norte x 11..77 (17 vagas de 3 × 8, nariz N), fileira sul x 3..77 (19 de 3 × 9,
-nariz S), das quais x 43..45 e 47..49 (z 21..27) BLOCKED pela escada. Imagem: `docs/spots/abandoned_wide_building.png`.
+### Detection (`tools/find_spots.py`)
+`python3 -I tools/find_spots.py <abandoned_wide_building.nbt> 0`: 36 bays between the `white_concrete` stripes of the floor
+(layer 0), 34 free: north row x 11..77 (17 bays of 3 × 8, nose N), south row x 3..77 (19 of 3 × 9, nose S), of which
+x 43..45 and 47..49 (z 21..27) BLOCKED by the stairwell. Image: `docs/spots/abandoned_wide_building.png`.
 
-### Testes de unidade (`PlacementTest`, `./gradlew test`, contra o código do AMC)
-- `everyModelOfSpotsExists`: todo modelo de `spots.txt` existe no AMC.
-- `stripesOnBothSidesInEveryRotation`: para cada vaga e cada rotação 0..3, as células logo fora dos dois lados longos
-  da vaga, giradas por `Placement.turn`, são `white_concrete` em `Def.code` do AMC (os blocos que ele põe, com o
-  mato) em 60%+ (passou).
-- `carInsideItsBayAndAlongIt`: o corpo do carro (as colunas que ele cobre) fica dentro da vaga girada, o nariz ao
-  longo do lado comprido e a altura em cima do piso.
-- `turnedDirectionMatchesTurnedPoints` e `yawOfDirections`: a direção girada bate com os pontos girados; o ângulo de
-  cada direção.
-- **O teste pega erros**: trocando de propósito o giro de 1 quarto de volta pelo de 3, `stripesOnBothSides...` falhou
-  ("rot 1: 0 of 16 stripe cells") e `turnedDirection...` também; o código foi devolvido e os 5 passaram.
+### Unit tests (`PlacementTest`, `./gradlew test`, against AMC's code)
+- `everyModelOfSpotsExists`: every model of `spots.txt` exists in AMC.
+- `stripesOnBothSidesInEveryRotation`: for each bay and each rotation 0..3, the cells right outside the two long sides of
+  the bay, turned by `Placement.turn`, are `white_concrete` in AMC's `Def.code` (the blocks it places, with the
+  overgrowth) in 60%+ (passed).
+- `carInsideItsBayAndAlongIt`: the car's body (the columns it covers) lies inside the turned bay, the nose along the long
+  side and the height on top of the floor.
+- `turnedDirectionMatchesTurnedPoints` and `yawOfDirections`: the turned direction matches the turned points; the angle of
+  each direction.
+- **The test catches errors**: swapping on purpose the turn of 1 quarter for that of 3, `stripesOnBothSides...` failed
+  ("rot 1: 0 of 16 stripe cells") and so did `turnedDirection...`; the code was put back and the 5 passed.
 
-### No mundo (semente 20261027)
-- `/amcs locate structure building_large abandoned_wide_building` (de 0, 100, 0): caixa 321,1154 .. 351,1237 (girada:
-  31 × 84), canto 321 1154, rotação 1, chão da cidade y 67 (piso da garagem y 59).
-- `forceload add 300 1130 380 1260` e `execute positioned 336 60 1195 run amcv fill`: **34 vagas, 34 carros, 0
-  pulados**.
-- `python3 -I tools/check_bays.py 336 1195 60`: os 34 carros em y 59,99 (no piso), **10 de 10 células de faixa
-  branca** nas duas colunas a 2 blocos de cada lado do meio do corpo, ao longo dos 5 blocos do corpo, em todos; a
-  fileira de x 342,57 com o nariz para o leste e a de x 329,93 para o oeste: os dois para a borda da caixa (x 351 e
-  321), ou seja, de frente para a parede.
+### In the world (seed 20261027)
+- `/amcs locate structure building_large abandoned_wide_building` (from 0, 100, 0): box 321,1154 .. 351,1237 (turned:
+  31 × 84), corner 321 1154, rotation 1, city ground y 67 (garage floor y 59).
+- `forceload add 300 1130 380 1260` and `execute positioned 336 60 1195 run amcv fill`: **34 bays, 34 cars, 0 skipped**.
+- `python3 -I tools/check_bays.py 336 1195 60`: the 34 cars at y 59.99 (on the floor), **10 of 10 white stripe cells** in
+  the two columns 2 blocks to each side of the middle of the body, along the 5 blocks of the body, on all of them; the row
+  at x 342.57 with the nose to the east and the one at x 329.93 to the west: both to the edge of the box (x 351 and 321),
+  that is, facing the wall.
 
-### Vaga bloqueada e `fill` repetido (0.2.0)
-- Segundo `/amcv fill` com os 34 carros lá: **0 carros, 34 pulados** ("occupied by a vehicle at 342 59 1166"...):
-  não empilha.
-- `kill` dos carros, `setblock 343 60 1170 minecraft:stone` (dentro da vaga 2) e `fill`: **33 carros, 1 pulado**
-  ("bay 2: Stone at 343 60 1170"); a resposta em várias linhas aparece inteira no console.
+### Blocked bay and repeated `fill` (0.2.0)
+- A second `/amcv fill` with the 34 cars there: **0 cars, 34 skipped** ("occupied by a vehicle at 342 59 1166"...): it
+  does not stack.
+- `kill` of the cars, `setblock 343 60 1170 minecraft:stone` (inside bay 2) and `fill`: **33 cars, 1 skipped** ("bay 2:
+  Stone at 343 60 1170"); the multi-line reply shows whole in the console.
 
-### Direção do nariz (`NoseYawTest`, com o jar do IV no classpath dos testes)
-`RotationMatrix.setToAngles(0, -yaw, 0)` aplicado ao +Z do modelo (a frente do merc230): yaw 0 → +Z (sul), 90 → -X
-(oeste), 180 → -Z (norte), 270 → +X (leste); e `Placement.yaw` concorda com isso nas 4 direções. Assim o "nariz para
-o leste/oeste" do `check_bays.py` (que lê `anglesy` com a mesma regra) não depende só da suposição do sinal.
+### Direction of the nose (`NoseYawTest`, with IV's jar on the tests' classpath)
+`RotationMatrix.setToAngles(0, -yaw, 0)` applied to the model's +Z (the front of the merc230): yaw 0 → +Z (south), 90 → -X
+(west), 180 → -Z (north), 270 → +X (east); and `Placement.yaw` agrees with it in the 4 directions. So the "nose to the
+east/west" of `check_bays.py` (which reads `anglesy` with the same rule) does not depend only on the assumption of the
+sign.
 
-**Não visto no jogo:** a aparência na garagem (o carro inteiro dentro da vaga, sem atravessar paredes ou pilares) e
-a garagem de outras rotações no mundo (só a rotação 1 foi testada no mundo; as 4 nos testes de unidade).
+**Not seen in the game:** the look in the garage (the whole car inside the bay, without going through walls or pillars)
+and the garage in other rotations in the world (only rotation 1 was tested in the world; the 4 in the unit tests).
 
-## Etapa 3 — geração no mundo (16 Nov 2026, versão 0.3.0)
+## Stage 3 — generation in the world (2026-11-16, version 0.3.0)
 
-### Testes de unidade (`DrawTest`)
-- `sameInputSameCar`: o sorteio é determinístico.
-- `chancesAndColours` (2.000.000 vagas): 2,99% com carro; capô 50,1%, porta-malas 50,0%, porta esquerda 49,8%,
-  direita 50,1%; as 15 cores civis entre 3.870 e 4.088 (1/15 ± 0,5%); nenhuma de polícia.
-- `policeOnlyPoliceColours`: na delegacia só `_police` e `_police2`.
-- `projectionPerCity`: o planejador real do AMC (terreno plano, sementes 20261027, 3478477863671517581,
-  -3297019724594858492, 1 e 42; as cidades de 12 × 12 células de cada), com o sorteio pela posição da vaga: 492
-  cidades, 172 com prédio largo (35,0%), 5.848 vagas (11,9 por cidade), 159 carros (0,32 por cidade; 2,72% das vagas,
-  dentro do acaso para 3%: o esperado seria 175 ± 13); cidades com 0 carros 380 (77,2%), 1 74 (15,0%), 2 30 (6,1%),
-  3 7 (1,4%), 4 1 (0,2%); 0,92 carro por prédio largo.
+### Unit tests (`DrawTest`)
+- `sameInputSameCar`: the draw is deterministic.
+- `chancesAndColours` (2,000,000 bays): 2.99% with a car; hood 50.1%, trunk 50.0%, left door 49.8%, right 50.1%; the 15
+  civilian colours between 3,870 and 4,088 (1/15 ± 0.5%); no police one.
+- `policeOnlyPoliceColours`: at the police station only `_police` and `_police2`.
+- `projectionPerCity`: AMC's real planner (flat terrain, seeds 20261027, 3478477863671517581, -3297019724594858492, 1 and
+  42; the cities of 12 × 12 cells of each), with the draw by the position of the bay: 492 cities, 172 with a wide building
+  (35.0%), 5,848 bays (11.9 per city), 159 cars (0.32 per city; 2.72% of the bays, within chance for 3%: the expected
+  would be 175 ± 13); cities with 0 cars 380 (77.2%), 1 74 (15.0%), 2 30 (6.1%), 3 7 (1.4%), 4 1 (0.2%); 0.92 car per wide
+  building.
 
-### No mundo (semente 20261027)
-Primeira rodada com o sorteio pela ordem da vaga e uma fila em memória; o revisor apontou dois caminhos que o jogo
-normal alcança e os testes não (um chunk que cai abaixo de completo e volta sem novo evento de carregamento; um chunk
-com dois carros em que um espera, que repetia o log a cada 10 ticks), e que o sorteio pela ordem mudaria se as vagas
-de um modelo fossem reordenadas. Corrigido (o mod percorre `Pending`; carros resolvidos não são tentados de novo; o
-sorteio usa a posição da vaga; "ocupado" só por `mts:builder_existing`) e **tudo rodado de novo, num mundo novo**:
+### In the world (seed 20261027)
+A first round with the draw by the order of the bay and a queue in memory; the reviewer pointed at two paths the normal
+game reaches and the tests do not (a chunk that drops below full and comes back without a new load event; a chunk with
+two cars where one waits, which repeated the log every 10 ticks), and that the draw by order would change if the bays of a
+model were reordered. Fixed (the mod goes through `Pending`; resolved cars are not tried again; the draw uses the position
+of the bay; "occupied" only by `mts:builder_existing`) and **everything run again, in a new world**:
 
-- **Contagem exata**: 12 prédios largos (`/amcs locate` de uma grade de 7 × 7 pontos, 736 de distância),
-  `tools/check_generation.py --load` (forceload de cada caixa, que a gera): em todos, carros na caixa = sorteados =
-  "occupied by a vehicle" no `/amcv draw`; **11 carros, 11 sorteados, 11 no lugar**; 11 linhas `(generated)` no log,
-  nenhuma vaga pulada.
-- **Muitos carros por chunk (chance trocada para 100% só neste teste, depois devolvida a 3%: o diff do `Draw.java`
-  não tem a linha, e `javap -constants` do jar mostra `CHANCE_PER_BAY = 0.03d`)**: mundo novo; `forceload` só do chunk
-  162,207 (perto da caixa 2593,3265): as vagas 8 a 17 (nos chunks completos 162..164 da fileira 205) postas, 10 linhas
-  no log, as outras esperando os chunks delas nascerem; `forceload` da caixa inteira: **33 carros e 1 vaga pulada**
-  ("bay 25 skipped (generated): Chest at 2643 64 3272", um baú sorteado pelo AMC dentro da vaga), **34 linhas, uma
-  por vaga, nenhuma repetida** (iguais 10 s depois), `pending chunks 0`.
-- **Faixas, 4 rotações no mundo** (`check_bays.py`, na primeira rodada; o giro e a posição não mudaram com as
-  correções): os carros gerados das caixas -1300,-1976 (3) e 385,1857 (3) e -2559,-1240 (2), e `/amcv fill` nas
-  caixas 1000,-2410 (rotação 2) e 2593,-1087 (rotação 0): **todos com 10/10 células de faixa**, 17 narizes N e 17 S nas
-  caixas de rotação 0 e 2, E/W nas de rotação 1 e 3.
-- **Reinício** (primeira rodada): 79 carros antes e 79 depois; nenhuma linha `[AMCV] Mercedes` nova; as 10 caixas
-  geradas de novo 11/11/11; `pending chunks 0`.
-- **Borda (chunk completo que não roda)** (primeira rodada): `forceload add` só do chunk 166,204: a Mercedes cujo corpo
-  fica todo no chunk 164,204 (a 2 do forçado: completo, sem tick) foi posta ("(generated)"); dados salvos iguais aos de
-  um carro normal (só invisible_standing e gloveboxscout, 1.500 de lava, velocímetro no 1, combustível no 2, portas e
-  porta-malas sorteados).
-- **Pendente sobrevive a um reinício** (primeira rodada): dono no chunk -243,-304 (a 2 do forçado -245,-304: completo)
-  e corpo também em -242,-304 (a 3: não completo): `pending chunks 1`, sem carro; servidor parado e reiniciado: ainda
-  `pending chunks 1`, sem carro; `forceload add` de -242,-304: o carro apareceu, `pending chunks 0`.
-- **Pendente sobrevive a descarregar** (segunda rodada): a Mercedes prata da vaga 13 da caixa 4648,-415 (dono 291,-25,
-  corpo também em 292,-25): `forceload` de 289,-25 → `pending chunks 1`, sem carro; `forceload remove` e 20 s → ainda
-  1, sem carro; `forceload add` de novo → 1, sem carro; `forceload add` de 292,-25 → **o carro apareceu**,
-  `pending chunks 0`.
+- **Exact count**: 12 wide buildings (`/amcs locate` from a grid of 7 × 7 points, 736 apart),
+  `tools/check_generation.py --load` (forceload of each box, which generates it): in all of them, cars in the box = drawn =
+  "occupied by a vehicle" in `/amcv draw`; **11 cars, 11 drawn, 11 in place**; 11 `(generated)` lines in the log, no bay
+  skipped.
+- **Many cars per chunk (chance switched to 100% only for this test, then put back to 3%: the diff of `Draw.java` does not
+  have the line, and `javap -constants` of the jar shows `CHANCE_PER_BAY = 0.03d`)**: new world; `forceload` only of chunk
+  162,207 (near the box 2593,3265): bays 8 to 17 (in the full chunks 162..164 of row 205) placed, 10 lines in the log, the
+  others waiting for their chunks to be born; `forceload` of the whole box: **33 cars and 1 bay skipped** ("bay 25 skipped
+  (generated): Chest at 2643 64 3272", a chest drawn by AMC inside the bay), **34 lines, one per bay, none repeated** (the
+  same 10 s later), `pending chunks 0`.
+- **Stripes, 4 rotations in the world** (`check_bays.py`, in the first round; the turn and the position did not change with
+  the fixes): the generated cars of the boxes -1300,-1976 (3) and 385,1857 (3) and -2559,-1240 (2), and `/amcv fill` in the
+  boxes 1000,-2410 (rotation 2) and 2593,-1087 (rotation 0): **all with 10/10 stripe cells**, 17 noses N and 17 S in the
+  boxes of rotation 0 and 2, E/W in those of rotation 1 and 3.
+- **Restart** (first round): 79 cars before and 79 after; no new `[AMCV] Mercedes` line; the 10 boxes generated again
+  11/11/11; `pending chunks 0`.
+- **Edge (a full chunk that does not tick)** (first round): `forceload add` only of chunk 166,204: the Mercedes whose body
+  lies wholly in chunk 164,204 (2 from the forced one: full, no tick) was placed ("(generated)"); saved data the same as
+  a normal car's (only invisible_standing and gloveboxscout, 1,500 of lava, speedometer in 1, fuel in 2, doors and trunk
+  drawn).
+- **A pending chunk survives a restart** (first round): owner in chunk -243,-304 (2 from the forced -245,-304: full) and
+  body also in -242,-304 (3 away: not full): `pending chunks 1`, no car; server stopped and restarted: still `pending
+  chunks 1`, no car; `forceload add` of -242,-304: the car appeared, `pending chunks 0`.
+- **A pending chunk survives unloading** (second round): the silver Mercedes of bay 13 of the box 4648,-415 (owner 291,-25,
+  body also in 292,-25): `forceload` of 289,-25 → `pending chunks 1`, no car; `forceload remove` and 20 s → still 1, no car;
+  `forceload add` again → 1, no car; `forceload add` of 292,-25 → **the car appeared**, `pending chunks 0`.
 
-### Ferramentas corrigidas no caminho (não eram defeitos do mod)
-- `check_bays.py` pareava a lista de posições com a de `anglesy`, mas o IV não grava `anglesy` quando é 0 (nariz para
-  o sul): as listas desalinhavam e os narizes saíam errados. Agora pergunta o ângulo de cada carro (ausente = 0).
-- O RCON parte respostas acima de 4096 bytes; o cliente lia só o primeiro pedaço (`tools/rconlib.py` agora lê
-  todos). Mandar o comando e um marcador colados derrubava a conexão: o `RconClient` do jogo lê até 1.460 bytes, trata
-  um pacote por leitura e fecha quando uma leitura traz menos de 10 bytes (conferido no código do Minecraft 1.21.1);
-  agora vai um pacote por vez.
-- O primeiro comando do AMC depois de iniciar o servidor planeja as cidades (~10 s, "Planning cities"; o servidor fica
-  parado nesse tempo).
+### Tools fixed along the way (they were not defects of the mod)
+- `check_bays.py` paired the list of positions with that of `anglesy`, but IV does not save `anglesy` when it is 0 (nose
+  to the south): the lists went out of step and the noses came out wrong. Now it asks the angle of each car (absent = 0).
+- RCON splits replies above 4096 bytes; the client read only the first piece (`tools/rconlib.py` now reads all of them).
+  Sending the command and a marker stuck together broke the connection: the game's `RconClient` reads up to 1,460 bytes,
+  handles one packet per read and closes when a read brings less than 10 bytes (checked in Minecraft 1.21.1's code); now
+  one packet goes at a time.
+- AMC's first command after the server starts plans the cities (~10 s, "Planning cities"; the server stands still
+  meanwhile).
 
-**Não visto no jogo:** um carro gerado sozinho, com um jogador andando (os testes usaram forceload; a borda da visão
-do jogador é o caso "completo sem tick", testado acima).
+**Not seen in the game:** a car generated by itself, with a player walking (the tests used forceload; the edge of the
+player's view is the "full without tick" case, tested above).
 
-## Etapa 4 — as outras estruturas (16 Nov 2026, versão 0.4.0)
+## Stage 4 — the other structures (2026-11-16, version 0.4.0)
 
-### Levantamento e proposta
-- Varredura de todos os 30 modelos, todas as camadas, todo bloco com 8+ células na camada como possível faixa
-  (`find_spots.py` por bloco): fora o prédio largo, só falsos positivos (tábuas do piso das casas e do prédio das
-  rampas, a grade de concreto branco do saguão da torre, o piso do prédio azulado e do apocalíptico) e, no posto, as
-  próprias ilhas das bombas (contornadas de terracota vermelha). Mapas de piso coberto/aberto para achar as garagens.
-- Proposta (`docs/spots/etapa4_propostas.png`), aprovada pelo usuário; ele acrescentou a farmácia grande e escolheu o
-  nariz sorteado nos postos. Ajustes antes da proposta, pela checagem de `find_spots.py --bays`: oficina média (uma
-  coluna em x 6: vagas em x 8..10 e 13..15), casa moderna (blocos em z 9: vagas de z 10), farmácia grande (a sebe da
-  fachada em z 8..9: vagas até z 7).
+### Survey and proposal
+- A sweep of all 30 models, every layer, every block with 8+ cells in the layer as a possible stripe (`find_spots.py` per
+  block): apart from the wide building, only false positives (the floor planks of the houses and of the ramp building, the
+  white concrete grid of the tower's lobby, the floor of the bluish building and of the apocalyptic one) and, at the gas
+  station, the islands of the pumps themselves (edged with red terracotta). Maps of covered/open floor to find the garages.
+- Proposal (`docs/spots/etapa4_propostas.png`), approved by the user; he added the large pharmacy and chose the drawn nose
+  at the gas stations. Adjustments before the proposal, from the check of `find_spots.py --bays`: medium workshop (a column
+  at x 6: bays at x 8..10 and 13..15), modern house (blocks at z 9: bays from z 10), large pharmacy (the hedge of the front
+  at z 8..9: bays up to z 7).
 
-### Testes de unidade
-- `PlacementTest.floorAndRoomInEveryRotationAndVariant` (novo): toda vaga, nas 4 rotações, em **toda variante de cor**
-  do modelo, tem piso em todas as células e 2 blocos livres (ar, nada salvo, plantas, tapetes, cipós) em cima, em
-  `Def.code` do AMC (com o mato): 10.628 células conferidas. **O teste pega erro**: com a vaga da oficina média de volta
-  em x 6..8, falhou ("workshop_medium_blue_black ... cell 6,4: minecraft:polished_blackstone 1 over the floor"); o
-  arquivo foi devolvido.
-- `stripesOnBothSidesInEveryRotation`: agora só para os modelos de faixa pintada (o prédio largo).
-- `carInsideItsBayAndAlongIt`: os dois sentidos das vagas de nariz sorteado.
-- `DrawTest.projectionPerCity` (as 57 vagas): 16.567 vagas em 492 cidades (33,7 por cidade), 497 carros (1,01 por
-  cidade, 3,00%); cidades com 0 carros 196 (39,8%), 1 166 (33,7%), 2 80 (16,3%), 3 31 (6,3%), 4 18 (3,7%), 6 1 (0,2%).
+### Unit tests
+- `PlacementTest.floorAndRoomInEveryRotationAndVariant` (new): every bay, in the 4 rotations, in **every colour variant**
+  of the model, has a floor in every cell and 2 free blocks (air, structure void, plants, carpets, vines) on top, in AMC's
+  `Def.code` (with the overgrowth): 10,628 cells checked. **The test catches an error**: with the medium workshop's bay
+  back at x 6..8, it failed ("workshop_medium_blue_black ... cell 6,4: minecraft:polished_blackstone 1 over the floor");
+  the file was put back.
+- `stripesOnBothSidesInEveryRotation`: now only for the models of painted stripes (the wide building).
+- `carInsideItsBayAndAlongIt`: both ways of the bays with a drawn nose.
+- `DrawTest.projectionPerCity` (the 57 bays): 16,567 bays in 492 cities (33.7 per city), 497 cars (1.01 per city,
+  3.00%); cities with 0 cars 196 (39.8%), 1 166 (33.7%), 2 80 (16.3%), 3 31 (6.3%), 4 18 (3.7%), 6 1 (0.2%).
 
-### No mundo (semente 20261027, mundo novo)
-- Uma cópia de cada estrutura nova (`/amcs locate structure ...` de 0, 100, 0). **Geração, contagem exata**
-  (`check_generation.py --load` nas 9 caixas): 8 sem carro sorteado e a delegacia com 1 (`Mercedes_police2`, vaga 1):
-  **1 carro, 1 sorteado, 1 no lugar**.
-- **`/amcv fill`** em cada uma: oficina média 2/2 (rotação 2), oficina pequena 2/2 (rotação 2), posto 4/4 (rotação 3),
-  posto pequeno 2/2 (rotação 0), farmácia grande 4/4 (rotação 0), delegacia 4/4 (rotação 2), casa com garagem 1/1,
-  casa suburbana 2/2 (rotação 2); casa moderna **0/2 na primeira rodada: "Moss Carpet at 242 70 184"**: o tapete de
-  musgo do mato do AMC tem colisão de 1/16 e a checagem o tratava como obstáculo; corrigido (`AmcWorld.THIN`: no
-  primeiro bloco sobre o piso, até 1/4 de altura não barra) e de novo: **2/2**. Total 23 carros.
-- **Delegacia**: os 4 carros só de cores de polícia (2 `_police`, 2 `_police2`); `check_bays.py ... white_concrete`:
-  6, 7, 8 e 7 de 10 células de faixa (as linhas são gastas no modelo), nariz para o prédio.
-- **Farmácia grande**: `check_bays.py` dá 2 a 4/10, porque ele procura a faixa a 2 blocos do meio e estas vagas têm 4 de
-  largura (a faixa fica a 3 de um lado); conferido pela conta: vaga x 2..5, z 1..7 da cópia de canto -317,172, rotação
-  0, meio em x -313,0, z 176,5; o carro está em x -313,00, z 175,075 (= 176,5 - 1,425, nariz para o sul). Exato.
-- **Postos**: narizes misturados como pedido (posto: 3 N e 1 S; posto pequeno: 1 E e 1 W).
+### In the world (seed 20261027, new world)
+- One copy of each new structure (`/amcs locate structure ...` from 0, 100, 0). **Generation, exact count**
+  (`check_generation.py --load` in the 9 boxes): 8 without a drawn car and the police station with 1 (`Mercedes_police2`,
+  bay 1): **1 car, 1 drawn, 1 in place**.
+- **`/amcv fill`** in each: medium workshop 2/2 (rotation 2), small workshop 2/2 (rotation 2), gas station 4/4 (rotation 3),
+  small gas station 2/2 (rotation 0), large pharmacy 4/4 (rotation 0), police station 4/4 (rotation 2), garage house 1/1,
+  suburban house 2/2 (rotation 2); modern house **0/2 in the first round: "Moss Carpet at 242 70 184"**: the moss carpet of
+  AMC's overgrowth has a collision of 1/16 and the check treated it as an obstacle; fixed (`AmcWorld.THIN`: on the first
+  block over the floor, up to 1/4 of height does not block) and again: **2/2**. Total 23 cars.
+- **Police station**: the 4 cars only of police colours (2 `_police`, 2 `_police2`); `check_bays.py ... white_concrete`:
+  6, 7, 8 and 7 of 10 stripe cells (the lines are worn in the model), nose to the building.
+- **Large pharmacy**: `check_bays.py` gives 2 to 4/10, because it looks for the stripe 2 blocks from the middle and these
+  bays are 4 wide (the stripe is 3 away on one side); checked by the sum: bay x 2..5, z 1..7 of the copy with corner
+  -317,172, rotation 0, middle at x -313.0, z 176.5; the car is at x -313.00, z 175.075 (= 176.5 - 1.425, nose to the
+  south). Exact.
+- **Gas stations**: mixed noses as asked (gas station: 3 N and 1 S; small gas station: 1 E and 1 W).
 
-- **O segundo carro do `kill`** (2 apagados, 1 nas 9 caixas): `Mercedes_blue in gas_station_small_yellow bay 2 at 309
-  70 338 (generated)`, um posto pequeno vizinho, num chunk da borda da área carregada.
-- **Geração em todas as vagas novas (chance trocada para 100% só neste teste, depois devolvida a 3%: `git diff` vazio
-  e `javap -constants` do jar com `CHANCE_PER_BAY = 0.03d`, build com `--rerun-tasks`)**: mundo novo, as mesmas 9
-  caixas: **23 carros, 23 sorteados, 23 no lugar**, nenhuma vaga pulada; 28 linhas `(generated)` (as 23 e 5 de
-  estruturas vizinhas nos chunks da borda), nenhuma repetida; narizes do posto 2 N e 2 S, do posto pequeno 1 E e 1 W
-  (o caminho do nariz sorteado na geração); `pending chunks 0`.
-- **Carros sobre o tapete de musgo**: os 2 da casa moderna, segundos depois, em y 69,991 (o piso da camada do chão
-  está em y 69 e o carro fica em cima dele, como os outros: ~0,01 abaixo do topo do bloco); os tapetes continuam lá
-  (`execute if block 242 70 184 minecraft:moss_carpet` passou).
+- **The second car of the `kill`** (2 removed, 1 in the 9 boxes): `Mercedes_blue in gas_station_small_yellow bay 2 at 309
+  70 338 (generated)`, a neighbouring small gas station, in a chunk at the edge of the loaded area.
+- **Generation in every new bay (chance switched to 100% only for this test, then put back to 3%: `git diff` empty and
+  `javap -constants` of the jar with `CHANCE_PER_BAY = 0.03d`, build with `--rerun-tasks`)**: new world, the same 9 boxes:
+  **23 cars, 23 drawn, 23 in place**, no bay skipped; 28 `(generated)` lines (the 23 and 5 of neighbouring structures in
+  the chunks of the edge), none repeated; noses of the gas station 2 N and 2 S, of the small gas station 1 E and 1 W (the
+  path of the drawn nose in the generation); `pending chunks 0`.
+- **Cars on the moss carpet**: the 2 of the modern house, seconds later, at y 69.991 (the floor of the ground layer is at
+  y 69 and the car stands on top of it, like the others: ~0.01 below the top of the block); the carpets are still there
+  (`execute if block 242 70 184 minecraft:moss_carpet` passed).
 
-**Não visto no jogo:** a aparência nestas estruturas (o carro dentro da garagem sem atravessar parede, ao lado da ilha
-sem atravessar a bomba, antes da sebe da farmácia); as outras variantes de cor só nos testes de unidade (no mundo,
-uma variante de cada).
+**Not seen in the game:** the look in these structures (the car inside the garage without going through a wall, beside
+the island without going through the pump, before the pharmacy's hedge); the other colour variants only in the unit tests
+(in the world, one variant of each).
 
-## Versão 0.4.1 — garagens da casa abandonada e do prédio pequeno (16 Nov 2026)
-- Apontadas pelo usuário. Casa abandonada: a sala da frente à esquerda não tem parede na frente (z 13, ar até 4 de
-  altura), piso de pedra; prédio pequeno: térreo de pilotis aberto na frente, camadas 1 a 5 livres. Proposta
-  (`docs/spots/garagens_propostas.png`) conferida com `find_spots.py --bays`: a vaga 3 do prédio pequeno batia num banco
-  de escada de abeto em x 15..16, z 12 e foi para x 12..14. Aprovada pelo usuário ("Aprovar as 6").
-- Testes de unidade: todos passam; `floorAndRoom` 11.204 células; projeção 19.905 vagas em 492 cidades (40,5 por
-  cidade), 599 carros (1,22 por cidade, 3,01%), 162 cidades sem carro (32,9%); casa abandonada 0,07 por cópia, prédio
-  pequeno 0,11.
-- No mundo (semente 20261027, mundo novo): 2 cópias de cada (`/amcs locate` de 0,0, 1500,1500 e -1500,1500).
-  Geração: nenhum carro sorteado nas 4 (3%), 0 no mundo, igual. `/amcv fill`: casa abandonada 2/2 (rotações 0 e 2),
-  prédio pequeno 4/4 (duas cópias de rotação 1), nenhuma vaga pulada. O caminho da geração é o mesmo das outras vagas
-  (só os dados mudaram); não foi refeita a rodada a 100%.
+## Version 0.4.1 — garages of the abandoned house and of the small building (2026-11-16)
+- Pointed at by the user. Abandoned house: the front room on the left has no front wall (z 13, air up to 4 high), stone
+  floor; small building: ground floor on pillars open at the front, layers 1 to 5 free. Proposal
+  (`docs/spots/garagens_propostas.png`) checked with `find_spots.py --bays`: bay 3 of the small building hit a spruce
+  stair bench at x 15..16, z 12 and moved to x 12..14. Approved by the user ("Approve the 6").
+- Unit tests: all pass; `floorAndRoom` 11,204 cells; projection 19,905 bays in 492 cities (40.5 per city), 599 cars (1.22
+  per city, 3.01%), 162 cities without a car (32.9%); abandoned house 0.07 per copy, small building 0.11.
+- In the world (seed 20261027, new world): 2 copies of each (`/amcs locate` from 0,0, 1500,1500 and -1500,1500).
+  Generation: no car drawn in the 4 (3%), 0 in the world, the same. `/amcv fill`: abandoned house 2/2 (rotations 0 and 2),
+  small building 4/4 (two copies of rotation 1), no bay skipped. The path of the generation is the same as the other
+  bays' (only the data changed); the 100% round was not redone.
 
-## Versão 0.4.2 — carros apoiados nos blocos de apoio, não enterrados (16 Nov 2026)
-- O usuário testou com um jar de teste a 100% (não versionado) e viu os carros meio enterrados (print: a soleira e as
-  caixas de roda abaixo do piso, um bloco escuro afundado sob a caixa da roda dianteira).
-- Causa, medida no pack: o `merc230.obj` tem os objetos `cube_fl/fr/rl/rr` (blocos de apoio nas posições das rodas,
-  visíveis quando falta a roda: `part_present_N` = 0 e `terrain_distance` 0..0,7 no `merc230.json`) com o ponto mais
-  baixo em y -0,46875 (o mais baixo do modelo; a carroceria -0,1875); as caixas de colisão mais baixas também descem a
-  -0,47. A origem era posta no piso, então tudo afundava 0,47. O ponto mais alto do modelo: 1,625 (giroflex das cores
-  de polícia), carroceria 1,5625.
-- Correção: origem 0,46875 acima do piso (`Placement.CAR_LIFT`) e 3 blocos livres exigidos (`Placement.HEADROOM`,
-  topo do carro a 2,09). Testes de unidade: todos passam com 3 blocos (`floorAndRoom`, 11.204 células: as 63 vagas
-  cabem).
-- No servidor (mundo novo): `/amcv fill` na delegacia 4/4 e no prédio largo 34/34 (3 blocos livres no mundo);
-  posição logo depois e 30 s depois, em chunks que rodam: y 69,460175 (piso em y 69) e 57,460175 (piso em 57): parados,
-  apoiados nos blocos (a base deles 0,0086 dentro do piso, o mesmo assentamento de antes).
-- Jar de teste a 100% refeito com a correção (`amcvehicles-0.4.2-TESTE-100pct.jar`, só local; `javap -constants`:
-  `CHANCE_PER_BAY = 1.0d`, `CAR_LIFT = 0.46875d`); o jar normal tem `CHANCE_PER_BAY = 0.03d`.
+## Version 0.4.2 — cars resting on the support blocks, not buried (2026-11-16)
+- The user tested with a 100% test jar (not versioned) and saw the cars half buried (screenshot: the sill and the wheel
+  boxes below the floor, a dark block sunk under the front wheel box).
+- Cause, measured in the pack: `merc230.obj` has the objects `cube_fl/fr/rl/rr` (support blocks at the positions of the
+  wheels, visible when the wheel is missing: `part_present_N` = 0 and `terrain_distance` 0..0.7 in `merc230.json`) with
+  the lowest point at y -0.46875 (the lowest of the model; the body -0.1875); the lowest collision boxes also go down to
+  -0.47. The origin was put on the floor, so everything sank 0.47. The highest point of the model: 1.625 (the light bar of
+  the police colours), body 1.5625.
+- Fix: origin 0.46875 over the floor (`Placement.CAR_LIFT`) and 3 free blocks required (`Placement.HEADROOM`, top of the
+  car at 2.09). Unit tests: all pass with 3 blocks (`floorAndRoom`, 11,204 cells: the 63 bays fit).
+- On the server (new world): `/amcv fill` at the police station 4/4 and in the wide building 34/34 (3 free blocks in the
+  world); position right after and 30 s later, in chunks that tick: y 69.460175 (floor at y 69) and 57.460175 (floor at
+  57): still, resting on the blocks (their base 0.0086 inside the floor, the same settling as before).
+- 100% test jar rebuilt with the fix (`amcvehicles-0.4.2-TESTE-100pct.jar`, only local; `javap -constants`:
+  `CHANCE_PER_BAY = 1.0d`, `CAR_LIFT = 0.46875d`); the normal jar has `CHANCE_PER_BAY = 0.03d`.
 
-**Não visto no jogo:** a aparência corrigida (precisa do cliente do usuário).
+**Not seen in the game:** the fixed look (it needs the user's client).
 
-## Etapa 5 — 8 modelos (16 Nov 2026, versão 0.5.0)
+## Stage 5 — 8 models (2026-11-16, version 0.5.0)
 
-### Prova da bomba (para a etapa 6)
-- `/amcv pump` no servidor: `execute positioned -320 69 330 rotated 0 0 run amcv pump 2` e `... -325 69 330 rotated 90
-  0 run amcv pump 0`: as duas postas; `data get block`: `id: "mts:builder_fluidtank"`, `packID: "mtsofficialpack"`,
-  `systemName: "fuelpump"`, `anglesy` -180 e 90, `tank` com `currentFluid: "lava"`, `currentFluidMod: "minecraft"`,
-  `fluidLevel: 2000.0` na primeira e vazio na segunda. Depois de reiniciar o servidor: iguais. A reflexão nos dois
-  membros `protected` do IV funcionou.
+### Proof of the pump (for stage 6)
+- `/amcv pump` on the server: `execute positioned -320 69 330 rotated 0 0 run amcv pump 2` and `... -325 69 330 rotated
+  90 0 run amcv pump 0`: both placed; `data get block`: `id: "mts:builder_fluidtank"`, `packID: "mtsofficialpack"`,
+  `systemName: "fuelpump"`, `anglesy` -180 and 90, `tank` with `currentFluid: "lava"`, `currentFluidMod: "minecraft"`,
+  `fluidLevel: 2000.0` on the first and empty on the second. After restarting the server: the same. The reflection on the
+  two `protected` members of IV worked.
 
-### Testes de unidade (15, todos passam)
-- `CarsTest.tableMatchesThePacks`: a tabela de `Cars` contra os jars (lidos como zip): cada cor existe, as de polícia
-  são todas as do pack, as variáveis das portas e do porta-malas existem (o Mustang não tem `door_trunk`), o capô
-  existe, `lift` = base dos blocos de apoio e `top` = ponto mais alto do `.obj` (até 1e-4), e cabem em 3 blocos.
-- `DrawTest.chancesModelsAndColours` (4.000.000 vagas): 3,00% com carro; os 8 modelos entre 14.838 e 15.152 (1/8 ±
-  0,6%); cada cor civil de cada modelo perto de 1/n do modelo; nenhuma de polícia; capô 50,1%, porta-malas 50,1% (só
-  nos modelos com porta-malas), portas 50,1%.
-- `DrawTest.policeOnlyPoliceModelsAndColours` (300.000): `cagouille_police` 100.105, `mustang_police` 99.956,
-  `mercedes_police` 49.779, `mercedes_police2` 50.160 (1/3, 1/3, 1/6, 1/6).
-- `PlacementTest.carInsideItsBayAndAlongIt`: os **8 modelos** dentro de todas as 63 vagas, nas 4 rotações e nos dois
-  sentidos das vagas sorteadas (o Mustang, 2,97 de largura, e a Cagouille, 6,38 de comprimento, os mais justos).
-- A projeção por cidade não muda (o índice 0, "a vaga tem carro", é o mesmo): 599 carros, 1,22 por cidade.
+### Unit tests (15, all pass)
+- `CarsTest.tableMatchesThePacks`: the table of `Cars` against the jars (read as zip): each colour exists, the police ones
+  are all those of the pack, the variables of the doors and of the trunk exist (the Mustang has no `door_trunk`), the
+  hood exists, `lift` = base of the support blocks and `top` = highest point of the `.obj` (up to 1e-4), and they fit in 3
+  blocks.
+- `DrawTest.chancesModelsAndColours` (4,000,000 bays): 3.00% with a car; the 8 models between 14,838 and 15,152 (1/8 ±
+  0.6%); each civilian colour of each model near 1/n of the model; no police one; hood 50.1%, trunk 50.1% (only on the
+  models with a trunk), doors 50.1%.
+- `DrawTest.policeOnlyPoliceModelsAndColours` (300,000): `cagouille_police` 100,105, `mustang_police` 99,956,
+  `mercedes_police` 49,779, `mercedes_police2` 50,160 (1/3, 1/3, 1/6, 1/6).
+- `PlacementTest.carInsideItsBayAndAlongIt`: the **8 models** inside all 63 bays, in the 4 rotations and in both ways of
+  the drawn bays (the Mustang, 2.97 wide, and the Cagouille, 6.38 long, the tightest).
+- The projection per city does not change (index 0, "the bay has a car", is the same): 599 cars, 1.22 per city.
 
-### No mundo (semente 20261027)
-- `/amcv lineup` (de -335, 69, 305, nariz para o sul): **12 carros**. Respostas: só o motor tirado em cada um (no
-  Escargot também o estepe `wheellarge`); combustível 1.500 (Mercedes, Cagouille, Escargot, Station Wagon, Scout), 1.000
-  (Camaro, Highwayman), 800 (Mustang), lava; mostradores: Mercedes e Cagouille 1 e 2, Camaro e Highwayman 0 e 1, Escargot
-  2 e 1, Station Wagon 0 e 2, Mustang e Scout 2 e 3; portas por modelo (a Station Wagon com as 4, o Mustang sem
-  porta-malas, o Scout com `door_tailgate`).
-- Dados salvos (`save-all`, `data get entity`): em todos, **só** `instrument_car_spedometer_kph` e
-  `instrument_car_fuelqty` nos mostradores acima (sem conta-giros, relógio ou temperatura); peças: as permanentes, mais
-  a caçamba e o adesivo do Scout e o enfeite de espelho do Mustang. Altura 30 s depois, piso em y 69: Mercedes, Escargot
-  69,460; Cagouille, Highwayman 69,429; Camaro 69,491; Mustang 69,4375; Station Wagon e Scout 69,46875 (chunk sem tick):
-  cada um no `lift` dele.
-- Geração (`check_generation.py`, num mundo onde algumas áreas já tinham sido geradas pela 0.4.2): as 3 caixas geradas
-  agora batem (prédios largos -1300,-1976: `mustang_whitestripe`; 385,1857: `highwayman_blue`, `camaro_brown`,
-  `scout_tan`; posto 2593,-351: nenhum); as 2 geradas antes (prédio largo 1000,-2410 e delegacia) têm os carros do
-  `fill` antigo e não contam.
-- `/amcv fill` na delegacia: `[mustang_police, cagouille_police, mercedes_police, cagouille_police]`, só viaturas.
+### In the world (seed 20261027)
+- `/amcv lineup` (from -335, 69, 305, nose to the south): **12 cars**. Replies: only the engine taken out on each (on the
+  Escargot also the spare wheel `wheellarge`); fuel 1,500 (Mercedes, Cagouille, Escargot, Station Wagon, Scout), 1,000
+  (Camaro, Highwayman), 800 (Mustang), lava; gauges: Mercedes and Cagouille 1 and 2, Camaro and Highwayman 0 and 1,
+  Escargot 2 and 1, Station Wagon 0 and 2, Mustang and Scout 2 and 3; doors per model (the Station Wagon with 4, the
+  Mustang without a trunk, the Scout with `door_tailgate`).
+- Saved data (`save-all`, `data get entity`): on all of them, **only** `instrument_car_spedometer_kph` and
+  `instrument_car_fuelqty` in the gauges above (no tachometer, clock or temperature); parts: the permanent ones, plus the
+  Scout's pickup bed and sticker and the Mustang's mirror ornament. Height 30 s later, floor at y 69: Mercedes, Escargot
+  69.460; Cagouille, Highwayman 69.429; Camaro 69.491; Mustang 69.4375; Station Wagon and Scout 69.46875 (chunk without
+  tick): each on its own `lift`.
+- Generation (`check_generation.py`, in a world where some areas had already been generated by 0.4.2): the 3 boxes
+  generated now match (wide buildings -1300,-1976: `mustang_whitestripe`; 385,1857: `highwayman_blue`, `camaro_brown`,
+  `scout_tan`; gas station 2593,-351: none); the 2 generated before (wide building 1000,-2410 and police station) have the
+  cars of the old `fill` and do not count.
+- `/amcv fill` at the police station: `[mustang_police, cagouille_police, mercedes_police, cagouille_police]`, only police
+  cars.
 
-**Não visto no jogo:** a aparência dos 7 modelos novos (altura, portas, painel), que só o cliente do usuário mostra.
+**Not seen in the game:** the look of the 7 new models (height, doors, dashboard), which only the user's client shows.
 
-## Etapa 6 — bombas de combustível e balanceamento (16 Nov 2026, versão 0.6.0)
+## Stage 6 — fuel pumps and balance (2026-11-16, version 0.6.0)
 
-### Testes de unidade (22, todos passam)
-- `PumpTest.floorAndRoomInEveryRotationAndVariant`: as 10 bombas, nas 5 cores e 4 rotações (200 posições): piso
-  embaixo, a célula e a de cima livres em `Def.code` do AMC. **Pega erro**: com uma bomba de propósito em x 22, z 11
-  (um pilar da cobertura) falhou ("minecraft:chiseled_polished_blackstone at +0"); o arquivo foi devolvido.
-- `pumpsOutOfTheBays`, `facingTurnsWithTheStructure`, `pumpKeysNeverBayKeys`, `pumpsOfTheGasStations` (8 e 2).
-- `thirtyPercentWithOneBucket` (1.000.000): 30,00% com 1 balde. `pumpsOfAStationIndependent` (200.000 postos): média
-  2,400 bombas com lava por posto e variância 1,679 (binomial de 8 com 0,3: 2,4 e 1,68), histograma
-  [11542, 39476, 59288, 50937, 27201, 9326, 1951, 263, 16]: 6 ou mais em 1,1% dos postos.
+### Unit tests (22, all pass)
+- `PumpTest.floorAndRoomInEveryRotationAndVariant`: the 10 pumps, in the 5 colours and 4 rotations (200 positions): floor
+  under, the cell and the one above free in AMC's `Def.code`. **It catches an error**: with a pump on purpose at x 22, z 11
+  (a pillar of the canopy) it failed ("minecraft:chiseled_polished_blackstone at +0"); the file was put back.
+- `pumpsOutOfTheBays`, `facingTurnsWithTheStructure`, `pumpKeysNeverBayKeys`, `pumpsOfTheGasStations` (8 and 2).
+- `thirtyPercentWithOneBucket` (1,000,000): 30.00% with 1 bucket. `pumpsOfAStationIndependent` (200,000 gas stations):
+  mean 2.400 pumps with lava per gas station and variance 1.679 (binomial of 8 with 0.3: 2.4 and 1.68), histogram
+  [11542, 39476, 59288, 50937, 27201, 9326, 1951, 263, 16]: 6 or more in 1.1% of the gas stations.
 
-### No mundo (semente 20261027, mundo novo)
-- **Balanceamento**: no log ao iniciar, `[AMCV] Lava as a fuel set to 0.35 (server starting; was: diesel 1.0, avgas
-  1.0, gasoline 1.0); IV's config file is not changed`. A primeira rodada tinha mudado também `furnace` e
-  `brewing_stand` (não são de motor): corrigido. `config/mtsconfig.json` com `"lava": 1.0` nos 5 tipos antes e depois
-  de duas partidas do servidor.
-- **`/amcv draw` antes de gerar** (posto 2593,-351 e posto pequeno 385,172): lista as bombas com posição, chunk e lava
-  sorteada, "chunks around not ready", sem forçar carregamento.
-- **Espera e o reparo do AMC** (posto pequeno, bombas no chunk 24,11): `forceload` do chunk 22,11 (o 24 completo, o
-  vizinho 25 não): `pending chunks 1`, nenhuma bomba. Uma bomba posta à mão (`/amcv pump 1`) em 397, 70, 181 (célula de
-  ar no `.nbt`). `forceload` do 26,11 (gera o 25): a bomba gerada 1 apareceu (0 balde, "generated"), `pending chunks 0`,
-  e a posta à mão **continuou lá** (1.000 mB): o reparo do AMC não passou na célula; a regra dos 8 vizinhos fica como
-  margem (ver `CLAUDE.md`).
-- **Posto grande**: `forceload` da caixa: as 8 bombas postas ("generated"), lava 1, 0, 0, 1, 1, 1, 1, 1 balde como o
-  sorteio do `draw`; `data get block`: `systemName "fuelpump"`, `fluidLevel 1000` nas com lava, sem nível nas vazias;
-  `anglesy` 90 nas 8 (a cópia está na rotação 3).
-- **Reinício**: as bombas continuam (mesma lava); `/amcv fill` no posto pequeno: "already there" nas 2.
+### In the world (seed 20261027, new world)
+- **Balance**: in the log at start, `[AMCV] Lava as a fuel set to 0.35 (server starting; was: diesel 1.0, avgas 1.0,
+  gasoline 1.0); IV's config file is not changed`. The first round had also changed `furnace` and `brewing_stand` (they
+  are not engine ones): fixed. `config/mtsconfig.json` with `"lava": 1.0` in the 5 types before and after two runs of the
+  server.
+- **`/amcv draw` before generating** (gas station 2593,-351 and small gas station 385,172): it lists the pumps with
+  position, chunk and drawn lava, "chunks around not ready", without forcing a load.
+- **Waiting and AMC's repair** (small gas station, pumps in chunk 24,11): `forceload` of chunk 22,11 (24 full, the
+  neighbour 25 not): `pending chunks 1`, no pump. A pump placed by hand (`/amcv pump 1`) at 397, 70, 181 (a cell of air in
+  the `.nbt`). `forceload` of 26,11 (generates 25): the generated pump 1 appeared (0 bucket, "generated"), `pending chunks
+  0`, and the hand-placed one **stayed there** (1,000 mB): AMC's repair did not go over the cell; the rule of the 8
+  neighbours stays as a margin (see `CLAUDE.md`).
+- **Large gas station**: `forceload` of the box: the 8 pumps placed ("generated"), lava 1, 0, 0, 1, 1, 1, 1, 1 bucket as
+  the draw of `draw`; `data get block`: `systemName "fuelpump"`, `fluidLevel 1000` on those with lava, no level on the
+  empty ones; `anglesy` 90 on the 8 (the copy is in rotation 3).
+- **Restart**: the pumps stay (the same lava); `/amcv fill` at the small gas station: "already there" on the 2.
 
-### Revisão antes da entrega (0.6.0)
-- **Consumo**: no `PartEngine` do IV o consumo é `getTotalFuelConsumption() * fuelUsageFactor / fuelFactor`: a potência
-  divide, então 0,35 faz cada balde render ~1/3 (a estimativa de ~0,45 cidade por balde vale, a partir da medida do
-  usuário).
-- **Arquivo de config**: o `saveToDisk` do IV também é chamado pelo `ControlSystem` e pelo `GUIConfig` (controles e tela
-  de configuração do IV, durante o jogo). Acrescentado: os valores voltam ao parar o servidor e ao sair de um servidor;
-  no servidor de teste, o log diz `[AMCV] Lava as a fuel put back to IV's values (server stopped): {diesel=1.0,
-  avgas=1.0, gasoline=1.0}` e o arquivo segue com 1,0 nos 5 tipos. Uma gravação feita com o mundo aberto ainda leva o
-  0,35 para o arquivo (documentado).
-- **Tanque dos carros**: o `EntityFluidTank.fill` só junta o mesmo fluido do mesmo mod (ou `wildcard`): com o mod `""`
-  um balde de lava (`minecraft`) seria recusado. Agora o tanque é gravado com `currentFluidMod: "minecraft"`
-  (conferido em `data get entity` de um carro do `/amcv car`). Despejar o balde não foi testado (precisa de jogador).
-- **Células das bombas**: nas 10 variantes, todas ar no `.nbt`; a regra do jogo aceita agora também plantas, cipós,
-  teias e blocos finos, como o `PumpTest`.
+### Review before delivery (0.6.0)
+- **Consumption**: in IV's `PartEngine` the consumption is `getTotalFuelConsumption() * fuelUsageFactor / fuelFactor`:
+  the potency divides, so 0.35 makes each bucket yield ~1/3 (the estimate of ~0.45 city per bucket holds, from the user's
+  measure).
+- **Config file**: IV's `saveToDisk` is also called by `ControlSystem` and by `GUIConfig` (IV's controls and config
+  screen, during the game). Added: the values come back when the server stops and when a client leaves a server; on the
+  test server, the log says `[AMCV] Lava as a fuel put back to IV's values (server stopped): {diesel=1.0, avgas=1.0,
+  gasoline=1.0}` and the file keeps 1.0 in the 5 types. A save made with a world open still takes 0.35 to the file
+  (documented).
+- **The cars' tank**: `EntityFluidTank.fill` only joins the same fluid of the same mod (or `wildcard`): with the mod `""`
+  a bucket of lava (`minecraft`) would be refused. Now the tank is saved with `currentFluidMod: "minecraft"` (checked in
+  `data get entity` of a car of `/amcv car`). Pouring the bucket was not tested (it needs a player).
+- **Cells of the pumps**: in the 10 variants, all air in the `.nbt`; the game's rule now also takes plants, vines,
+  cobwebs and thin blocks, like `PumpTest`.
 
-**Não visto no jogo:** a aparência e a frente das bombas, abastecer um carro na bomba e com balde, o consumo novo da
-lava (precisa dirigir) e o mod carregando no cliente (`ClientHooks` é nova).
+**Not seen in the game:** the look and the front of the pumps, filling a car at the pump and with a bucket, the new
+consumption of lava (it needs driving) and the mod loading on the client (`ClientHooks` is new).
 
-## Versão 0.6.1 — sem carros nos postos (16 Nov 2026)
-- Pedido do usuário depois de testar a 0.6.0: os carros nos postos atrapalhavam abastecer um carro montado. As 6 vagas
-  dos postos saíram de `spots.txt`; as bombas ficam. O sorteio das outras vagas não muda (é pela posição da vaga).
-- Testes de unidade: todos passam; projeção 17.507 vagas em 492 cidades (35,6 por cidade), 527 carros (1,07 por
-  cidade, 3,01%), 187 cidades sem carro (38,0%).
-- Servidor: `/amcv fill` no posto pequeno e no posto: "0 bays, 0 cars", bombas "already there"; `/amcv draw` no posto:
-  0 vagas, as 8 bombas listadas.
+## Version 0.6.1 — no cars at the gas stations (2026-11-16)
+- The user's request after testing 0.6.0: the cars at the gas stations were in the way of filling up a built car. The 6
+  bays of the gas stations left `spots.txt`; the pumps stay. The draw of the other bays does not change (it is by the
+  position of the bay).
+- Unit tests: all pass; projection 17,507 bays in 492 cities (35.6 per city), 527 cars (1.07 per city, 3.01%), 187 cities
+  without a car (38.0%).
+- Server: `/amcv fill` at the small gas station and at the gas station: "0 bays, 0 cars", pumps "already there"; `/amcv
+  draw` at the gas station: 0 bays, the 8 pumps listed.
 
-## Versão 0.6.2 — lava das bombas: 50% vazias, 50% com 1 a 3 baldes (16 Nov 2026)
-- Pedido do usuário (primeiro "de volta ao original, 0 a 3", depois "50% de chance de ter 0, 50% de chance de ter 1, 2
-  ou 3"; lido como 1/6 para cada uma de 1, 2 e 3).
-- `PumpTest.halfEmptyHalfOneToThree` (1.200.000): 0 balde 599.997 (50,0%), 1 199.731, 2 199.912, 3 200.360 (16,7%
-  cada). `pumpsOfAStationIndependent` (200.000 postos): média 7,998 baldes por posto grande (esperado 8) e variância
-  10,636 (esperado 32/3 = 10,67).
-- Mundo novo: posto grande e posto pequeno gerados; as 10 bombas com a lava do sorteio (posto: 0, 1, 1, 0, 0, 0, 0, 0
-  baldes; posto pequeno: 2 e 0), `fluidLevel` 1000 e 2000 onde há, sem nível nas vazias.
+## Version 0.6.2 — lava of the pumps: 50% empty, 50% with 1 to 3 buckets (2026-11-16)
+- The user's request (first "back to the original, 0 to 3", then "50% chance of having 0, 50% chance of having 1, 2 or
+  3"; read as 1/6 for each of 1, 2 and 3).
+- `PumpTest.halfEmptyHalfOneToThree` (1,200,000): 0 bucket 599,997 (50.0%), 1 199,731, 2 199,912, 3 200,360 (16.7% each).
+  `pumpsOfAStationIndependent` (200,000 gas stations): mean 7.998 buckets per large gas station (expected 8) and variance
+  10.636 (expected 32/3 = 10.67).
+- New world: large gas station and small gas station generated; the 10 pumps with the drawn lava (gas station: 0, 1, 1,
+  0, 0, 0, 0, 0 buckets; small gas station: 2 and 0), `fluidLevel` 1000 and 2000 where there is lava, no level on the empty
+  ones.
 
-## Versão 0.7.0 — loot de oficinas e postos (16 Nov 2026)
+## Version 0.7.0 — loot of workshops and gas stations (2026-11-16)
 
-### Testes de unidade (`LootDataTest`, 25 no total, todos passam)
-- `everyItemExistsAndNothingExcluded`: as 57 entradas de item existem nos jars (IV base e os dois packs) e nenhuma é de
-  polícia, `_legacy`, `huge` ou de arnês. **Pega erro**: com `blowtorchh` falhou ("no item
-  mts:mtsofficialpack.blowtorchh"); o arquivo foi devolvido e regerado.
-- `referencedTablesExist`, `everyPoolAddsUpToTenThousand` (cada sorteio = peso + vazio = 10.000),
-  `modifiersAreRegisteredAndPointAtTheAmcTables` (8 modificadores, a lista global confere, cada um aponta para a tabela
-  certa do AMC).
+### Unit tests (`LootDataTest`, 25 in all, all pass)
+- `everyItemExistsAndNothingExcluded`: the 57 item entries exist in the jars (base IV and the two packs) and none is a
+  police, `_legacy`, `huge` or harness one. **It catches an error**: with `blowtorchh` it failed ("no item
+  mts:mtsofficialpack.blowtorchh"); the file was put back and regenerated.
+- `referencedTablesExist`, `everyPoolAddsUpToTenThousand` (each draw = weight + empty = 10,000),
+  `modifiersAreRegisteredAndPointAtTheAmcTables` (8 modifiers, the global list matches, each one points at the right AMC
+  table).
 
-### No servidor (mundo novo, AMC + AMC TACZ Loot + TACZ + LesRaisins + First Aid + AMC Vehicles juntos)
-- Nenhum erro de carregamento de loot no log. `tools/sample_loot.py` gera a tabela do AMC N vezes num baú (Sorte 0) e
-  compara cada item com o esperado (desvio em desvios-padrão da binomial). Resultados:
-  - `workshop/chest` (16.000): banco 9,38% (esperado 9,20), roda 9,34, motor 2,04 (2,00), blowtorch 4,29 (4,40), repair
-    kit 2,10, jumper pack 1,98; todos entre -0,7 e +0,9 desvio.
-  - `workshop/barrel` (16.000): banco 4,74 (4,60), roda 4,49, motor 1,03 (1,00), blowtorch 2,24 (2,20), repair kit 1,19
-    (1,00; +2,4 desvios, o único acima de 2), jumper pack 1,04.
-  - `gas_station/chest` (8.000): galão vazio 4,55 (4,40), cheio 4,58; `gas_station/barrel` (16.000): vazio 2,11 (2,20),
-    cheio 2,24; em todos os galões cheios o fluido foi `lava` (366 no baú de 8.000 e 359 no barril de 16.000).
-  - As 4 tabelas "difíceis" (4.000 cada): todos dentro de 2 desvios.
-  - Nenhum item além de 3 desvios. Com amostras de 8.000, dois itens (roda no baú, jumper pack no barril) tinham saído
-    perto de -2,4 desvios e voltaram ao esperado com 16.000: ruído (com 36 comparações, 1 a 2 acima de 1,96 desvio são
-    esperados só por acaso).
-- **Soma, não substitui**: com o meu loot ligado, os itens do AMC TACZ Loot (`tacz:`, `lrtactical:`, `firstaid:`)
-  continuam saindo em ~57% dos baús e ~34% dos barris de oficina e posto. Não comparei com uma rodada sem o meu mod
-  (o servidor de teste carrega o AMC Vehicles pelo código-fonte, não da pasta `mods`); o argumento é que as tabelas e
-  modificadores do AMC TACZ Loot não foram tocados.
-- **Vasos** (`workshop/pot`, `gas_station/pot` e as versões difíceis, 6.000 vasos): 0 itens do AMC Vehicles.
-- **Variantes excluídas**: nas amostras das 4 tabelas "difíceis", nenhum id com `police`, `legacy`, `huge` ou `harness`.
+### On the server (new world, AMC + AMC TACZ Loot + TACZ + LesRaisins + First Aid + AMC Vehicles together)
+- No loot loading error in the log. `tools/sample_loot.py` generates AMC's table N times in a chest (Luck 0) and compares
+  each item with the expected (deviation in standard deviations of the binomial). Results:
+  - `workshop/chest` (16,000): seat 9.38% (expected 9.20), wheel 9.34, engine 2.04 (2.00), blowtorch 4.29 (4.40), repair
+    kit 2.10, jumper pack 1.98; all between -0.7 and +0.9 deviation.
+  - `workshop/barrel` (16,000): seat 4.74 (4.60), wheel 4.49, engine 1.03 (1.00), blowtorch 2.24 (2.20), repair kit 1.19
+    (1.00; +2.4 deviations, the only one above 2), jumper pack 1.04.
+  - `gas_station/chest` (8,000): empty jerry can 4.55 (4.40), full 4.58; `gas_station/barrel` (16,000): empty 2.11
+    (2.20), full 2.24; in all full jerry cans the fluid was `lava` (366 in the chest of 8,000 and 359 in the barrel of
+    16,000).
+  - The 4 "hard" tables (4,000 each): all within 2 deviations.
+  - No item beyond 3 deviations. With samples of 8,000, two items (wheel in the chest, jumper pack in the barrel) had come
+    out near -2.4 deviations and came back to the expected with 16,000: noise (with 36 comparisons, 1 to 2 above 1.96
+    deviation are expected by chance alone).
+- **It adds, it does not replace**: with my loot on, AMC TACZ Loot's items (`tacz:`, `lrtactical:`, `firstaid:`) still come
+  out in ~57% of the chests and ~34% of the barrels of workshop and gas station. I did not compare with a round without my
+  mod (the test server loads AMC Vehicles from the source code, not from the `mods` folder); the argument is that AMC TACZ
+  Loot's tables and modifiers were not touched.
+- **Pots** (`workshop/pot`, `gas_station/pot` and the hard versions, 6,000 pots): 0 items of AMC Vehicles.
+- **Excluded variants**: in the samples of the 4 "hard" tables, no id with `police`, `legacy`, `huge` or `harness`.
 
-### Defeitos do amostrador achados e corrigidos no caminho (não eram das tabelas)
-- Ele cortava o texto dos itens esperando `count` primeiro: o galão cheio (que tem `components`) era atribuído ao item
-  vizinho. Agora separa pelas chaves `{...}` da lista.
-- A chave `id` era procurada como `id: "...`, que também casa com o fim de `jerrycanFluid: "lava"`: o galão cheio
-  virava item "lava". Agora só casa `id` inteiro.
-- Efeito: nas primeiras rodadas o galão cheio saiu 0% e alguns itens "fora" do intervalo; depois das correções, tudo
-  dentro do esperado.
+### Defects of the sampler found and fixed along the way (they were not the tables')
+- It cut the text of the items expecting `count` first: the full jerry can (which has `components`) was attributed to the
+  neighbouring item. Now it splits by the `{...}` keys of the list.
+- The key `id` was looked for as `id: "...`, which also matches the end of `jerrycanFluid: "lava"`: the full jerry can
+  became the item "lava". Now it only matches the whole `id`.
+- Effect: in the first rounds the full jerry can came out at 0% and some items "out" of the interval; after the fixes,
+  everything within the expected.
 
-**Lido no código do IV** (`ItemPartInteractable.doEntityInteraction`, não rodado): um galão com `jerrycanFluid` despeja
-no carro com `fuelTank.fill(fluido, "wildcard", 1000)`: o `wildcard` passa pela checagem de mod do tanque (então o tanque
-dos carros do AMC Vehicles, marcado `minecraft`, não atrapalha); precisa de **um motor instalado** (sem motor o IV avisa
-"sem motor" e não despeja), de fluido compatível com o motor (a lava é) e de espaço de 1.000 mB no tanque. O galão vazio
-se enche numa bomba (`TileEntityFuelPump.interact`: bomba com 1.000 mB ou mais e galão sem `jerrycanFluid`).
+**Read in IV's code** (`ItemPartInteractable.doEntityInteraction`, not run): a jerry can with `jerrycanFluid` pours into
+the car with `fuelTank.fill(fluid, "wildcard", 1000)`: the `wildcard` passes the tank's mod check (so the tank of AMC
+Vehicles' cars, marked `minecraft`, does not get in the way); it needs **an installed engine** (without an engine IV warns
+"no engine" and does not pour), a fluid compatible with the engine (lava is) and room for 1,000 mB in the tank. The empty
+jerry can is filled at a pump (`TileEntityFuelPump.interact`: a pump with 1,000 mB or more and a jerry can without
+`jerrycanFluid`).
 
-**Não visto no jogo:** usar um galão cheio do loot num carro com motor (confirmado só pela leitura do código acima); a Sorte (o console não a aplica; `quality` = 25%
-do peso como no AMC TACZ Loot) e abrir os containers num mundo gerado de verdade; e a lista de ids foi conferida nos
-jars, não no registro de itens do jogo (que o servidor de teste usou nas amostras).
+**Not seen in the game:** using a full jerry can from the loot on a car with an engine (confirmed only by reading the code
+above); Luck (the console does not apply it; `quality` = 25% of the weight as in AMC TACZ Loot) and opening the containers
+in a really generated world; and the list of ids was checked in the jars, not in the game's item registry (which the test
+server used in the samples).
 
-## Versão 0.7.1 — banco genérico no loot e só rodas offroad e vintage (16 Nov 2026)
-- Pedido do usuário: incluir o banco genérico `seat` (10 cores, ids `mts:mtsofficialpack.seat<cor>`, sem `_`) e deixar
-  só as rodas offroad e vintage. `tools/gen_loot.py --write`; 53 entradas de item (eram 57), todas nos jars; 25 testes de
-  unidade passam.
-- Servidor (`workshop/chest`, 12.000 containers): banco 9,46% (esperado 9,20; +1,0 desvio), roda 8,97% (-0,9), motor
-  2,09, blowtorch 4,32, repair kit 2,26 (+2,0), jumper pack 1,89; nenhum além de 3 desvios. Bancos por modelo: genérico
-  258, sport 280, vintage 293, car 304 (de 1.135): os 4 com a mesma chance; 34 cores distintas vistas (7 + 7 + 10 +
-  10). Rodas vistas: só `wheeloffroad_default` e `wheelvintage_lightblue`, `_mint`, `_sinty`. As 8 tabelas e o resto
-  não mudaram (só a escolha dentro de banco e roda).
+## Version 0.7.1 — generic seat in the loot and only offroad and vintage wheels (2026-11-16)
+- The user's request: include the generic seat `seat` (10 colours, ids `mts:mtsofficialpack.seat<colour>`, without `_`) and
+  keep only the offroad and vintage wheels. `tools/gen_loot.py --write`; 53 item entries (they were 57), all in the jars;
+  25 unit tests pass.
+- Server (`workshop/chest`, 12,000 containers): seat 9.46% (expected 9.20; +1.0 deviation), wheel 8.97% (-0.9), engine
+  2.09, blowtorch 4.32, repair kit 2.26 (+2.0), jumper pack 1.89; none beyond 3 deviations. Seats per model: generic 258,
+  sport 280, vintage 293, car 304 (of 1,135): the 4 with the same chance; 34 distinct colours seen (7 + 7 + 10 + 10).
+  Wheels seen: only `wheeloffroad_default` and `wheelvintage_lightblue`, `_mint`, `_sinty`. The 8 tables and the rest did
+  not change (only the choice inside seat and wheel).
 
-## Desempenho dos veículos parados (17 Nov 2026, versão 0.7.1)
-Pergunta do usuário: o que muda a longo prazo com muitos chunks carregados e carros gerados; os carros ficam longe do jogador?
+## Performance of the parked vehicles (2026-11-17, version 0.7.1)
+The user's question: what changes in the long run with many loaded chunks and generated cars; do the cars stay far from
+the player?
 
-**Lido no código do IV** (`BuilderEntityExisting`, `EntityManager`, `AEntityVehicleD_Moving`; descompilado, não rodado):
-- O carro é uma entidade comum do Minecraft (`mts:builder_existing`) gravada no NBT do chunk (`saveWithoutId`) e
-  restaurada quando o chunk carrega (`loadFromSavedNBT`); sem distância de despawn. Só é descartado se o veículo ficar
-  inválido, cair abaixo do mundo ou sair da borda do mundo.
-- Chunk descarregado: o carro sai da memória (`onRemovedFromLevel` chama `remove()`) e fica só no disco.
-- Não há modo "dormindo" para carro parado: o `EntityManager.tickAll` roda o `update()` de todo veículo registrado a cada
-  tick, com a física completa (`getForcesAndMotions`, `moveVehicle`, caixas de colisão), exceto na configuração
+**Read in IV's code** (`BuilderEntityExisting`, `EntityManager`, `AEntityVehicleD_Moving`; decompiled, not run):
+- The car is a normal Minecraft entity (`mts:builder_existing`) saved in the chunk's NBT (`saveWithoutId`) and restored
+  when the chunk loads (`loadFromSavedNBT`); no despawn distance. It is only discarded if the vehicle becomes invalid,
+  falls below the world or leaves the world border.
+- Unloaded chunk: the car leaves memory (`onRemovedFromLevel` calls `remove()`) and stays only on disk.
+- There is no "sleeping" mode for a parked car: `EntityManager.tickAll` runs the `update()` of every registered vehicle
+  every tick, with the full physics (`getForcesAndMotions`, `moveVehicle`, collision boxes), except with the setting
   `noclipVehicles`.
 
-**Medido** (servidor de teste, mundo novo, 4 áreas de prédio largo com `forceload`, tudo entidade-ticking, 20 s
-depois de cada `/amcv fill`, `tick query` 3 vezes): MSPT médio com 4 carros 1,4 ms; 36 carros 3,0; 67 carros 4,5; 98 carros
-6,0; 131 carros 7,8 (P99 de 5 a 12 ms). Crescimento **linear**, ~0,05 ms por carro (+1,5 ms a cada ~31 carros), sem sinal
-de custo quadrático até 131. O orçamento de um tick é 50 ms: ~300 carros ticando = ~15 ms.
-Disco (`run/world/entities`, depois de `save-all flush`): 81.175 bytes antes e 258.550 depois de 127 carros novos:
-~1,4 KB por carro.
+**Measured** (test server, new world, 4 areas of wide building with `forceload`, everything entity-ticking, 20 s after
+each `/amcv fill`, `tick query` 3 times): mean MSPT with 4 cars 1.4 ms; 36 cars 3.0; 67 cars 4.5; 98 cars 6.0; 131 cars
+7.8 (P99 from 5 to 12 ms). **Linear** growth, ~0.05 ms per car (+1.5 ms every ~31 cars), no sign of a quadratic cost up to
+131. The budget of a tick is 50 ms: ~300 ticking cars = ~15 ms.
+Disk (`run/world/entities`, after `save-all flush`): 81,175 bytes before and 258,550 after 127 new cars: ~1.4 KB per car.
 
-**Não medido:** o cliente (renderização, som, a cópia do cliente do `EntityManager`); carros em chunks carregados mas
-**fora da distância de simulação** (o servidor de teste sem jogador só tem chunks forçados, que tickam). Hipótese pelo
-código: o `EntityManager` do IV só registra o carro no primeiro tick da entidade (o `baseTick` restaura o IV a partir do
-NBT), então um carro nunca ticado pelo Minecraft não custa física, mas um que já foi ticado e depois ficou fora da
-simulação continuaria registrado (e ticando) até o chunk descarregar. Teste que decide: no jogo, com um jar de teste a
-100% perto de uma garagem cheia, `/tick query` parado ao lado e depois a uma distância entre a simulação e a visão
-(`simulation-distance` menor que `view-distance`).
+**Not measured:** the client (rendering, sound, the client's copy of the `EntityManager`); cars in loaded chunks but
+**outside the simulation distance** (the test server without a player only has forced chunks, which tick). Hypothesis from
+the code: IV's `EntityManager` only registers the car on the entity's first tick (`baseTick` restores IV from the NBT), so
+a car never ticked by Minecraft costs no physics, but one that was ticked and then left the simulation would stay
+registered (and ticking) until the chunk unloads. Deciding test: in the game, with a 100% test jar near a full garage,
+`/tick query` standing beside it and then at a distance between the simulation and the view (`simulation-distance`
+smaller than `view-distance`).
 
-### Custo do próprio mod ao criar carros (17 Nov 2026, 0.7.1)
-`/amcv fill` numa garagem do prédio largo (33-34 carros, tempo da resposta pelo RCON, inclui sorteio, checagem do
-mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 21, 16 e 15 ms = **~0,5 ms por carro**.
-`/amcv draw` (só conferir 34 vagas): 3 ms. Isso é um custo **único por carro**, na hora de gerar; o custo contínuo
-é o do IV (~0,05 ms por carro por tick, medido acima).
+### Cost of the mod itself when it creates cars (2026-11-17, 0.7.1)
+`/amcv fill` in a garage of the wide building (33-34 cars, time of the reply through RCON, it includes the draw, the check
+of the world and the creation of the car in IV): 32 ms the first time (warm-up), then 21, 16 and 15 ms = **~0.5 ms per
+car**. `/amcv draw` (only checking 34 bays): 3 ms. This is a **one-off cost per car**, when generating; the ongoing cost is
+IV's (~0.05 ms per car per tick, measured above).
 
-## Versão 0.7.2 — 9% por vaga (17 Nov 2026)
-- Pedido do usuário: a chance dos carros estacionados sobe de 3% para 9% (`Draw.CHANCE_PER_BAY`). O sorteio é o mesmo
-  (a vaga tem carro se o número de índice 0 < a chance): quem tinha carro com 3% continua tendo, e entram mais.
-- Testes de unidade: 25 passam. `DrawTest.chancesModelsAndColours` (4.000.000 vagas): 9,02% com carro, os 8 modelos entre
-  44.872 e 45.491, capô, porta-malas e portas 50%. `projectionPerCity` (492 cidades, as 57 vagas): 17.507 vagas, 1.575
-  carros = **3,20 por cidade** (9,00% das vagas); cidades sem carro 46 (9,3%), com 1: 15,2%, 2: 19,5%, 3: 18,5%, 4: 11,2%,
-  5: 10,2%, 6: 6,9%, 7: 3,9%, 8 a 11: 5,2% juntas.
-- Servidor (mundo novo, semente 20261027, 6 prédios largos gerados): carros nas caixas 6, 4, 4, 3, 3 e 3 = 23, sorteados
-  23, no lugar 23, nenhuma vaga pulada (25 linhas `(generated)` no log: 2 de estruturas vizinhas nos chunks da borda).
-- O jar de teste a 100% continua existindo (`CHANCE_PER_BAY = 1.0d`, só local).
+## Version 0.7.2 — 9% per bay (2026-11-17)
+- The user's request: the chance of the parked cars rises from 3% to 9% (`Draw.CHANCE_PER_BAY`). The draw is the same (the
+  bay has a car if the number of index 0 < the chance): who had a car with 3% still has it, and more come in.
+- Unit tests: 25 pass. `DrawTest.chancesModelsAndColours` (4,000,000 bays): 9.02% with a car, the 8 models between 44,872
+  and 45,491, hood, trunk and doors 50%. `projectionPerCity` (492 cities, the 57 bays): 17,507 bays, 1,575 cars = **3.20
+  per city** (9.00% of the bays); cities without a car 46 (9.3%), with 1: 15.2%, 2: 19.5%, 3: 18.5%, 4: 11.2%, 5: 10.2%,
+  6: 6.9%, 7: 3.9%, 8 to 11: 5.2% together.
+- Server (new world, seed 20261027, 6 wide buildings generated): cars in the boxes 6, 4, 4, 3, 3 and 3 = 23, drawn 23, in
+  place 23, no bay skipped (25 `(generated)` lines in the log: 2 of neighbouring structures in the chunks of the edge).
+- The 100% test jar still exists (`CHANCE_PER_BAY = 1.0d`, only local).
 
-## Versão 0.7.3 — carros com a bateria descarregada (17 Nov 2026)
-- Pedido do usuário. Antes: `electricPower` 12,0001 de capacidade 14 (85,7%, o padrão do IV), medido em 3 carros gerados
-  (Mercedes, Camaro, Mustang). Agora `Vehicles.spawn` põe `electricPower = batteryCapacity * 0` (0%).
-- **NÃO TESTADO** (o usuário pediu para ignorar os testes desta mudança): nem os testes de unidade, nem o servidor. Só foi
-  compilado (`./gradlew build -x test`). Não sei se o IV recarrega o campo na primeira atualização do carro nem se o
-  painel ou o jumper pack se comportam como esperado. Para conferir: `/amcv car mercedes` e
-  `execute as @e[type=mts:builder_existing,limit=1,sort=nearest] run data get entity @s electricPower` (esperado 0.0).
+## Version 0.7.3 — cars with a flat battery (2026-11-17)
+- The user's request. Before: `electricPower` 12.0001 of capacity 14 (85.7%, IV's default), measured on 3 generated cars
+  (Mercedes, Camaro, Mustang). Now `Vehicles.spawn` sets `electricPower = batteryCapacity * 0` (0%).
+- **NOT TESTED** (the user asked to skip the tests of this change): neither the unit tests nor the server. Only compiled
+  (`./gradlew build -x test`). I do not know whether IV reloads the field on the car's first update nor whether the
+  dashboard or the jumper pack behave as expected. To check: `/amcv car mercedes` and
+  `execute as @e[type=mts:builder_existing,limit=1,sort=nearest] run data get entity @s electricPower` (expected 0.0).
+  (0.9.3: on a generated car the field no longer appears, and IV does not save zero.)
 
-## Versão 0.7.4 — tanque dos carros a 15% (17 Nov 2026)
-- Pedido do usuário (junto com o da bateria, e na mesma instrução de ignorar os testes): `Vehicles.FUEL_FRACTION` de 0,10
-  para 0,15. Quantidades: Camaro e Highwayman 1.500 mB (eram 1.000), Mustang 1.200 (800), Mercedes, Cagouille, Escargot,
-  Station Wagon e Scout 2.250 (1.500).
-- **NÃO TESTADO** (por pedido do usuário): só compilado (`./gradlew build -x test`); a constante dentro do jar foi lida com
-  `javap`. A 0.7.3 (bateria 0%) também continua sem teste.
+## Version 0.7.4 — the cars' tank at 15% (2026-11-17)
+- The user's request (along with the battery's, and with the same instruction to skip the tests):
+  `Vehicles.FUEL_FRACTION` from 0.10 to 0.15. Amounts: Camaro and Highwayman 1,500 mB (they were 1,000), Mustang 1,200
+  (800), Mercedes, Cagouille, Escargot, Station Wagon and Scout 2,250 (1,500).
+- **NOT TESTED** (at the user's request): only compiled (`./gradlew build -x test`); the constant inside the jar was read
+  with `javap`. 0.7.3 (battery 0%) also stays untested. (0.9.3: a generated Escargot has `fluidLevel 2250`.)
 
-## Versão 0.7.5 — lava volta a render 1,0 (17 Nov 2026)
-- Pedido do usuário: remover a configuração que faz o combustível ser drenado mais rápido (a lava a 0,35 do `FuelBalance`).
-  Apagadas `FuelBalance` e `ClientHooks` e os ganchos em `AmcVehicles`.
-- Testes: 25 de unidade passam. Servidor (mundo novo): 0 linhas "Lava as a fuel" no log (antes havia uma ao iniciar e outra ao
-  parar), 0 erros do mod, `/amcv car mercedes` responde `fuel 2250/15000 mB (lava)` (15%), `mtsconfig.json` do servidor de
-  teste com `"lava": 1.0` nos 5 tipos.
-- **Achado**: o `config/mtsconfig.json` da instância "MAZ 2.0.0 (TESTE)" (gravado em 17 Nov 2026, 01:09) tem `gasoline`,
-  `diesel` e `avgas` em **0,35**: o IV gravou a própria configuração com o valor do mod em memória (o limite documentado
-  na 0.6.0). Remover o mod não desfaz isso. Pendente: voltar esses três a 1,0 (precisa do OK do usuário e do jogo fechado).
-- Não testado no jogo: o consumo com a lava a 1,0 (depende do arquivo acima).
+## Version 0.7.5 — lava back to 1.0 (2026-11-17)
+- The user's request: remove the setting that makes the fuel drain faster (`FuelBalance`'s lava at 0.35). `FuelBalance`
+  and `ClientHooks` and the hooks in `AmcVehicles` deleted.
+- Tests: 25 unit tests pass. Server (new world): 0 "Lava as a fuel" lines in the log (before there was one at start and
+  another at stop), 0 errors of the mod, `/amcv car mercedes` answers `fuel 2250/15000 mB (lava)` (15%), `mtsconfig.json`
+  of the test server with `"lava": 1.0` in the 5 types.
+- **Finding**: the `config/mtsconfig.json` of the instance "MAZ 2.0.0 (TESTE)" (saved on 2026-11-17, 01:09) has
+  `gasoline`, `diesel` and `avgas` at **0.35**: IV saved its own config with the mod's value in memory (the limit
+  documented in 0.6.0). Removing the mod does not undo it. Pending: set those three back to 1.0 (it needs the user's OK and
+  the game closed).
+- Not tested in the game: the consumption with lava at 1.0 (it depends on the file above).
 
-## Versão 0.7.6 — repair kit 10% mais comum (17 Nov 2026)
-- Pedido do usuário: repair kit de 1,0% para 1,1% (barril; baú 2,0% para 2,2%), "para evitar competir com o motor e o jumper
-  pack". Os sorteios são independentes (cada item tem o seu pool): não há competição; a mudança só ordena o repair kit
-  acima dos outros dois. `ITEM_MULT = {"repairkit": 1.1}` em `tools/gen_loot.py`; só `workshop/chest.json` e
-  `workshop/barrel.json` mudaram (pesos 220 e 110).
-- Testes: 25 de unidade passam. Servidor (16.000 containers de cada): barril repair kit 1,22% (esperado 1,10; +1,4
-  desvio), motor 0,92 (1,00), jumper pack 0,89 (1,00); baú repair kit 2,27% (2,20; +0,6), motor 2,12, jumper pack 1,93.
-  Nenhum item além de 3 desvios; 0 erros de loot. A diferença de 10% é menor que o ruído de uma amostra pequena: aparece
-  só na média de muitos containers (esperado por oficina média: repair kit 0,69, motor e jumper pack 0,63).
+## Version 0.7.6 — repair kit 10% more common (2026-11-17)
+- The user's request: repair kit from 1.0% to 1.1% (barrel; chest 2.0% to 2.2%), "to avoid competing with the engine and
+  the jumper pack". The draws are independent (each item has its own pool): there is no competition; the change only
+  ranks the repair kit above the other two. `ITEM_MULT = {"repairkit": 1.1}` in `tools/gen_loot.py`; only
+  `workshop/chest.json` and `workshop/barrel.json` changed (weights 220 and 110).
+- Tests: 25 unit tests pass. Server (16,000 containers of each): barrel repair kit 1.22% (expected 1.10; +1.4 deviation),
+  engine 0.92 (1.00), jumper pack 0.89 (1.00); chest repair kit 2.27% (2.20; +0.6), engine 2.12, jumper pack 1.93. No item
+  beyond 3 deviations; 0 loot errors. The 10% difference is smaller than the noise of a small sample: it shows only in the
+  mean of many containers (expected per medium workshop: repair kit 0.69, engine and jumper pack 0.63).
 
-## Versão 0.7.7 — wrench no loot das oficinas; `mtsconfig.json` corrigido (17 Nov 2026)
-- **`mtsconfig.json`** (pedido do usuário, jogo fechado: `ps` sem processo do jogo): backup `~/backups/mtsconfig-2026-11-17/`,
-  troca de `"lava": 0.35` por `"lava": 1.0` (3 linhas: `gasoline`, `diesel`, `avgas`), conferido com `json.load`
-  (lava 1,0 nos 5 tipos) e `diff` contra o backup (só essas 3 linhas). Para reverter: `cp -p` do backup sobre o arquivo.
-- **Wrench** (`mts:mts.wrench`, IV base) Comum nas oficinas (baú 9,2% / barril 4,6%), como bancos e rodas. Prévia: 2,90 por
-  oficina média, 1,98 por pequena, 4,44 por cidade. 25 testes de unidade passam (55 entradas de item, todas nos jars).
-- Servidor (mundo novo, 0 erros de loot): `workshop/barrel` (16.000) wrench 4,92% (esperado 4,60; +1,9 desvio);
-  `workshop/chest` (16.000) 8,74% (9,20; -2,0); `workshop/barrel_hard` (4.000) 4,58%; os outros itens inalterados; nenhum
-  além de 3 desvios. `gas_station/barrel` (3.000): nenhum wrench.
+## Version 0.7.7 — wrench in the workshops' loot; `mtsconfig.json` fixed (2026-11-17)
+- **`mtsconfig.json`** (the user's request, game closed: `ps` without a game process): backup
+  `~/backups/mtsconfig-2026-11-17/`, `"lava": 0.35` replaced by `"lava": 1.0` (3 lines: `gasoline`, `diesel`, `avgas`),
+  checked with `json.load` (lava 1.0 in the 5 types) and `diff` against the backup (only those 3 lines). To revert: `cp -p`
+  of the backup over the file.
+- **Wrench** (`mts:mts.wrench`, base IV) Common in the workshops (chest 9.2% / barrel 4.6%), like seats and wheels.
+  Preview: 2.90 per medium workshop, 1.98 per small one, 4.44 per city. 25 unit tests pass (55 item entries, all in the
+  jars).
+- Server (new world, 0 loot errors): `workshop/barrel` (16,000) wrench 4.92% (expected 4.60; +1.9 deviation);
+  `workshop/chest` (16,000) 8.74% (9.20; -2.0); `workshop/barrel_hard` (4,000) 4.58%; the other items unchanged; none
+  beyond 3 deviations. `gas_station/barrel` (3,000): no wrench.
 
-## Versão 0.7.8 — galão sempre cheio no loot dos postos (17 Nov 2026)
-- Pedido do usuário: remover o galão vazio; o galão passa a sair sempre cheio, mantendo a raridade (Incomum: baú 4,4% / barril
-  2,2%). Consequência: de ~1,2 para ~0,6 galão por cidade. `GAS = [("jerrycan_full", "Incomum")]` em `tools/gen_loot.py`;
-  só `gas_station/chest.json` e `gas_station/barrel.json` mudaram (um sorteio em vez de dois).
-- Teste de unidade: `LootDataTest.everyPoolAddsUpToTenThousand` exigia 2 sorteios por tabela e passou a exigir 1 (o teste
-  estava desatualizado, não os dados); com uma tabela de posto sem sorteio nenhum ele falha (conferido). 25 testes passam.
-- `tools/sample_loot.py` agora acusa qualquer item do AMC Vehicles que não deveria sair na tabela amostrada.
-- Servidor (mundo novo, 0 erros de loot): `gas_station/chest` (12.000) galão cheio 4,22% (esperado 4,40; -1,0 desvio),
-  `barrel` (16.000) 2,34% (2,20; +1,2), `chest_hard` (4.000) 4,20%, `barrel_hard` (4.000) 2,38%; os 1.143 galões vistos
-  tinham `jerrycanFluid: "lava"`; nenhum item indevido (nem galão vazio, nem wrench) e `workshop/barrel` (3.000) sem item indevido.
-- Nota de método: uma primeira rodada passou "tabela N" como um argumento só (o zsh não separa `$t`) e o amostrador não
-  imprimiu nada; foi refeita com argumentos separados.
+## Version 0.7.8 — jerry can always full in the gas stations' loot (2026-11-17)
+- The user's request: remove the empty jerry can; the jerry can now always comes out full, keeping the rarity (Uncommon:
+  chest 4.4% / barrel 2.2%). Consequence: from ~1.2 to ~0.6 jerry can per city. `GAS = [("jerrycan_full", "Incomum")]` in
+  `tools/gen_loot.py`; only `gas_station/chest.json` and `gas_station/barrel.json` changed (one draw instead of two).
+- Unit test: `LootDataTest.everyPoolAddsUpToTenThousand` required 2 draws per table and now requires 1 (the test was out of
+  date, not the data); with a gas station table without any draw it fails (checked). 25 tests pass.
+- `tools/sample_loot.py` now flags any AMC Vehicles item that should not come out in the sampled table.
+- Server (new world, 0 loot errors): `gas_station/chest` (12,000) full jerry can 4.22% (expected 4.40; -1.0 deviation),
+  `barrel` (16,000) 2.34% (2.20; +1.2), `chest_hard` (4,000) 4.20%, `barrel_hard` (4,000) 2.38%; the 1,143 jerry cans seen
+  had `jerrycanFluid: "lava"`; no item that should not be there (neither the empty jerry can nor the wrench) and
+  `workshop/barrel` (3,000) without such an item.
+- Note on method: a first round passed "table N" as a single argument (zsh does not split `$t`) and the sampler printed
+  nothing; it was redone with separate arguments.
 
-## Versão 0.7.9 — `FuelBalance` de volta, com a lava a 0,60 (17 Nov 2026)
-- Pedido do usuário: "mudar a regra do FuelBalance de novo, dessa vez para 0,60". A regra tinha sido removida na 0.7.5; as
-  classes `FuelBalance` e `ClientHooks` foram restauradas do commit `36560dd` (`git checkout 36560dd -- ...`) e os ganchos
-  de `AmcVehicles` religados; `LAVA = 0.60`.
-- Testes: 25 de unidade passam; a constante dentro do jar (`javap -constants`) é `LAVA = 0.6d`.
-- Servidor (mundo novo): log ao iniciar `[AMCV] Lava as a fuel set to 0.6 (server starting; was: diesel 1.0, avgas 1.0,
-  gasoline 1.0); IV's config file is not changed`; ao parar `[AMCV] Lava as a fuel put back to IV's values (server stopped)`;
-  `/amcv car mercedes` responde `fuel 2250/15000 mB (lava)`; `mtsconfig.json` do servidor de teste com `"lava": 1.0` nos
-  5 tipos depois de parar.
-- Não testado no jogo: o consumo real com 0,60, e o `ClientHooks` num cliente (a parte de entrar e sair de um servidor).
-  O `mtsconfig.json` da instância do usuário segue em 1,0 (corrigido na 0.7.7), a menos que o IV o grave de novo.
+## Version 0.7.9 — `FuelBalance` back, with lava at 0.60 (2026-11-17)
+- The user's request: "change the FuelBalance rule again, this time to 0.60". The rule had been removed in 0.7.5; the
+  classes `FuelBalance` and `ClientHooks` were restored from commit `36560dd` (`git checkout 36560dd -- ...`) and the hooks
+  of `AmcVehicles` wired again; `LAVA = 0.60`.
+- Tests: 25 unit tests pass; the constant inside the jar (`javap -constants`) is `LAVA = 0.6d`.
+- Server (new world): log at start `[AMCV] Lava as a fuel set to 0.6 (server starting; was: diesel 1.0, avgas 1.0,
+  gasoline 1.0); IV's config file is not changed`; at stop `[AMCV] Lava as a fuel put back to IV's values (server
+  stopped)`; `/amcv car mercedes` answers `fuel 2250/15000 mB (lava)`; `mtsconfig.json` of the test server with
+  `"lava": 1.0` in the 5 types after stopping.
+- Not tested in the game: the real consumption with 0.60, and `ClientHooks` on a client (the part of joining and leaving a
+  server). The `mtsconfig.json` of the user's instance stays at 1.0 (fixed in 0.7.7), unless IV saves it again.
 
-## Versão 0.7.10 — lava a 0,45 (17 Nov 2026)
-- Pedido do usuário: reduzir de 0,60 para 0,45 (`FuelBalance.LAVA`). Nada mais mudou.
-- Testes: 25 de unidade passam; `javap -constants` no jar: `LAVA = 0.45d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to
-  0.45 (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; ao parar `... put back to IV's values (server
-  stopped)`; `mtsconfig.json` do servidor de teste com `"lava": 1.0` nos 5 tipos depois de parar.
-- Instância do usuário (lida, não alterada): `mtsconfig.json` com `gasoline`, `diesel` e `avgas` em 0,6, gravado pelo IV em
-  17 Nov 2026, 21:33 (0.7.9). Com o mod, o valor em memória (0,45) manda; o arquivo só muda se o IV o regravar. Com o 0,6
-  no arquivo, o mod guarda 0,6 como "valor do IV" e o devolve ao parar (a devolução não restaura 1,0).
-- Não testado no jogo: o consumo real com 0,45.
+## Version 0.7.10 — lava at 0.45 (2026-11-17)
+- The user's request: lower it from 0.60 to 0.45 (`FuelBalance.LAVA`). Nothing else changed.
+- Tests: 25 unit tests pass; `javap -constants` on the jar: `LAVA = 0.45d`. Server (new world): `[AMCV] Lava as a fuel set
+  to 0.45 (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; at stop `... put back to IV's values (server
+  stopped)`; `mtsconfig.json` of the test server with `"lava": 1.0` in the 5 types after stopping.
+- The user's instance (read, not changed): `mtsconfig.json` with `gasoline`, `diesel` and `avgas` at 0.6, saved by IV on
+  2026-11-17, 21:33 (0.7.9). With the mod, the value in memory (0.45) rules; the file only changes if IV rewrites it. With
+  0.6 in the file, the mod keeps 0.6 as "IV's value" and puts it back at stop (the putting back does not restore 1.0).
+- Not tested in the game: the real consumption with 0.45.
 
-## Versão 0.7.11 — lava a 0,35 de novo (17 Nov 2026)
-- Pedido do usuário: de 0,45 para 0,35 (`FuelBalance.LAVA`); nada mais mudou.
-- Testes: 25 de unidade passam; `javap -constants`: `LAVA = 0.35d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to 0.35
-  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; ao parar `... put back to IV's values`; `mtsconfig.json` do
-  servidor de teste com `"lava": 1.0` nos 5 tipos depois de parar.
-- Não testado no jogo: o consumo real com 0,35. O `mtsconfig.json` da instância do usuário não foi alterado nesta versão.
+## Version 0.7.11 — lava at 0.35 again (2026-11-17)
+- The user's request: from 0.45 to 0.35 (`FuelBalance.LAVA`); nothing else changed.
+- Tests: 25 unit tests pass; `javap -constants`: `LAVA = 0.35d`. Server (new world): `[AMCV] Lava as a fuel set to 0.35
+  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)`; at stop `... put back to IV's values`; `mtsconfig.json` of
+  the test server with `"lava": 1.0` in the 5 types after stopping.
+- Not tested in the game: the real consumption with 0.35. The `mtsconfig.json` of the user's instance was not changed in
+  this version.
 
-## Versão 0.7.12 — lava a 0,05 como padrão (17 Nov 2026)
-- O usuário testou um jar de teste com a lava a 0,05 (`amcvehicles-0.7.11-TESTE-100pct-lava0.05.jar`, não versionado) no
-  jogo dele: "o consumo está muito rápido, funcionando normalmente" (confirmação do consumo no jogo, feita por ele). Pediu
-  para ser o padrão: `FuelBalance.LAVA` de 0,35 para 0,05.
-- Testes: 25 de unidade passam; `javap -constants`: `LAVA = 0.05d`. Servidor (mundo novo): `[AMCV] Lava as a fuel set to 0.05
-  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)` e a devolução ao parar; `mtsconfig.json` do servidor de teste
-  em 1,0 depois de parar.
+## Version 0.7.12 — lava at 0.05 as the default (2026-11-17)
+- The user tested a test jar with lava at 0.05 (`amcvehicles-0.7.11-TESTE-100pct-lava0.05.jar`, not versioned) in his
+  game: "the consumption is very fast, working normally" (confirmation of the consumption in the game, made by him). He
+  asked for it to be the default: `FuelBalance.LAVA` from 0.35 to 0.05.
+- Tests: 25 unit tests pass; `javap -constants`: `LAVA = 0.05d`. Server (new world): `[AMCV] Lava as a fuel set to 0.05
+  (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0)` and the putting back at stop; `mtsconfig.json` of the test
+  server at 1.0 after stopping.
 
-## Versão 0.7.13 — bombas com 0 a 4 baldes (18 Nov 2026)
-- Pedido do usuário: "passar de 0 a 3 para 0 a 4 de lava nas bombas". Lido como: continua 50% vazias e o máximo sobe de 3
-  para 4 (`Draw.MAX_BUCKETS`): 1, 2, 3 ou 4 baldes com 12,5% cada, média 1,25 balde por bomba (era 1). Se ele quis 0 a 4 com a
-  mesma chance (20% cada), é outra regra: perguntado a ele na entrega.
-- Testes: 25 de unidade passam. `PumpTest.halfEmptyHalfOneToThree` (1.200.000): 0 balde 599.997 (50,0%) e 1, 2, 3, 4 baldes
-  149.791, 150.063, 149.697, 150.452 (12,5% cada). `pumpsOfAStationIndependent` (200.000 postos de 8 bombas): média 9,995
-  baldes (esperado 10) e variância 17,431 (esperado 17,5; antes eram 8 e 10,67); o teste foi atualizado para esses valores.
-- Servidor (mundo novo, 8 áreas de posto geradas uma a uma): 34 bombas, **o tanque de cada uma bate com o sorteado (0
-  diferenças)**; baldes sorteados: 0 em 20, 1 em 8, 3 em 5, 4 em 1 (uma bomba de 4 baldes, 4.000 mB, apareceu). 4 avisos
-  "Can't keep up" (2 a 4 s de atraso) enquanto gerava várias cidades; nenhuma exceção. Uma primeira tentativa com 21 postos de
-  uma vez derrubou o servidor de teste (sobrecarga ao gerar tudo junto; o log foi apagado por engano, então a causa
-  exata não foi lida).
-- Só valem para chunks novos: as bombas já geradas nos mundos do usuário não mudam.
+## Version 0.7.13 — pumps with 0 to 4 buckets (2026-11-18)
+- The user's request: "go from 0 to 3 to 0 to 4 of lava in the pumps". Read as: still 50% empty and the most rises from 3
+  to 4 (`Draw.MAX_BUCKETS`): 1, 2, 3 or 4 buckets with 12.5% each, mean 1.25 bucket per pump (it was 1). If he meant 0 to 4
+  with the same chance (20% each), it is another rule: asked to him at delivery.
+- Tests: 25 unit tests pass. `PumpTest.halfEmptyHalfOneToThree` (1,200,000; renamed `halfEmptyOthersOneToMaxBuckets` in
+  0.9.1): 0 bucket 599,997 (50.0%) and 1, 2, 3, 4 buckets 149,791, 150,063, 149,697, 150,452 (12.5% each).
+  `pumpsOfAStationIndependent` (200,000 gas stations of 8 pumps): mean 9.995 buckets (expected 10) and variance 17.431
+  (expected 17.5; before they were 8 and 10.67); the test was updated to these values.
+- Server (new world, 8 gas station areas generated one by one): 34 pumps, **the tank of each one matches the drawn one (0
+  differences)**; drawn buckets: 0 in 20, 1 in 8, 3 in 5, 4 in 1 (a pump of 4 buckets, 4,000 mB, appeared). 4 "Can't keep
+  up" warnings (2 to 4 s behind) while it generated several cities; no exception. A first try with 21 gas stations at once
+  brought the test server down (overload from generating everything together; the log was deleted by mistake, so the exact
+  cause was not read).
+- Only for new chunks: the pumps already generated in the user's worlds do not change.
 
-## Versão 0.8.0 — vagas na casa de vidro e no prédio-rampa (18 Nov 2026)
-- Pedido do usuário: "adicionar vaga de estacionamento na abandoned_glass_house e no prédio-rampa". Proposta em
-  `docs/spots/vidro_rampa_propostas.png` (gerada com `tools/find_spots.py --bays`). Respostas dele: andares y=10 e y=0 do
-  prédio-rampa (21 vagas), quantidade boa, e, na casa de vidro, uma foto que mostrou que o lugar é a sala do canto nordeste
-  (não a varanda da frente que eu tinha proposto); aplicadas as 2 vagas da sala depois da confirmação dele.
-- Detector: casa de vidro, as 2 vagas livres; prédio-rampa, 20 propostas por andar: y=10 10 livres, y=0 11 livres, y=5 0
-  livres (por isso fora). Entram só as livres.
-- Testes: 25 de unidade passam (inclui o `PlacementTest`, que põe os 8 modelos em todas as vagas nas 4 rotações, agora com
-  as 23 novas). Projeção com o planejador real do AMC (5 sementes, 492 cidades): 19.704 vagas (40,0 por cidade), **1.788
-  carros (3,63 por cidade, 9,07% das vagas)**; cidades com 0 carro 39 (7,9%); casa de vidro 521 cópias, 108 carros
-  (0,21 por cópia); prédio-rampa 55 cópias (0,11 por cidade), 105 carros (1,91 por cópia). Antes: 3,20 por cidade e 9,3%
-  sem carro.
-- Servidor (mundo novo, semente 20261027): `amcs locate` achou uma casa de vidro (x -351..-312, z 434..481, rotação 3) e
-  um prédio-rampa (x 172..243, z 1121..1222, rotação 3). `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados, nos
-  centros esperados pelo cálculo manual do `.nbt` (x -337,5 e -333,5; eixo traseiro em z 445), nariz para o norte (a parede
-  leste do modelo) e piso certo (y 69,4). No prédio-rampa: 21 vagas, 18 carros postos e 3 "occupied by a vehicle" (carros
-  do sorteio real de 9% feitos na geração do mundo, o que prova que a geração também vê as vagas novas); carros do y=10 em
-  y 78,4 e os do y=0 em y 68,4 (10 acima), em z a cada 4 blocos, todos com o nariz para oeste (o norte do modelo girado).
-- `tools/check_bays.py` não serve para estas vagas (procura faixas compridas ao lado do carro; no prédio-rampa as marcas
-  brancas são pontinhos nas bordas e na casa de vidro não há pintura): mostrou "0 cars between stripes", sem significado.
-- Não testado no jogo: o aspecto visual (carro encostado em alguma coisa, a céu aberto no y=10 do prédio-rampa), a geração
-  natural na casa de vidro (o `fill` a testou; o sorteio real só foi visto no prédio-rampa) e o tamanho do prédio-rampa
-  (102 × 137 × 72) em desempenho com carros.
+## Version 0.8.0 — bays at the glass house and at the ramp building (2026-11-18)
+- The user's request: "add parking bays at the abandoned_glass_house and at the ramp building". Proposal in
+  `docs/spots/vidro_rampa_propostas.png` (generated with `tools/find_spots.py --bays`). His answers: floors y=10 and y=0 of
+  the ramp building (21 bays), a good amount, and, at the glass house, a photo that showed the place is the north-east
+  corner room (not the front porch I had proposed); the 2 bays of the room applied after his confirmation.
+- Detector: glass house, the 2 bays free; ramp building, 20 proposals per floor: y=10 10 free, y=0 11 free, y=5 0 free
+  (hence out). Only the free ones go in.
+- Tests: 25 unit tests pass (including `PlacementTest`, which puts the 8 models in every bay in the 4 rotations, now with
+  the 23 new ones). Projection with AMC's real planner (5 seeds, 492 cities): 19,704 bays (40.0 per city), **1,788 cars
+  (3.63 per city, 9.07% of the bays)**; cities with 0 cars 39 (7.9%); glass house 521 copies, 108 cars (0.21 per copy);
+  ramp building 55 copies (0.11 per city), 105 cars (1.91 per copy). Before: 3.20 per city and 9.3% without a car.
+- Server (new world, seed 20261027): `amcs locate` found a glass house (x -351..-312, z 434..481, rotation 3) and a ramp
+  building (x 172..243, z 1121..1222, rotation 3). `/amcv fill` at the glass house: 2 bays, 2 cars, 0 skipped, at the
+  centres expected by the hand sum on the `.nbt` (x -337.5 and -333.5; rear axle at z 445), nose to the north (the
+  model's east wall) and the right floor (y 69.4). At the ramp building: 21 bays, 18 cars placed and 3 "occupied by a
+  vehicle" (cars of the real 9% draw made in the world's generation, which proves the generation also sees the new bays);
+  cars of y=10 at y 78.4 and those of y=0 at y 68.4 (10 above), in z every 4 blocks, all with the nose to the west (the
+  model's north turned).
+- `tools/check_bays.py` does not work for these bays (it looks for long stripes beside the car; at the ramp building the
+  white marks are dots at the edges and at the glass house there is no paint): it showed "0 cars between stripes", without
+  meaning.
+- Not tested in the game: the look (a car leaning on something, in the open at y=10 of the ramp building), the natural
+  generation at the glass house (`fill` tested it; the real draw was only seen at the ramp building) and the size of the
+  ramp building (102 × 137 × 72) in performance with cars.
 
-## Versão 0.8.1 — prédio-rampa sem vagas, casa de vidro mantida (18 Nov 2026)
-- O usuário testou a 0.8.0: "pode manter as vagas da casa de vidro, mas do prédio-rampa pode remover". As 21 linhas
-  `abandoned_ramp_building bay ...` de `spots.txt` ficaram comentadas (não apagadas), com uma nota; nada mais mudou.
-- Testes: 25 de unidade passam. Projeção (planejador real do AMC, 5 sementes, 492 cidades): 18.549 vagas (37,7 por cidade),
-  **1.683 carros (3,42 por cidade, 9,07% das vagas)**, cidades com 0 carro 41 (8,3%). Jar: `spots.txt` com 59 vagas.
-- Servidor (mundo novo): `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados; no prédio-rampa: "abandoned_ramp_building
-  has no bays yet". O log tem 12 linhas ERROR/Exception, todas anteriores ao mundo e do IV (`MTSERROR` ao ler modelos dos
-  packs, como "roller2" e `engineikarus.obj`, e uma tag do Minecraft); nenhuma cita `amcvehicles`. (Uma primeira rodada
-  contou esses 12 e eu apaguei o log antes de lê-lo; refiz guardando o log.)
-- Só vale para chunks novos: um prédio-rampa que o mundo do usuário gerou com a 0.8.0 já pode ter carros nele (ficam).
+## Version 0.8.1 — ramp building without bays, glass house kept (2026-11-18)
+- The user tested 0.8.0: "you can keep the glass house's bays, but you can remove the ramp building's". The 21 lines
+  `abandoned_ramp_building bay ...` of `spots.txt` were commented (not deleted), with a note; nothing else changed.
+- Tests: 25 unit tests pass. Projection (AMC's real planner, 5 seeds, 492 cities): 18,549 bays (37.7 per city), **1,683
+  cars (3.42 per city, 9.07% of the bays)**, cities with 0 cars 41 (8.3%). Jar: `spots.txt` with 59 bays.
+- Server (new world): `/amcv fill` at the glass house: 2 bays, 2 cars, 0 skipped; at the ramp building:
+  "abandoned_ramp_building has no bays yet". The log has 12 ERROR/Exception lines, all before the world and from IV
+  (`MTSERROR` while reading the packs' models, like "roller2" and `engineikarus.obj`, and a Minecraft tag); none mentions
+  `amcvehicles`. (A first round counted those 12 and I deleted the log before reading it; I redid it keeping the log.)
+- Only for new chunks: a ramp building that the user's world generated with 0.8.0 may already have cars in it (they stay).
 
-## Preparação do 1.0.0, Fase 0 — rede de segurança (2026-11-18, ainda 0.8.1)
-- Nenhuma mudança no mod: só o teste dourado novo (`GoldenDrawTest`, 26 testes no total, todos passam) e a foto da 0.8.1 em
-  `docs/baseline/` (hashes dos JSON, entradas do jar, constantes, projeção, servidor). Detalhes e números em
+## The 1.0.0 work, phase 0 — safety net (2026-11-18, still 0.8.1)
+- No change in the mod: only the new golden test (`GoldenDrawTest`, 26 tests in all, all pass) and the snapshot of 0.8.1
+  in `docs/baseline/` (hashes of the JSON, jar entries, constants, projection, server). Details and numbers in
   `docs/baseline/README.md`.
-- O teste dourado foi conferido contra uma mudança de propósito (`DOOR_OPEN_CHANCE` 0,5 para 0,51): falhou na linha 205;
-  desfeita a mudança, passou.
-- Servidor (mundo novo): 6 caixas geradas, 4 carros = 4 sorteados = 4 no lugar, 8 bombas com a lava sorteada, `/amcv fill`
-  na casa de vidro com 2 carros; nenhum ERROR ou WARN do mod no log.
+- The golden test was checked against a change on purpose (`DOOR_OPEN_CHANCE` 0.5 to 0.51): it failed on line 205; with the
+  change undone, it passed.
+- Server (new world): 6 boxes generated, 4 cars = 4 drawn = 4 in place, 8 pumps with the drawn lava, `/amcv fill` at the
+  glass house with 2 cars; no ERROR or WARN of the mod in the log.
 
-## Versão 0.9.0 — Fase 1 do 1.0.0: código morto (2026-11-19)
-- Levantamento (sem mudar nada): `javac -Xlint:all` em main e test (por um init script do Gradle; conferido com `--debug` que
-  o `-Xlint:all` chegou ao compilador): **0 avisos**. Nenhum import sem uso (busca por nome fora de comentários). Nenhum
-  membro declarado pelo mod sem uso; só `Spots.all`, `Spots.allPumps` e `Spots.Bay.alongZ` são usados apenas por testes
-  (mantidos, escolha do usuário). Os 5 `catch` registram o erro com o stack trace e devolvem a mensagem; nenhum engole
-  erro. Nenhum código comentado no Java. As 9 ferramentas de `tools/` são citadas pelos docs ou usadas por outra
-  (`nbt.py` pelo `find_spots.py`; só ele não tinha a linha de uso, agora tem). As 7 imagens de `docs/spots/` são citadas.
-  Nada de `run/`, `build/` ou `.gradle/` no git.
-- Removido (escolha do usuário): o nariz sorteado (`X`/`Z` em `spots.txt`, `Spots.Bay.drawnFacing` e `oriented`,
-  `Draw.Car.flip`, o índice `FLIP` = 6, o `ways` do `PlacementTest`). O índice 6 fica livre; os outros mantêm o número.
-- Texto: o comentário das bombas em `spots.txt` (citava `Draw.PUMP_FUEL_CHANCE` e "30% com 1 balde"), a nota das vagas
-  comentadas dos postos, a linha duplicada do README, o parágrafo duplicado de "Como a bomba é posta" e as citações a
-  `Mercedes.spawn`, `Placement.CAR_LIFT` e "`Mercedes` as repete" no `CLAUDE.md`, os "63 vagas" que descreviam o estado
-  atual.
-- Provas: as 69 linhas de dados de `spots.txt` iguais às da 0.8.1 (`diff` sem os comentários); 26 testes passam, 0 avisos;
-  **teste dourado idêntico** (`golden: 4708 lines ... sha256 717de763...e4d8b7`, a referência não foi tocada); projeção
-  igual (1.683 carros, 3,42 por cidade, 8,3% sem carro).
-- Jars: `amcvehicles-0.9.0.jar` (`javap -constants`: `CHANCE_PER_BAY = 0.09d`; as constantes iguais às da foto da 0.8.1,
-  menos `FLIP = 6`; as 60 entradas do jar iguais) e `amcvehicles-0.9.0-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, feito
-  com `./gradlew jar`, sem os testes, e a constante devolvida; só local). Os 21 JSON iguais aos da foto.
-- Servidor (mundo novo, a mesma semente; o mundo da Fase 0 guardado em `run/world_phase0`): as mesmas 6 caixas da Fase 0
-  deram **o mesmo resultado** (os mesmos 4 carros nas mesmas vagas e posições, as mesmas 8 bombas com a mesma lava).
-  `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados; `/amcv car mercedes police true false`: `mercedes_police`,
-  capô aberto, porta-malas fechado; `/amcv lineup`: os 12 carros. Log: os mesmos 12 ERROR e 15 WARN da Fase 0 (IV, TACZ,
-  Minecraft, AMC), nenhum do mod.
-- Não conferido por ferramenta: parâmetros e variáveis locais sem uso (o `-Xlint:all` não os aponta; ficam para a Fase 2,
-  que lê cada classe). A varredura dos docs foi dirigida (a lista do roteiro e o que apareceu no caminho, mais "2 de altura
-  livre" no "Pôr" e a "Arquitetura" sem `FuelBalance` e `ClientHooks`); a conferência de todo valor contra o código é da Fase 6.
+## Version 0.9.0 — phase 1 of 1.0.0: dead code (2026-11-19)
+- Survey (changing nothing): `javac -Xlint:all` on main and test (through a Gradle init script; checked with `--debug`
+  that `-Xlint:all` reached the compiler): **0 warnings**. No unused import (search by name outside comments). No member
+  declared by the mod without use; only `Spots.all`, `Spots.allPumps` and `Spots.Bay.alongZ` are used only by tests (kept,
+  the user's choice). The 5 `catch` blocks log the error with the stack trace and return the message; none swallows an
+  error. No commented-out code in the Java. The 9 tools of `tools/` are cited by the docs or used by another (`nbt.py` by
+  `find_spots.py`; only it lacked the usage line, now it has one). The 7 images of `docs/spots/` are cited. Nothing of
+  `run/`, `build/` or `.gradle/` in git.
+- Removed (the user's choice): the drawn nose (`X`/`Z` in `spots.txt`, `Spots.Bay.drawnFacing` and `oriented`,
+  `Draw.Car.flip`, the index `FLIP` = 6, `PlacementTest`'s `ways`). Index 6 stays free; the others keep their number.
+- Text: the pumps' comment in `spots.txt` (it cited `Draw.PUMP_FUEL_CHANCE` and "30% with 1 bucket"), the note of the
+  commented bays of the gas stations, the README's duplicate line, the duplicate paragraph of "How the pump is placed" and
+  the mentions of `Mercedes.spawn`, `Placement.CAR_LIFT` and "`Mercedes` repeats them" in `CLAUDE.md`, the "63 bays" that
+  described the current state.
+- Proof: the 69 data lines of `spots.txt` equal to 0.8.1's (`diff` without the comments); 26 tests pass, 0 warnings;
+  **golden test identical** (`golden: 4708 lines ... sha256 717de763...e4d8b7`, the reference was not touched); projection
+  the same (1,683 cars, 3.42 per city, 8.3% without a car).
+- Jars: `amcvehicles-0.9.0.jar` (`javap -constants`: `CHANCE_PER_BAY = 0.09d`; the constants equal to the snapshot of
+  0.8.1, except `FLIP = 6`; the 60 jar entries the same) and `amcvehicles-0.9.0-TESTE-100pct.jar` (`CHANCE_PER_BAY =
+  1.0d`, made with `./gradlew jar`, without the tests, and the constant put back; only local). The 21 JSON equal to the
+  snapshot's.
+- Server (new world, the same seed; the world of phase 0 kept in `run/world_phase0`): the same 6 boxes of phase 0 gave
+  **the same result** (the same 4 cars in the same bays and positions, the same 8 pumps with the same lava). `/amcv fill`
+  at the glass house: 2 bays, 2 cars, 0 skipped; `/amcv car mercedes police true false`: `mercedes_police`, hood open,
+  trunk closed; `/amcv lineup`: the 12 cars. Log: the same 12 ERROR and 15 WARN as in phase 0 (IV, TACZ, Minecraft, AMC),
+  none of the mod.
+- Not checked by a tool: unused parameters and local variables (`-Xlint:all` does not point at them; left for phase 2,
+  which reads each class). The docs sweep was targeted (the plan's list and what came up along the way, plus "2 of free
+  height" in "Placing" and the "Architecture" without `FuelBalance` and `ClientHooks`); checking every value against the
+  code is phase 6's.
 
-## Versão 0.9.1 — Fase 2 do 1.0.0: código mais limpo, mesmo comportamento (2026-11-19)
-- Decisão do usuário: sem formatador automático, só `.editorconfig`.
-- Rede extra antes de mexer (o teste dourado não cobre `Vehicles`, `AmcWorld.blocked`, o tick da geração, as bombas nem as
-  respostas dos comandos): no mundo da 0.9.0, gravados em `run/phase2/` (fora do git) os dados completos (`data get`) dos 4
-  carros gerados e das 8 bombas do posto e as respostas do `/amcv draw` nas 6 caixas da Fase 0 (`run/phase2/dump.py`), mais as
-  respostas de `fill`, `car` (válido, modelo errado, cor errada), `lineup`, `pump` e `fill` fora de estrutura; e o tamanho e o
-  aninhamento de cada método (`run/phase2/metrics.py`).
-- Mudanças (só forma): `Vehicles.spawn` (79 linhas) em `newVehicle`, `setOpenings`, `setDashboard`, `removeParts` e
-  `engineFuelType`, na mesma ordem de antes (variáveis e painel antes de o carro entrar no mundo, peças depois);
-  `Generation.onLevelTick` (54) em `resolve`, `placeReadyCars` e `placeReadyPumps` (os dois sempre rodam), a lista de carros e
-  bombas do chunk calculada uma vez, `pumpCellBlocked`, `drawn(s)`/`pumps(s)` sem os `Integer` nulos; `AmcvCommands`:
-  `structureHere`, `spawn` (o `try/catch` que se repetia 3 vezes), `forward`, `chunksUnder`, `lineupCars`, `fillPumps`;
-  `AmcWorld.Placed.of` (a mesma conta repetida em `AmcWorld.at` e `Generation.structuresIn`) e `room`; `FuelPumps.pumpData` e
-  `Block.UPDATE_ALL_IMMEDIATE` no lugar do `11`; `Spots.parseLine`; constantes com nome (`PERMISSION`, `MAX_PUMP_BUCKETS`,
-  `COLUMNS`, `PUMP_KEY_SALT`, `SLIVER`); comentários errados corrigidos (10% de combustível, 0 a 3 baldes, `CAR_LIFT`) e linhas
-  do Java com até 120 colunas; classes visíveis só no pacote (menos `AmcVehicles`); teste `halfEmptyHalfOneToThree` renomeado
-  `halfEmptyOthersOneToMaxBuckets`. Métodos com mais de 40 linhas: antes `Vehicles.spawn` 79, `AmcvCommands.fill` 54,
-  `Generation.onLevelTick` 54, `FuelPumps.place` 44, `AmcvCommands.draw` 42; depois só `AmcvCommands.fill` 41.
-- Provas: 26 testes passam, 0 avisos com `-Xlint:all`; **teste dourado idêntico** (sha256 `717de763...e4d8b7`); constantes do
-  jar iguais às da foto, mais as novas com nome (com os valores de antes). Servidor, mundo novo, a mesma semente: as 6 caixas
-  com os mesmos 4 carros; os dados completos dos 4 carros e das 8 bombas e as 6 respostas do `/amcv draw` **idênticos aos de
-  antes** (`diff` vazio, trocados só os UUIDs); o formato das respostas de `fill` (posto e ocupado), `car`, `lineup`, `pump` e
-  das 3 mensagens de erro igual; log com os mesmos 12 ERROR e 15 WARN (nenhum do mod).
-- Jars em `run/jars/`: `amcvehicles-0.9.1.jar` e `amcvehicles-0.9.1-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, só local).
-- Não conferido: parâmetros e variáveis locais sem uso foram procurados lendo cada classe (não por ferramenta); o jogo em si
-  (visual) não foi testado.
+## Version 0.9.1 — phase 2 of 1.0.0: cleaner code, same behaviour (2026-11-19)
+- The user's decision: no automatic formatter, only `.editorconfig`.
+- Extra net before touching anything (the golden test does not cover `Vehicles`, `AmcWorld.blocked`, the generation's
+  tick, the pumps nor the commands' replies): in the world of 0.9.0, saved in `run/phase2/` (outside git) the full data
+  (`data get`) of the 4 generated cars and of the 8 pumps of the gas station and the `/amcv draw` replies in the 6 boxes of
+  phase 0 (`run/phase2/dump.py`), plus the replies of `fill`, `car` (valid, wrong model, wrong colour), `lineup`, `pump`
+  and `fill` outside a structure; and the length and nesting of each method (`run/phase2/metrics.py`).
+- Changes (form only): `Vehicles.spawn` (79 lines) into `newVehicle`, `setOpenings`, `setDashboard`, `removeParts` and
+  `engineFuelType`, in the same order as before (variables and dashboard before the car is in the world, parts after);
+  `Generation.onLevelTick` (54) into `resolve`, `placeReadyCars` and `placeReadyPumps` (both always run), the chunk's list
+  of cars and pumps computed once, `pumpCellBlocked`, `drawn(s)`/`pumps(s)` without the null `Integer`s; `AmcvCommands`:
+  `structureHere`, `spawn` (the `try/catch` that repeated 3 times), `forward`, `chunksUnder`, `lineupCars`, `fillPumps`;
+  `AmcWorld.Placed.of` (the same sum repeated in `AmcWorld.at` and `Generation.structuresIn`) and `room`;
+  `FuelPumps.pumpData` and `Block.UPDATE_ALL_IMMEDIATE` instead of `11`; `Spots.parseLine`; named constants
+  (`PERMISSION`, `MAX_PUMP_BUCKETS`, `COLUMNS`, `PUMP_KEY_SALT`, `SLIVER`); wrong comments fixed (10% of fuel, 0 to 3
+  buckets, `CAR_LIFT`) and Java lines of up to 120 columns; classes visible only in the package (except `AmcVehicles`);
+  test `halfEmptyHalfOneToThree` renamed `halfEmptyOthersOneToMaxBuckets`. Methods with more than 40 lines: before
+  `Vehicles.spawn` 79, `AmcvCommands.fill` 54, `Generation.onLevelTick` 54, `FuelPumps.place` 44, `AmcvCommands.draw` 42;
+  after only `AmcvCommands.fill` 41.
+- Proof: 26 tests pass, 0 warnings with `-Xlint:all`; **golden test identical** (sha256 `717de763...e4d8b7`); the jar's
+  constants equal to the snapshot's, plus the new named ones (with the values of before). Server, new world, the same seed:
+  the 6 boxes with the same 4 cars; the full data of the 4 cars and of the 8 pumps and the 6 `/amcv draw` replies
+  **identical to those of before** (empty `diff`, only the UUIDs masked); the format of the replies of `fill` (placed and
+  occupied), `car`, `lineup`, `pump` and of the 3 error messages the same; log with the same 12 ERROR and 15 WARN (none of
+  the mod).
+- Jars in `run/jars/`: `amcvehicles-0.9.1.jar` and `amcvehicles-0.9.1-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, only
+  local).
+- Not checked: unused parameters and local variables were looked for by reading each class (not by a tool); the game itself
+  (the look) was not tested.
 
-## Versão 0.9.2 — Fase 3 do 1.0.0: segurança (2026-11-19)
-Modelo de ameaça: o mod não registra pacote de rede e só lê o `spots.txt` embutido; quem pode causar dano é um operador
-(nível 2), um mundo com dado corrompido, outra versão do IV ou de um pack, a cadeia de build e o repositório publicado.
+## Version 0.9.2 — phase 3 of 1.0.0: security (2026-11-19)
+Threat model: the mod registers no network packet and only reads its embedded `spots.txt`; who can cause harm is an
+operator (level 2), a world with corrupt data, another version of IV or of a pack, the build chain and the published
+repository.
 
-| Achado | Evidência | Situação | Gravidade | Correção | Teste |
+| Finding | Evidence | Status | Severity | Fix | Test |
 |---|---|---|---|---|---|
-| Erro do IV ao montar um carro na geração derruba o servidor | build temporária com `Vehicles.spawn` sempre falhando, delegacia gerada: crash em 2 s (`crash-2026-11-19_09.50.40`); ao reiniciar, crash de novo em 12 s (`10.12.58`), pois o chunk segue pendente | confirmado | alta (o mundo fica inutilizável com o mod) | `Generation.place` pega o erro, registra (`could not spawn ..., the car is dropped`) e pula o carro (escolha do usuário) | o mesmo mundo e a mesma build quebrada: sem crash, o relógio do jogo avança, `pending chunks 0` |
-| `mts` aceito em qualquer versão futura (a reflexão em `FuelPumps` pode quebrar) | `versionRange="[24.0.0,)"` | confirmado | média | `[24.0.0,25)` (escolha do usuário) | build; o NeoForge recusa a 25 na tela (não testado com um IV 25, que não existe) |
-| Falha da reflexão em `FuelPumps` | leitura: o `catch (ReflectiveOperationException \| RuntimeException)` devolve o motivo; `resolve` conta a bomba como resolvida e o chunk sai de `Pending` | confirmado pela leitura | baixa | nenhuma | não testado no servidor |
-| `FuelBalance` restauraria o valor errado (cliente e servidor no single-player) | `FuelBalanceTest`: nas duas ordens os valores do IV voltam | refutado | - | nenhuma | 2 testes |
-| Arquivo `mtsconfig.json` já sujo fica sujo | `FuelBalanceTest.dirtyConfigStaysDirty` | confirmado (limite conhecido) | média | Fase 4 | 1 teste |
-| `Pending` corrompido | arquivo com `chunks` de tipo errado: o mundo abre, lista vazia, sem erro; arquivo aleatório: `Error loading saved data: amcvehicles_pending` e o mundo abre | sem defeito | - | nenhuma | 2 rodadas do servidor |
-| `Pending` sem limite / trabalho por passada | um chunk só fica pendente enquanto os chunks sob um carro dele não estão prontos; cada passada custa uma consulta por chunk pendente; criar um carro custa ~0,5 ms (medido na 0.7.1), uma garagem inteira ~17 ms num tick de 50 ms | sem defeito | - | nenhum limite (não é preciso) | medida existente |
-| Linha ruim do `spots.txt` | um número inválido dava `NumberFormatException` sem a linha | confirmado | baixa (o arquivo é embutido) | `IllegalStateException("spots.txt line N: ...")` | `SpotsTest` (7 linhas ruins, 2 boas) |
-| Comandos | `pump 16`: o Minecraft recusa ("must not be more than 15"); modelo e cor desconhecidos recusados com mensagem; `fill`/`draw` limitados às vagas da estrutura (no máximo 34); nível 2 | sem defeito | - | os números viraram constantes na Fase 2 | servidor |
-| Respostas de comando com `e.toString()` | `car`, `lineup`, `fill` mostram a classe da exceção ao operador | confirmado | baixa (só operador; sem stack trace) | nenhuma | - |
-| Cadeia de build | wrapper sem `distributionSha256Sum`; repositórios: NeoForged (releases e mojang-meta), Mojang libraries, Gradle plugin portal | confirmado | média | hash `72f44c9f...bc3f` (de `services.gradle.org/...sha256` e da página `gradle.org/release-checksums`) | o wrapper baixou numa pasta vazia e aceitou o hash (o caso de um hash errado não foi testado) |
-| Servidor de teste exposto na rede | `server-ip=` vazio, RCON com senha `teste`, `online-mode=false` | confirmado | média (só enquanto roda, na rede local) | `server-ip=127.0.0.1` (em `run/`, fora do git); `rconlib.py` lê `AMCV_RCON_PASSWORD` (padrão `teste`) | as ferramentas continuam conectando |
-| Ferramentas Python | `car_info.py` e `nbt.py` só leem; ninguém extrai arquivos de jar para o disco; tudo roda com `-I` | sem defeito | - | - | leitura |
-| Repositório | sem `LICENSE`; histórico: 0 caminhos pessoais, 0 segredos (só a senha `teste` do servidor local); e-mail pessoal nos commits antigos | confirmado | baixa | `LICENSE` MIT (RakkuLyc, 2026); commits novos com o e-mail noreply do GitHub (escolha do usuário; o histórico não foi reescrito) | `git log -p` |
-| Logs | as linhas do mod têm coordenadas, modelos e motivos; nada pessoal | sem defeito | - | - | log do servidor |
+| An IV error while building a car in the generation stops the server | temporary build with `Vehicles.spawn` always failing, police station generated: crash in 2 s (`crash-2026-11-19_09.50.40`); on restart, crash again in 12 s (`10.12.58`), since the chunk stays pending | confirmed | high (the world becomes unusable with the mod) | `Generation.place` catches the error, logs it (`could not spawn ..., the car is dropped`) and skips the car (the user's choice) | the same world and the same broken build: no crash, the game's clock moves on, `pending chunks 0` |
+| `mts` accepted in any future version (the reflection in `FuelPumps` may break) | `versionRange="[24.0.0,)"` | confirmed | medium | `[24.0.0,25)` (the user's choice) | build; NeoForge refuses a 25 on screen (not tested with an IV 25, which does not exist) |
+| A failure of the reflection in `FuelPumps` | reading: the `catch (ReflectiveOperationException \| RuntimeException)` returns the reason; `resolve` counts the pump as resolved and the chunk leaves `Pending` | confirmed by reading | low | none | not tested on the server |
+| `FuelBalance` would put back the wrong value (client and server in single player) | `FuelBalanceTest`: in both orders IV's values come back | refuted | - | none | 2 tests |
+| A `mtsconfig.json` already dirty stays dirty | `FuelBalanceTest.dirtyConfigStaysDirty` | confirmed (known limit) | medium | phase 4 | 1 test |
+| Corrupt `Pending` | a file with `chunks` of the wrong type: the world opens, empty list, no error; a random file: `Error loading saved data: amcvehicles_pending` and the world opens | no defect | - | none | 2 server runs |
+| `Pending` without a limit / work per pass | a chunk only stays pending while the chunks under one of its cars are not ready; each pass costs one lookup per pending chunk; creating a car costs ~0.5 ms (measured in 0.7.1), a whole garage ~17 ms in a tick of 50 ms | no defect | - | no limit (not needed) | existing measurement |
+| A bad line of `spots.txt` | an invalid number gave a `NumberFormatException` without the line | confirmed | low (the file is embedded) | `IllegalStateException("spots.txt line N: ...")` | `SpotsTest` (7 bad lines, 2 good) |
+| Commands | `pump 16`: Minecraft refuses ("must not be more than 15"); unknown model and colour refused with a message; `fill`/`draw` limited to the structure's bays (at most 34); level 2 | no defect | - | the numbers became constants in phase 2 | server |
+| Command replies with `e.toString()` | `car`, `lineup`, `fill` show the exception's class to the operator | confirmed | low (operator only; no stack trace) | none | - |
+| Build chain | wrapper without `distributionSha256Sum`; repositories: NeoForged (releases and mojang-meta), Mojang libraries, Gradle plugin portal | confirmed | medium | hash `72f44c9f...bc3f` (from `services.gradle.org/...sha256` and from the page `gradle.org/release-checksums`) | the wrapper downloaded into an empty folder and accepted the hash (the case of a wrong hash was not tested) |
+| Test server exposed on the network | `server-ip=` empty, RCON with password `teste`, `online-mode=false` | confirmed | medium (only while it runs, on the local network) | `server-ip=127.0.0.1` (in `run/`, outside git); `rconlib.py` reads `AMCV_RCON_PASSWORD` (default `teste`) | the tools still connect |
+| Python tools | `car_info.py` and `nbt.py` only read; nobody extracts files from a jar to disk; everything runs with `-I` | no defect | - | - | reading |
+| Repository | no `LICENSE`; history: 0 personal paths, 0 secrets (only the password `teste` of the local server); personal e-mail in the old commits | confirmed | low | `LICENSE` MIT (RakkuLyc, 2026); new commits with GitHub's noreply e-mail (the user's choice; the history was not rewritten) | `git log -p` |
+| Logs | the mod's lines have coordinates, models and reasons; nothing personal | no defect | - | - | the server's log |
 
-- `libs/` (não versionada), SHA-256: `abandonedmoderncity-0.1.0.jar` `392639e5...20ec5e`, `Immersive Vehicles-1.21.1-24.0.0.jar`
+- `libs/` (not versioned), SHA-256: `abandonedmoderncity-0.1.0.jar` `392639e5...20ec5e`, `Immersive Vehicles-1.21.1-24.0.0.jar`
   `1d2f7512...78d251`, `MTS Official Pack-1.21.1-V29.jar` `f82e67f6...a0b5d8`, `OAmP-1.21.1-V3.jar` `74311b94...433769`.
-- Achado novo para a Fase 4 (no teste do `Pending`): carro **duplicado** quando `/amcv draw` roda logo depois de o servidor
-  subir (`count: 2` na vaga da delegacia).
-- Testes: 31 passam; teste dourado idêntico.
+- A new finding for phase 4 (in the `Pending` test): a **duplicate** car when `/amcv draw` runs right after the server starts
+  (`count: 2` in the police station's bay).
+- A folder `logs/` written by `FuelBalanceTest` (Minecraft's logging writes where the test runs) went into a commit by
+  mistake: only 4 lines of the mod, nothing personal; taken out of git and ignored (`/logs/` in `.gitignore`).
+- Tests: 31 pass; golden test identical.
 
-## Versão 0.9.3 — Fase 4 do 1.0.0: defeitos (2026-11-19)
-- **`mtsconfig.json` sujo (corrigido)**. Causa, no código do IV 24.0.0 (`javap -c`): `ConfigSystem.saveToDisk` grava o arquivo
-  inteiro a partir da memória e é chamado com o mundo aberto por `GUIConfig` e `ControlSystem` (telas do cliente) e por
-  `WrapperWorld.onIVWorldTickPre` (o tick do servidor, quando um jogador entra pela primeira vez: o IV dá os itens iniciais,
-  põe o jogador em `general.joinedPlayers` e salva); fora disso, ao carregar (`InterfaceLoader`, `PackParser.parsePacks`),
-  antes de o mod mexer. Correção (aprovada pelo usuário antes: "pode aplicar direto" se o jogo não muda): `ConfigSystemMixin`
-  em volta de `saveToDisk` (início: valores do IV na memória; fim: a lava do mod de novo). Teste no servidor, com um comando
-  temporário (já removido) que chamava `saveToDisk`: resposta "lava in memory 0.05", o arquivo regravado às 10:24:27 com
-  `"lava": 1.0` nos 5 tipos; nenhum erro de mixin no log. Limite: um arquivo que já está sujo (de versões antigas) continua
-  sujo (`FuelBalanceTest.dirtyConfigStaysDirty`); o README explica como limpar. Não testado: as telas do cliente (só o servidor
-  foi testado; o caminho é o mesmo método).
-- **Carro duplicado (corrigido)**. Reproduzido na Fase 3: `/amcv draw` logo depois de o servidor subir pôs um segundo carro na
-  vaga da delegacia (`count: 2`). Causa: as entidades de um chunk carregam depois dele, e a checagem de veículo não as via.
-  Correção: `Generation.ready` exige `ServerLevel.areEntitiesLoaded` dos chunks sob o carro; `AmcWorld.blocked` responde
-  "entities of chunk -21,21 not loaded yet". Teste: o mesmo mundo, `/amcv draw` logo depois de subir: "entities of chunk -21,21
-  not loaded yet" (nada posto); 8 s depois: "occupied by a vehicle"; a contagem ficou em 2 (o duplicado antigo). A geração
-  segue igual: prédio largo e posto num mundo novo, 3 carros = 3 sorteados = 3 no lugar, 8 bombas.
-- **Estresse**: uma cidade inteira (a de -368,368, 4 × 225 = 900 chunks forçados de uma vez), o servidor parado no meio e
-  religado: 3 carros e 4 bombas `(generated)`, 3 veículos em 3 posições diferentes (nenhum duplicado), `Pending` vazio;
-  nenhum ERROR ou WARN do mod nos dois logs; um "Can't keep up" de 6,7 s ao gerar os 900 chunks (o mod pôs 7 itens nessa
-  hora, ~0,5 ms por carro; o resto é a geração do mundo, não medido à parte). Não foram "centenas de cidades": uma cidade.
-- **Nunca testados pelo usuário, conferidos no servidor**: tanque a 15% (Escargot gerado: `fluidLevel 2250` de 15.000, lava);
-  bateria a 0 (o campo `electricPower` não aparece, e o IV não grava zero; antes da 0.7.3 ele aparecia com 12,0); loot
-  (`sample_loot.py`, 400 baús de oficina: banco 7,25%, roda 8,75%, chave 11,5%, motor 1,5%, maçarico 4,0%, repair kit 1,75%,
-  jumper pack 1,0%, todos dentro de 3 desvios; 400 baús de posto: galão cheio 4,0% de 4,4%). Só o usuário pode confirmar no
-  jogo: a bateria descarregada na tela do carro, o jumper pack ligando o carro, o galão cheio despejando lava, o visual.
-- **A janela "chunk salvo antes do `Pending`"** (limite conhecido, não mudado): se o servidor cair depois de salvar um chunk
-  novo e antes de salvar `Pending`, os carros daquele chunk se perdem (nunca duplicam). Para fechar: (a) guardar a marca
-  "pendente" no próprio chunk (anexo de dados do NeoForge, salvo junto com ele; ~40 linhas, continuando a ler o `Pending` dos
-  mundos antigos); (b) salvar `Pending` a cada chunk novo com carro (custo de disco a cada um); (c) deixar como está (o
-  salvamento automático é a cada 5 minutos; perde-se no máximo um carro raro). Recomendação: (c) para o 1.0; decisão do
-  usuário.
-- **Mundo aberto sem o mod** (não testado, pela leitura): o Minecraft não lê arquivos desconhecidos de `data/`
-  (`amcvehicles_pending.dat` fica parado); os carros e as bombas são do IV e continuam; o mixin sai junto com o mod.
-- Testes: 31 passam; teste dourado idêntico.
+## Version 0.9.3 — phase 4 of 1.0.0: defects (2026-11-19)
+- **Dirty `mtsconfig.json` (fixed)**. Cause, in IV 24.0.0's code (`javap -c`): `ConfigSystem.saveToDisk` writes the whole
+  file from memory and is called with a world open by `GUIConfig` and `ControlSystem` (client screens) and by
+  `WrapperWorld.onIVWorldTickPre` (the server's tick, when a player joins for the first time: IV gives the starting items,
+  puts the player in `general.joinedPlayers` and saves); outside that, while loading (`InterfaceLoader`,
+  `PackParser.parsePacks`), before the mod touches anything. Fix (approved by the user beforehand: "apply it directly" if
+  the game does not change): `ConfigSystemMixin` around `saveToDisk` (start: IV's values in memory; end: the mod's lava
+  again). Test on the server, with a temporary command (already removed) that called `saveToDisk`: reply "lava in memory
+  0.05", the file rewritten at 10:24:27 with `"lava": 1.0` in the 5 types; no mixin error in the log. Limit: a file that
+  is already dirty (from old versions) stays dirty (`FuelBalanceTest.dirtyConfigStaysDirty`); the README explains how to
+  clean it. Not tested: the client's screens (only the server was tested; the path is the same method).
+- **Duplicate car (fixed)**. Reproduced in phase 3: `/amcv draw` right after the server started placed a second car in the
+  police station's bay (`count: 2`). Cause: the entities of a chunk load after it, and the vehicle check did not see them.
+  Fix: `Generation.ready` requires `ServerLevel.areEntitiesLoaded` of the chunks under the car; `AmcWorld.blocked` answers
+  "entities of chunk -21,21 not loaded yet". Test: the same world, `/amcv draw` right after starting: "entities of chunk
+  -21,21 not loaded yet" (nothing placed); 8 s later: "occupied by a vehicle"; the count stayed at 2 (the old duplicate).
+  The generation is the same: wide building and gas station in a new world, 3 cars = 3 drawn = 3 in place, 8 pumps.
+- **Stress**: a whole city (the one at -368,368, 4 × 225 = 900 chunks forced at once), the server stopped midway and started
+  again: 3 cars and 4 pumps `(generated)`, 3 vehicles in 3 different positions (no duplicate), `Pending` empty; no ERROR or
+  WARN of the mod in the two logs; one "Can't keep up" of 6.7 s while generating the 900 chunks (the mod placed 7 items at
+  that time, ~0.5 ms per car; the rest is the world's generation, not measured apart). It was not "hundreds of cities": one
+  city.
+- **Never tested by the user, checked on the server**: tank at 15% (generated Escargot: `fluidLevel 2250` of 15,000, lava);
+  battery at 0 (the field `electricPower` does not appear, and IV does not save zero; before 0.7.3 it appeared with 12.0);
+  loot (`sample_loot.py`, 400 workshop chests: seat 7.25%, wheel 8.75%, wrench 11.5%, engine 1.5%, blowtorch 4.0%, repair
+  kit 1.75%, jumper pack 1.0%, all within 3 deviations; 400 gas station chests: full jerry can 4.0% of 4.4%). Only the user
+  can confirm in the game: the flat battery on the car's screen, the jumper pack starting the car, the full jerry can
+  pouring lava, the look.
+- **The window "chunk saved before `Pending`"** (known limit, not changed): if the server crashes after saving a new chunk
+  and before saving `Pending`, the cars of that chunk are lost (never duplicated). To close it: (a) keep the "pending" mark
+  in the chunk itself (a NeoForge data attachment, saved along with it; ~40 lines, still reading the old worlds'
+  `Pending`); (b) save `Pending` at every new chunk with a car (a disk cost at each one); (c) leave it as it is (the
+  autosave is every 5 minutes; at most a rare car is lost). Recommendation: (c) for 1.0; the user's decision.
+- **World opened without the mod** (not tested, from reading): Minecraft does not read unknown files of `data/`
+  (`amcvehicles_pending.dat` just sits there); the cars and the pumps are IV's and stay; the mixin leaves with the mod.
+- Tests: 31 pass; golden test identical.
 
-## Fase 5 do 1.0.0: otimização, medida (2026-11-19; sem mudança de código, continua 0.9.3)
-- Medida com cronômetros temporários (já removidos) em `Generation.onChunkLoad` e `Generation.onLevelTick`, num mundo novo,
-  gerando a cidade de -368,368 inteira (4 × 225 chunks forçados; 7 itens postos): **1.205 chunks carregados, 17 ms no total
-  (média 14 µs, pior 2,7 ms)**; **2.982 chamadas do tick, 31 ms no total (média 10 µs, pior 16,8 ms, uma vez: a passada que
-  criou carros, incluindo o aquecimento do primeiro carro do IV)**. Uns 48 ms em ~2,5 minutos de servidor: ~0,03% do tempo.
-  Um "Can't keep up" no log, ao gerar os 900 chunks (o mundo, não o mod: o mod gastou 48 ms no total).
-- Candidatos do roteiro e de `docs/baseline/ACHADOS.md` (recalcular o sorteio do chunk pendente a cada 10 ticks, reflexão por
-  bomba em `FuelPumps`, busca de entidades em `AmcWorld.blocked`, `Spots.of`/`Placement` por chunk, ler o `spots.txt` ao
-  iniciar): todos ficam dentro desses números; **nenhum ganharia de forma perceptível, então nenhum foi mudado** (regra: sem
-  medir não se otimiza, e o que não ganha é descartado). Jar: 75 KB (`amcvehicles-0.9.3.jar`).
-
+## Phase 5 of 1.0.0: optimization, measured (2026-11-19; no code change, still 0.9.3)
+- Measured with temporary stopwatches (already removed) in `Generation.onChunkLoad` and `Generation.onLevelTick`, in a new
+  world, generating the whole city at -368,368 (4 × 225 chunks forced; 7 items placed): **1,205 chunks loaded, 17 ms in
+  all (mean 14 µs, worst 2.7 ms)**; **2,982 calls of the tick, 31 ms in all (mean 10 µs, worst 16.8 ms, once: the pass
+  that created cars, including the warm-up of IV's first car)**. About 48 ms in ~2.5 minutes of server: ~0.03% of the
+  time. One "Can't keep up" in the log, while generating the 900 chunks (the world, not the mod: the mod spent 48 ms in
+  all).
+- Candidates of the plan and of `docs/baseline/FINDINGS.md` (recomputing the pending chunk's draw every 10 ticks, the
+  reflection per pump in `FuelPumps`, the entity search in `AmcWorld.blocked`, `Spots.of`/`Placement` per chunk, reading
+  `spots.txt` at start): all of them stay within these numbers; **none would gain perceptibly, so none was changed** (the
+  rule: without measuring, no optimizing, and what does not gain is dropped). Jar: 76 KB (`amcvehicles-0.9.3.jar`, 77,653
+  bytes).
