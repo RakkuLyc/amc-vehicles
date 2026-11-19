@@ -12,7 +12,7 @@ import net.minecraft.world.level.saveddata.SavedData;
  * ({@code data/amcvehicles_pending.dat} of the dimension): a chunk is written here when it is generated with a car
  * drawn in it, and taken out only when every car of it is placed or found blocked. A restart in between resumes it.
  */
-public final class Pending extends SavedData {
+final class Pending extends SavedData {
     static final String NAME = "amcvehicles_pending";
     private final LongSet chunks = new LongOpenHashSet();
 

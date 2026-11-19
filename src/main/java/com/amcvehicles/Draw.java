@@ -8,13 +8,21 @@ import java.util.function.IntToDoubleFunction;
  * The draw of the cars: a pure function of the copy of the structure (the seed AMC gives its lot, itself from the world
  * seed) and of the bay, never of the order in which chunks load. No Minecraft classes: tested with JUnit.
  */
-public final class Draw {
+final class Draw {
     /** Chance of a car in each bay (the user's choice: 3% on 16 Nov 2026, 9% on 17 Nov 2026). */
     public static final double CHANCE_PER_BAY = 0.09;
     /** Chance of the hood being open, of the trunk, and of each side door (each drawn separately). */
     public static final double HOOD_OPEN_CHANCE = 0.5;
     public static final double TRUNK_OPEN_CHANCE = 0.5;
     public static final double DOOR_OPEN_CHANCE = 0.5;
+    /**
+     * Lava in a fuel pump (the user's choice, 0.6.2): {@link #PUMP_EMPTY_CHANCE} empty, else 1 to
+     * {@link #MAX_BUCKETS} buckets with the same chance (1/8 each since 0.7.13, when the user raised 3 to 4; 1/6 each
+     * with 3). History: 0 to 3 the same chance (first choice), then 70% empty and 30% with 1 bucket (0.6.0, after the
+     * balance of 16 Nov 2026).
+     */
+    public static final double PUMP_EMPTY_CHANCE = 0.5;
+    public static final int MAX_BUCKETS = 4;
 
     private static final long SALT = 0x414D4356L; // "AMCV"
     /**
@@ -67,14 +75,6 @@ public final class Draw {
                 m.trunk() != null && u.applyAsDouble(TRUNK) < TRUNK_OPEN_CHANCE,
                 List.copyOf(doors));
     }
-
-    /**
-     * Lava in a fuel pump (the user's choice, 0.6.2): {@link #PUMP_EMPTY_CHANCE} empty, else 1 to {@link #MAX_BUCKETS}
-     * buckets with the same chance (1/8 each since 0.7.13, when the user raised 3 to 4; 1/6 each with 3). History: 0 to 3
-     * the same chance (first choice), then 70% empty and 30% with 1 bucket (0.6.0, after the balance of 16 Nov 2026).
-     */
-    public static final double PUMP_EMPTY_CHANCE = 0.5;
-    public static final int MAX_BUCKETS = 4;
 
     /** Buckets of lava in a fuel pump, from the copy and the pump ({@link Spots.Pump#key}). */
     public static int buckets(long lotSeed, long pumpKey) {

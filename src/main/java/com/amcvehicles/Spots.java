@@ -15,7 +15,7 @@ import java.util.Map;
  * The parking bays of the AMC structures ({@code amcvehicles/spots.txt}), by model, in template coordinates of the
  * model's .nbt. No Minecraft classes: tested with JUnit.
  */
-public final class Spots {
+final class Spots {
     /**
      * A bay: the cells x0..x1, z0..z1 (inclusive) of the floor layer y of the template; the nose of the car points to
      * {@code facing} in the template: 'N' (-Z), 'S' (+Z), 'E' (+X) or 'W' (-X).
@@ -102,29 +102,42 @@ public final class Spots {
             while ((line = r.readLine()) != null) {
                 n++;
                 line = line.strip();
-                if (line.isEmpty() || line.startsWith("#")) {
-                    continue;
+                if (!line.isEmpty() && !line.startsWith("#")) {
+                    parseLine(line, n, out, pumps);
                 }
-                String[] f = line.split("\\s+");
-                if (f.length == 6 && f[1].equals("pump") && f[5].length() == 1 && "NSEW".indexOf(f[5].charAt(0)) >= 0) {
-                    pumps.computeIfAbsent(f[0], k -> new ArrayList<>()).add(new Pump(Integer.parseInt(f[2]),
-                            Integer.parseInt(f[3]), Integer.parseInt(f[4]), f[5].charAt(0)));
-                    continue;
-                }
-                if (f.length != 8 || !f[1].equals("bay") || f[7].length() != 1 || "NSEW".indexOf(f[7].charAt(0)) < 0) {
-                    throw new IllegalStateException("spots.txt line " + n + ": " + line);
-                }
-                Bay b = new Bay(Integer.parseInt(f[2]), Integer.parseInt(f[3]), Integer.parseInt(f[4]),
-                        Integer.parseInt(f[5]), Integer.parseInt(f[6]), f[7].charAt(0));
-                if (b.x1() < b.x0() || b.z1() < b.z0()) {
-                    throw new IllegalStateException("spots.txt line " + n + ": empty bay");
-                }
-                out.computeIfAbsent(f[0], k -> new ArrayList<>()).add(b);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
         out.forEach((k, v) -> BY_MODEL.put(k, List.copyOf(v)));
         pumps.forEach((k, v) -> PUMPS.put(k, List.copyOf(v)));
+    }
+
+    /** Whether a field is one of the four facings. */
+    private static boolean isFacing(String f) {
+        return f.length() == 1 && "NSEW".indexOf(f.charAt(0)) >= 0;
+    }
+
+    /**
+     * One line of spots.txt ({@code <model> pump <x> <y> <z> <facing>} or
+     * {@code <model> bay <x0> <y> <z0> <x1> <z1> <facing>}) into {@code bays} or {@code pumps}; a malformed line stops
+     * the game with its number.
+     */
+    private static void parseLine(String line, int n, Map<String, List<Bay>> bays, Map<String, List<Pump>> pumps) {
+        String[] f = line.split("\\s+");
+        if (f.length == 6 && f[1].equals("pump") && isFacing(f[5])) {
+            pumps.computeIfAbsent(f[0], k -> new ArrayList<>()).add(new Pump(Integer.parseInt(f[2]),
+                    Integer.parseInt(f[3]), Integer.parseInt(f[4]), f[5].charAt(0)));
+            return;
+        }
+        if (f.length != 8 || !f[1].equals("bay") || !isFacing(f[7])) {
+            throw new IllegalStateException("spots.txt line " + n + ": " + line);
+        }
+        Bay b = new Bay(Integer.parseInt(f[2]), Integer.parseInt(f[3]), Integer.parseInt(f[4]),
+                Integer.parseInt(f[5]), Integer.parseInt(f[6]), f[7].charAt(0));
+        if (b.x1() < b.x0() || b.z1() < b.z0()) {
+            throw new IllegalStateException("spots.txt line " + n + ": empty bay");
+        }
+        bays.computeIfAbsent(f[0], k -> new ArrayList<>()).add(b);
     }
 }

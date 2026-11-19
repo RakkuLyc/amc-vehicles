@@ -8,7 +8,7 @@ import java.util.List;
  * Station Wagon). The numbers come from the pack jars, printed by
  * {@code python3 -I tools/car_info.py <pack.jar> <pack id> <system names...>}. No Minecraft classes: tested with JUnit.
  */
-public final class Cars {
+final class Cars {
     /**
      * A car model.
      *

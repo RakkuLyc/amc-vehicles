@@ -71,7 +71,7 @@ class PumpTest {
     }
 
     @Test
-    void halfEmptyHalfOneToThree() {
+    void halfEmptyOthersOneToMaxBuckets() {
         int n = 1_200_000;
         int[] count = new int[Draw.MAX_BUCKETS + 1];
         for (int i = 0; i < n; i++) {

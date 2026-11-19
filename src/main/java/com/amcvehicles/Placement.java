@@ -11,13 +11,15 @@ import java.util.List;
  * {@code ground} layers buried, {@code turn} + the lot's {@code rot} quarter turns clockwise) and moved to the lot.
  * No Minecraft classes: tested with JUnit against {@code Def.code}.
  */
-public final class Placement {
+final class Placement {
     /** Free blocks a car needs over the floor (the tallest model on its support blocks: {@link Cars#HEADROOM}). */
     public static final int HEADROOM = Cars.HEADROOM;
+    /** A column counts under the body only when the body covers more than this sliver (blocks) of it. */
+    private static final double SLIVER = 0.01;
 
     /**
-     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor + the model's lift), the nose to the Minecraft yaw
-     * {@code noseYaw} (0 south, 90 west, 180 north, 270 east), and the columns its body covers.
+     * A car: its origin (the rear axle) at x, y, z (y = the top of the floor + the model's lift), the nose to the
+     * Minecraft yaw {@code noseYaw} (0 south, 90 west, 180 north, 270 east), and the columns its body covers.
      */
     public record Car(double x, double y, double z, float noseYaw, List<int[]> cells) {
     }
@@ -112,9 +114,8 @@ public final class Placement {
         double minZ = wd[1] != 0 ? z + Math.min(ax0 * wd[1], ax1 * wd[1]) : z - hw;
         double maxZ = wd[1] != 0 ? z + Math.max(ax0 * wd[1], ax1 * wd[1]) : z + hw;
         List<int[]> out = new ArrayList<>();
-        // a cell counts when the body covers more than a sliver of it
-        for (int ix = (int) Math.floor(minX + 0.01); ix <= (int) Math.floor(maxX - 0.01); ix++) {
-            for (int iz = (int) Math.floor(minZ + 0.01); iz <= (int) Math.floor(maxZ - 0.01); iz++) {
+        for (int ix = (int) Math.floor(minX + SLIVER); ix <= (int) Math.floor(maxX - SLIVER); ix++) {
+            for (int iz = (int) Math.floor(minZ + SLIVER); iz <= (int) Math.floor(maxZ - SLIVER); iz++) {
                 out.add(new int[]{ix, iz});
             }
         }

@@ -47,7 +47,8 @@ class GoldenDrawTest {
         for (boolean d : c.doorsOpen()) {
             doors.append(d ? '1' : '0');
         }
-        return c.model().key() + " " + c.color() + " hood=" + (c.hoodOpen() ? 1 : 0) + " trunk=" + (c.trunkOpen() ? 1 : 0)
+        return c.model().key() + " " + c.color() + " hood=" + (c.hoodOpen() ? 1 : 0)
+                + " trunk=" + (c.trunkOpen() ? 1 : 0)
                 + " doors=" + doors;
     }
 
@@ -146,7 +147,8 @@ class GoldenDrawTest {
             String e = i < expected.size() ? expected.get(i) : "(none)";
             String g = i < actual.size() ? actual.get(i) : "(none)";
             if (!e.equals(g)) {
-                fail("draw changed at line " + (i + 1) + "\n expected: " + e + "\n actual:   " + g + "\n(" + expected.size()
+                fail("draw changed at line " + (i + 1) + "\n expected: " + e + "\n actual:   " + g + "\n("
+                        + expected.size()
                         + " lines expected, " + actual.size() + " actual; full output in " + ACTUAL + ")");
             }
         }

@@ -3,32 +3,39 @@ package com.amcvehicles;
 import minecrafttransportsimulator.systems.ConfigSystem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Lava as a fuel is weaker (the user's choice, 16 Nov 2026): the user measured that 5 buckets of lava took a car
  * across 6 or 7 AMC cities (~1.3 cities per bucket), and lava is endless in the world (any lava lake). The potency of
  * lava in IV's fuel config ({@code fuel.fuels.<type>.lava}, 1.0 by default for gasoline, diesel and avgas) is set to
- * {@link #LAVA}: each bucket goes 5% as far as IV's own (~0.07 city per bucket by the user's measure of ~1.3). A real gasoline of another mod keeps its potency.
+ * {@link #LAVA}: each bucket goes 5% as far as IV's own (~0.07 city per bucket by the user's measure of ~1.3). A
+ * real gasoline of another mod keeps its potency.
  * <p>
  * In memory: IV writes {@code config/mtsconfig.json} while the game loads (on the client, in
  * {@code FMLLoadCompleteEvent}), so the value is set later, when a server starts (the single player world included: the
  * integrated server shares IV's settings) and, on a client, when it joins a server, and put back when the server stops
  * or the client leaves ({@link #restore}). IV also saves that file when a player changes its controls or its config
- * screen during a game: such a save writes 0.05 to the file (to undo it, edit the file). IV's engines read the map every time they burn fuel ({@code PartEngine}), so the change applies at once.
+ * screen during a game: such a save writes 0.05 to the file (to undo it, edit the file). IV's engines read the map
+ * every time they burn fuel ({@code PartEngine}), so the change applies at once.
  */
-public final class FuelBalance {
-    /** Potency of lava as an engine fuel. */
-    public static final double LAVA = 0.05; // 0.35 in 0.6.0 to 0.7.4; removed in 0.7.5; 0.60 in 0.7.9; 0.45 in 0.7.10; 0.35 in 0.7.11; 0.05 since 0.7.12 (user's choice after testing it, 17 Nov 2026)
+final class FuelBalance {
+    /**
+     * Potency of lava as an engine fuel: 0.05 since 0.7.12 (the user's choice after testing it, 17 Nov 2026). Before:
+     * 0.35 in 0.6.0 to 0.7.4, none in 0.7.5 to 0.7.8, 0.60 in 0.7.9, 0.45 in 0.7.10, 0.35 in 0.7.11.
+     */
+    public static final double LAVA = 0.05;
     /**
      * IV's fuel types that are not engine fuels and keep lava as it is: its furnace and brewing stand parts (lava 1.0
      * there too; seen in the log of the first run of 0.6.0, which changed them as well).
      */
-    static final java.util.Set<String> NOT_ENGINES = java.util.Set.of("furnace", "brewing_stand");
+    static final Set<String> NOT_ENGINES = Set.of("furnace", "brewing_stand");
 
     /** IV's values before {@link #apply}: put back by {@link #restore}. */
-    private static final Map<String, Double> ORIGINAL = new java.util.HashMap<>();
+    private static final Map<String, Double> ORIGINAL = new HashMap<>();
 
     private FuelBalance() {
     }

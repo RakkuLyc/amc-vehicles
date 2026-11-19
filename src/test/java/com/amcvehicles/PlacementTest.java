@@ -159,7 +159,8 @@ class PlacementTest {
                     double maxZ = lotZ + Math.max(a[1], b[1]);
                     for (int[] c : car.cells()) {
                         assertTrue(c[0] >= minX && c[0] + 1 <= maxX && c[1] >= minZ && c[1] + 1 <= maxZ,
-                                e.getKey() + " " + bay + " rot " + rot + " " + model.key() + ": body cell " + c[0] + "," + c[1]
+                                e.getKey() + " " + bay + " rot " + rot + " " + model.key() + ": body cell " + c[0] + ","
+                                        + c[1]
                                         + " out of the bay " + minX + ".." + maxX + ", " + minZ + ".." + maxZ);
                     }
                     // the nose runs along the long side of the bay

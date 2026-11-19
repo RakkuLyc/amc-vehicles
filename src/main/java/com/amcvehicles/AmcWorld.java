@@ -16,7 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** The AMC plan read from the world: which structure stands at a column, and whether a car fits in the world. */
-public final class AmcWorld {
+final class AmcWorld {
     /** The Minecraft entity of IV's vehicles (and of its other "existing" entities). */
     static final ResourceLocation VEHICLE = ResourceLocation.fromNamespaceAndPath("mts", "builder_existing");
     /** Height (blocks) up to which a block on the floor does not stop a car: carpets (1/16), a thin snow layer. */

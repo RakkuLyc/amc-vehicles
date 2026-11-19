@@ -12,6 +12,7 @@ import minecrafttransportsimulator.mcinterface.IWrapperNBT;
 import minecrafttransportsimulator.mcinterface.InterfaceManager;
 import minecrafttransportsimulator.packloading.PackParser;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.server.level.ServerLevel;
 
 import java.lang.reflect.Field;
@@ -19,17 +20,17 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * The fuel pumps of the gas stations: Immersive Vehicles' own {@code mts:fuelpump} (an IV decor block; the user's choice,
- * 16 Nov 2026, instead of the Official Pack's {@code mtsofficialpack:fuelpump}), placed
- * without a player. IV's own {@code WrapperWorld.setBlock} with no player only sets the block (no tile entity), so this
- * does what it does for a player: the block state of IV's block, then the tile entity, created with data that carry
+ * The fuel pumps of the gas stations: Immersive Vehicles' own {@code mts:fuelpump} (an IV decor block; the user's
+ * choice, 16 Nov 2026, instead of the Official Pack's {@code mtsofficialpack:fuelpump}), placed without a player.
+ * IV's own {@code WrapperWorld.setBlock} with no player only sets the block (no tile entity), so this does what it
+ * does for a player: the block state of IV's block, then the tile entity, created with data that carry
  * the angle ({@code angles}, read by the constructor before it sizes the bounding box) and the tank. Two members of IV
  * are protected and reached by reflection: {@code BuilderBlock.blockMap} and {@code BuilderTileEntity.setTileEntity}.
  */
-public final class FuelPumps {
+final class FuelPumps {
     public static final String PACK = "mts";
     public static final String PUMP = "fuelpump";
-    /** A bucket, in mB: the pumps get 0 to 3 buckets of lava (the user's choice). */
+    /** A bucket, in mB: the pumps get 0 to {@link Draw#MAX_BUCKETS} buckets of lava (the user's choice). */
     public static final int BUCKET = 1000;
 
     private FuelPumps() {
@@ -53,7 +54,7 @@ public final class FuelPumps {
             if (builder == null) {
                 return "no Minecraft block for " + PACK + ":" + PUMP;
             }
-            if (!level.setBlock(pos, builder.defaultBlockState(), 11)) {
+            if (!level.setBlock(pos, builder.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE)) {
                 return "the block was not set";
             }
             if (!(level.getBlockEntity(pos) instanceof BuilderTileEntity tile)) {

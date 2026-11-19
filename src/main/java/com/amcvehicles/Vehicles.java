@@ -27,17 +27,17 @@ import java.util.Map;
 
 /**
  * Builds an abandoned car of {@link Cars} in the world: always without engine, wheels (the Escargot's spare too) and
- * seats, 10% of fuel, only a speedometer (km/h) and a fuel gauge on the dashboard; hood, trunk and each side door as
- * drawn. The other default parts of the pack stay (the glovebox, the invisible standing seat of the trunk, the Scout's
- * pickup bed and bumper sticker, the Mustang's mirror ornament).
+ * seats, {@link #FUEL_FRACTION} of its tank, a flat battery, only a speedometer (km/h) and a fuel gauge on the
+ * dashboard; hood, trunk and each side door as drawn. The other default parts of the pack stay (the glovebox, the
+ * invisible standing seat of the trunk, the Scout's pickup bed and bumper sticker, the Mustang's mirror ornament).
  */
-public final class Vehicles {
-    /** Fuel left in the tank: 15% of the car's {@code motorized.fuelCapacity} (10% until 0.7.3; the user's choice, 17 Nov 2026). */
+final class Vehicles {
+    /** Fuel left in the tank: 15% of the car's {@code motorized.fuelCapacity} (the user's choice, 17 Nov 2026). */
     public static final double FUEL_FRACTION = 0.15;
     /**
-     * Charge of the battery: 0 (flat; the user's choice, 17 Nov 2026), so the jumper pack matters. IV's new car has 85.7%
-     * ({@code batteryCapacity * 0.85715}, set in its constructor for a vehicle with no saved data); {@code electricPower}
-     * is the field IV saves and reads.
+     * Charge of the battery: 0 (flat; the user's choice, 17 Nov 2026), so the jumper pack matters. IV's new car has
+     * 85.7% ({@code batteryCapacity * 0.85715}, set in its constructor for a vehicle with no saved data);
+     * {@code electricPower} is the field IV saves and reads.
      */
     public static final double BATTERY_FRACTION = 0.0;
     static final String INSTRUMENTS = "mtsofficialpack";
@@ -52,9 +52,14 @@ public final class Vehicles {
                          int fuelGaugeSlot, List<String> removed, List<String> parts) {
     }
 
+    /** The dashboard slots used: the speedometer's and the fuel gauge's (-1 when none). */
+    private record Dashboard(int speedometer, int fuelGauge) {
+    }
+
     /**
      * Spawns the car with its origin (the rear axle) at (x, y, z), its nose pointing to the Minecraft yaw
-     * {@code noseYaw} (0 = south, +Z; 90 = west; 180 = north; 270 = east).
+     * {@code noseYaw} (0 = south, +Z; 90 = west; 180 = north; 270 = east). The order matters to IV: the variables and
+     * the instruments go in before the car is in the world (they travel in its first data), the parts after it.
      */
     public static Result spawn(ServerLevel level, double x, double y, double z, float noseYaw, Draw.Car car) {
         Cars.Model m = car.model();
@@ -63,61 +68,13 @@ public final class Vehicles {
             throw new IllegalStateException("Immersive Vehicles has no item " + m.id() + car.color());
         }
         AWrapperWorld world = WrapperWorld.getWrapperFor(level);
-        // data null = a new car, as from a fresh item: the pack's initialVariables (some doors and the hood open, set
-        // again below) and default instruments (replaced below); the parts come with addPartsPostAddition
-        EntityVehicleF_Physics v = new EntityVehicleF_Physics(world, null, item, null);
-        v.electricPower = item.definition.motorized.batteryCapacity * BATTERY_FRACTION;
-        v.position.set(x, y, z);
-        v.prevPosition.set(v.position);
-        // IV turns by its own yaw, which is Minecraft's with the sign flipped (WrapperEntity.getYaw)
-        v.orientation.setToAngles(new Point3D(0.0, -noseYaw, 0.0));
-        v.prevOrientation.set(v.orientation);
-        v.motion.set(0.0, 0.0, 0.0);
-        v.prevMotion.set(v.motion);
-
-        v.getOrCreateVariable(Cars.Model.HOOD).setTo(car.hoodOpen() ? 1.0 : 0.0, false);
-        if (m.trunk() != null) {
-            v.getOrCreateVariable(m.trunk()).setTo(car.trunkOpen() ? 1.0 : 0.0, false);
-        }
-        for (int k = 0; k < m.doors().size(); k++) {
-            v.getOrCreateVariable(m.doors().get(k)).setTo(car.doorsOpen().get(k) ? 1.0 : 0.0, false);
-        }
-
-        // the dashboard: only the speedometer (km/h) and the fuel gauge (before the car is in the world)
-        List<JSONInstrumentDefinition> slots = item.definition.instruments;
-        int speedo = -1;
-        int fuelSlot = -1;
-        if (slots != null && !slots.isEmpty()) {
-            speedo = speedometerSlot(slots);
-            fuelSlot = fuelGaugeSlot(slots, speedo);
-            for (int k = 0; k < slots.size(); k++) {
-                if (k != speedo && k != fuelSlot && v.instruments.get(k) != null) {
-                    v.removeIntrument(k);
-                }
-            }
-            ItemInstrument s = PackParser.getItem(INSTRUMENTS, SPEEDOMETER);
-            ItemInstrument f = PackParser.getItem(INSTRUMENTS, FUEL_GAUGE);
-            if (s != null) {
-                v.addInstrument(s, speedo);
-            }
-            if (f != null && fuelSlot >= 0) {
-                v.addInstrument(f, fuelSlot);
-            }
-        }
-
+        EntityVehicleF_Physics v = newVehicle(world, item, x, y, z, noseYaw);
+        setOpenings(v, car);
+        Dashboard dash = setDashboard(v, item);
         world.spawnEntity(v);
-        // the pack's default parts, then out go the engine, the wheels (a spare too) and the seats that are not
-        // permanent (the invisible standing seat of the trunk is)
+        // the pack's default parts, then out go the ones an abandoned car lacks
         v.addPartsPostAddition(null, null);
-        List<String> removed = new ArrayList<>();
-        for (APart p : new ArrayList<>(v.parts)) {
-            boolean seat = p instanceof PartSeat && !p.placementDefinition.isPermanent;
-            if (p instanceof PartEngine || p instanceof PartGroundDevice || seat) {
-                removed.add(p.placementSlot + ":" + p.definition.packID + ":" + p.definition.systemName);
-                v.removePart(p, false, true);
-            }
-        }
-
+        List<String> removed = removeParts(v);
         int capacity = item.definition.motorized.fuelCapacity;
         String fluid = fluidFor(item);
         double fuel = fluid.isEmpty() ? 0.0 : capacity * FUEL_FRACTION;
@@ -128,12 +85,86 @@ public final class Vehicles {
             // (EntityFluidTank.fill takes the same fluid only with the same mod, or "wildcard" as the pumps send)
             v.fuelTank.manuallySet(fluid, namespace(fluid), fuel);
         }
-
         List<String> parts = new ArrayList<>();
         for (APart p : v.parts) {
-            parts.add(p.placementSlot + ":" + p.definition.packID + ":" + p.definition.systemName);
+            parts.add(partName(p));
         }
-        return new Result(car, fluid, fuel, capacity, speedo, fuelSlot, removed, parts);
+        return new Result(car, fluid, fuel, capacity, dash.speedometer(), dash.fuelGauge(), removed, parts);
+    }
+
+    /**
+     * A new car, not yet in the world, at (x, y, z) facing {@code noseYaw}, standing still, with a flat battery. Data
+     * null = a new car, as from a fresh item: the pack's initialVariables (some doors and the hood open, set again by
+     * {@link #setOpenings}) and default instruments (replaced by {@link #setDashboard}).
+     */
+    private static EntityVehicleF_Physics newVehicle(AWrapperWorld world, ItemVehicle item, double x, double y,
+                                                     double z, float noseYaw) {
+        EntityVehicleF_Physics v = new EntityVehicleF_Physics(world, null, item, null);
+        v.electricPower = item.definition.motorized.batteryCapacity * BATTERY_FRACTION;
+        v.position.set(x, y, z);
+        v.prevPosition.set(v.position);
+        // IV turns by its own yaw, which is Minecraft's with the sign flipped (WrapperEntity.getYaw)
+        v.orientation.setToAngles(new Point3D(0.0, -noseYaw, 0.0));
+        v.prevOrientation.set(v.orientation);
+        v.motion.set(0.0, 0.0, 0.0);
+        v.prevMotion.set(v.motion);
+        return v;
+    }
+
+    /** The hood, the trunk and each side door, open (1) or closed (0) as drawn. */
+    private static void setOpenings(EntityVehicleF_Physics v, Draw.Car car) {
+        Cars.Model m = car.model();
+        v.getOrCreateVariable(Cars.Model.HOOD).setTo(car.hoodOpen() ? 1.0 : 0.0, false);
+        if (m.trunk() != null) {
+            v.getOrCreateVariable(m.trunk()).setTo(car.trunkOpen() ? 1.0 : 0.0, false);
+        }
+        for (int k = 0; k < m.doors().size(); k++) {
+            v.getOrCreateVariable(m.doors().get(k)).setTo(car.doorsOpen().get(k) ? 1.0 : 0.0, false);
+        }
+    }
+
+    /** The dashboard: only the speedometer (km/h) and the fuel gauge; the pack's other instruments go. */
+    private static Dashboard setDashboard(EntityVehicleF_Physics v, ItemVehicle item) {
+        List<JSONInstrumentDefinition> slots = item.definition.instruments;
+        if (slots == null || slots.isEmpty()) {
+            return new Dashboard(-1, -1);
+        }
+        int speedo = speedometerSlot(slots);
+        int fuelSlot = fuelGaugeSlot(slots, speedo);
+        for (int k = 0; k < slots.size(); k++) {
+            if (k != speedo && k != fuelSlot && v.instruments.get(k) != null) {
+                v.removeIntrument(k);
+            }
+        }
+        ItemInstrument s = PackParser.getItem(INSTRUMENTS, SPEEDOMETER);
+        ItemInstrument f = PackParser.getItem(INSTRUMENTS, FUEL_GAUGE);
+        if (s != null) {
+            v.addInstrument(s, speedo);
+        }
+        if (f != null && fuelSlot >= 0) {
+            v.addInstrument(f, fuelSlot);
+        }
+        return new Dashboard(speedo, fuelSlot);
+    }
+
+    /**
+     * Takes out the engine, the wheels (a spare too) and the seats that are not permanent (the invisible standing
+     * seat of the trunk is); returns them as "slot:pack:name".
+     */
+    private static List<String> removeParts(EntityVehicleF_Physics v) {
+        List<String> removed = new ArrayList<>();
+        for (APart p : new ArrayList<>(v.parts)) {
+            boolean seat = p instanceof PartSeat && !p.placementDefinition.isPermanent;
+            if (p instanceof PartEngine || p instanceof PartGroundDevice || seat) {
+                removed.add(partName(p));
+                v.removePart(p, false, true);
+            }
+        }
+        return removed;
+    }
+
+    private static String partName(APart p) {
+        return p.placementSlot + ":" + p.definition.packID + ":" + p.definition.systemName;
     }
 
     /**
@@ -207,22 +238,7 @@ public final class Vehicles {
      * AEntityVehicleE_Powered.addPartsPostAddition).
      */
     static String fluidFor(ItemVehicle item) {
-        String fuelType = "gasoline";
-        if (item.definition.parts != null) {
-            for (JSONPartDefinition p : item.definition.parts) {
-                if (p.defaultPart != null && p.types != null && p.types.stream().anyMatch(t -> t.startsWith("engine"))) {
-                    String id = p.defaultPart;
-                    AItemPack<?> engine = PackParser.getItem(id.substring(0, id.indexOf(':')),
-                            id.substring(id.indexOf(':') + 1));
-                    if (engine != null && engine.definition instanceof JSONPart part && part.engine != null
-                            && part.engine.fuelType != null) {
-                        fuelType = part.engine.fuelType;
-                    }
-                    break;
-                }
-            }
-        }
-        Map<String, Double> fluids = ConfigSystem.settings.fuel.fuels.get(fuelType);
+        Map<String, Double> fluids = ConfigSystem.settings.fuel.fuels.get(engineFuelType(item));
         String best = "";
         if (fluids != null) {
             for (Map.Entry<String, Double> e : fluids.entrySet()) {
@@ -233,5 +249,26 @@ public final class Vehicles {
             }
         }
         return best;
+    }
+
+    /** The fuel type of the car's first default engine ("gasoline" when the pack does not say). */
+    static String engineFuelType(ItemVehicle item) {
+        if (item.definition.parts == null) {
+            return "gasoline";
+        }
+        for (JSONPartDefinition p : item.definition.parts) {
+            if (p.defaultPart == null || p.types == null || p.types.stream().noneMatch(t -> t.startsWith("engine"))) {
+                continue;
+            }
+            String id = p.defaultPart;
+            int colon = id.indexOf(':');
+            AItemPack<?> engine = PackParser.getItem(id.substring(0, colon), id.substring(colon + 1));
+            if (engine != null && engine.definition instanceof JSONPart part && part.engine != null
+                    && part.engine.fuelType != null) {
+                return part.engine.fuelType;
+            }
+            return "gasoline";
+        }
+        return "gasoline";
     }
 }

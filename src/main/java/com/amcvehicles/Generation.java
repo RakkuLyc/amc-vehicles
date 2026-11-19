@@ -38,7 +38,7 @@ import java.util.Map;
  *   restart.</li>
  * </ul>
  */
-public final class Generation {
+final class Generation {
     /** How often (ticks) the pending chunks are looked at. */
     static final int EVERY = 10;
     /** Columns of a chunk: the size of {@code ChunkPlan.lot}. */
