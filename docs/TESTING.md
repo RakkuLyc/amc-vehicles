@@ -621,4 +621,7 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados; `/amcv car mercedes police true false`: `mercedes_police`,
   capô aberto, porta-malas fechado; `/amcv lineup`: os 12 carros. Log: os mesmos 12 ERROR e 15 WARN da Fase 0 (IV, TACZ,
   Minecraft, AMC), nenhum do mod.
+- Não conferido por ferramenta: parâmetros e variáveis locais sem uso (o `-Xlint:all` não os aponta; ficam para a Fase 2,
+  que lê cada classe). A varredura dos docs foi dirigida (a lista do roteiro e o que apareceu no caminho, mais "2 de altura
+  livre" no "Pôr" e a "Arquitetura" sem `FuelBalance` e `ClientHooks`); a conferência de todo valor contra o código é da Fase 6.
 

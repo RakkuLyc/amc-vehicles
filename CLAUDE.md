@@ -245,7 +245,7 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   sem um novo evento de carregamento, e os pendentes depois de reiniciar); para cada chunk pendente que é um chunk
   completo carregado, cada carro dele espera até todos os chunks sob o corpo serem chunks completos carregados
   (`getChunkNow`, que nunca força um carregamento); então `Generation.place` confere o mundo (`AmcWorld.blocked`: piso,
-  2 de altura livre, nenhum veículo do IV, `mts:builder_existing`, ali) e põe o carro, ou o descarta de vez se estiver
+  3 de altura livre (`Placement.HEADROOM`), nenhum veículo do IV, `mts:builder_existing`, ali) e põe o carro, ou o descarta de vez se estiver
   bloqueado (por exemplo, um baú sorteado pelo AMC dentro da vaga). Quando nenhum carro do chunk espera mais, ele sai
   de `Pending`. Num chunk com um carro esperando, os outros já resolvidos não são tentados de novo na mesma sessão
   (sem log repetido). A checagem de "veículo ali" impede carro duplicado se o servidor cair entre pôr o carro e
@@ -375,7 +375,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 
 ## Arquitetura
 ```
-AmcVehicles    o @Mod: registra os comandos
+AmcVehicles    o @Mod: registra os comandos e os eventos (geração, FuelBalance ao iniciar e parar o servidor,
+               ClientHooks no cliente)
 Cars           os 8 modelos: cores, medidas, portas, porta-malas (puro; conferido contra os jars)
 Vehicles       monta um carro abandonado de qualquer modelo (estado, painel, peças, combustível)
 FuelPumps      põe uma bomba de combustível do IV (sem jogador) com lava
@@ -386,6 +387,8 @@ Draw           o sorteio dos carros (9% por vaga, modelo, cor, capô, porta-mala
 Generation     a geração: sorteia ao gerar um chunk, põe no tick quando os chunks sob o carro (ou em volta da
                bomba) estão prontos
 Pending        os chunks com carro sorteado ainda não posto (salvo no mundo; percorrido a cada 10 ticks)
+FuelBalance    a lava a 0,05 como combustível de motor do IV, só na memória (aplica ao iniciar, devolve ao parar)
+ClientHooks    o mesmo do FuelBalance no cliente, ao entrar e sair de um servidor (só carregada no cliente)
 AmcvCommands   /amcv (op 2): comandos de teste
 ```
 
