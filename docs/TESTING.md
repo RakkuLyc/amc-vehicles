@@ -716,3 +716,14 @@ Modelo de ameaça: o mod não registra pacote de rede e só lê o `spots.txt` em
   (`amcvehicles_pending.dat` fica parado); os carros e as bombas são do IV e continuam; o mixin sai junto com o mod.
 - Testes: 31 passam; teste dourado idêntico.
 
+## Fase 5 do 1.0.0: otimização, medida (2026-11-19; sem mudança de código, continua 0.9.3)
+- Medida com cronômetros temporários (já removidos) em `Generation.onChunkLoad` e `Generation.onLevelTick`, num mundo novo,
+  gerando a cidade de -368,368 inteira (4 × 225 chunks forçados; 7 itens postos): **1.205 chunks carregados, 17 ms no total
+  (média 14 µs, pior 2,7 ms)**; **2.982 chamadas do tick, 31 ms no total (média 10 µs, pior 16,8 ms, uma vez: a passada que
+  criou carros, incluindo o aquecimento do primeiro carro do IV)**. Uns 48 ms em ~2,5 minutos de servidor: ~0,03% do tempo.
+  Um "Can't keep up" no log, ao gerar os 900 chunks (o mundo, não o mod: o mod gastou 48 ms no total).
+- Candidatos do roteiro e de `docs/baseline/ACHADOS.md` (recalcular o sorteio do chunk pendente a cada 10 ticks, reflexão por
+  bomba em `FuelPumps`, busca de entidades em `AmcWorld.blocked`, `Spots.of`/`Placement` por chunk, ler o `spots.txt` ao
+  iniciar): todos ficam dentro desses números; **nenhum ganharia de forma perceptível, então nenhum foi mudado** (regra: sem
+  medir não se otimiza, e o que não ganha é descartado). Jar: 75 KB (`amcvehicles-0.9.3.jar`).
+

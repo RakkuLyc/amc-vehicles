@@ -105,6 +105,8 @@ primeira vez: `joinedPlayers`); o `ConfigSystemMixin` (`com.amcvehicles.mixin`, 
 duplicado: as entidades de um chunk carregam depois dele; `Generation.ready` espera `ServerLevel.areEntitiesLoaded` dos
 chunks sob o carro e `AmcWorld.blocked` responde "entities of chunk x,z not loaded yet" (os comandos não põem o carro).
 Pendente para o usuário decidir: fechar a janela "chunk salvo antes do `Pending`" (ver `docs/TESTING.md`, 0.9.3).
+Fase 5 (otimização) **medida, sem mudança**: o mod gasta ~0,03% do tempo do servidor ao gerar uma cidade inteira (14 µs
+por chunk novo, 10 µs por tick em média); nada a otimizar (`docs/TESTING.md`, Fase 5).
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
 foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
 removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".
