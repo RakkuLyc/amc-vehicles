@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * The fuel pumps of the gas stations: Immersive Vehicles' own {@code mts:fuelpump} (an IV decor block; the user's
- * choice, 16 Nov 2026, instead of the Official Pack's {@code mtsofficialpack:fuelpump}), placed without a player.
+ * choice, 2026-11-16, instead of the Official Pack's {@code mtsofficialpack:fuelpump}), placed without a player.
  * IV's own {@code WrapperWorld.setBlock} with no player only sets the block (no tile entity), so this does what it
  * does for a player: the block state of IV's block, then the tile entity, created with data that carry
  * the angle ({@code angles}, read by the constructor before it sizes the bounding box) and the tank. Two members of IV

@@ -59,15 +59,18 @@ def main():
             t = re.search(r'"types"\s*:\s*\[([^\]]*)\]', p)
             d = re.search(r'"defaultPart"\s*:\s*"([^"]+)"', p)
             if d:
+                permanent = ' (permanent)' if re.search(r'"isPermanent"\s*:\s*true', p) else ''
                 print('  part %d %s default %s%s' % (i, re.findall(r'"([^"]+)"', t.group(1)) if t else '', d.group(1),
-                                                    ' (permanent)' if re.search(r'"isPermanent"\s*:\s*true', p) else ''))
+                                                    permanent))
         for i, ins in enumerate(objects(array(s, 'instruments'))):
             hx = re.search(r'"hudX"\s*:\s*(-?\d+)', ins)
             di = re.search(r'"defaultInstrument"\s*:\s*"([^"]+)"', ins)
-            print('  instrument slot %d hudX %s default %s' % (i, hx.group(1) if hx else '?', di.group(1) if di else '-'))
+            print('  instrument slot %d hudX %s default %s' % (i, hx.group(1) if hx else '?',
+                                                               di.group(1) if di else '-'))
         xs, ys, zs, cube = [], [], [], []
         cur = ''
-        for line in z.read('assets/%s/objmodels/vehicles/%s.obj' % (pack, name)).decode('utf-8', 'replace').splitlines():
+        obj = z.read('assets/%s/objmodels/vehicles/%s.obj' % (pack, name)).decode('utf-8', 'replace')
+        for line in obj.splitlines():
             if line[:2] in ('o ', 'g '):
                 cur = line.split()[1]
             elif line.startswith('v '):

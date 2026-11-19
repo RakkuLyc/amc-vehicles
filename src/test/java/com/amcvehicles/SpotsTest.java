@@ -19,8 +19,8 @@ class SpotsTest {
 
     @Test
     void malformedLinesNameTheirLine() {
-        for (String bad : new String[]{"m bay 1 0 2 3 X", "m bay 1 0 2 3 4 Q", "m bay one 0 2 3 4 N", "m pump 1 2 three S",
-                "m pump 1 2 3 X", "m parking 1 0 2 3 4 N", "m bay 5 0 2 3 4 N"}) {
+        for (String bad : new String[]{"m bay 1 0 2 3 X", "m bay 1 0 2 3 4 Q", "m bay one 0 2 3 4 N",
+                "m pump 1 2 three S", "m pump 1 2 3 X", "m parking 1 0 2 3 4 N", "m bay 5 0 2 3 4 N"}) {
             assertTrue(error(bad).startsWith("spots.txt line 42: "), bad + " -> " + error(bad));
         }
     }

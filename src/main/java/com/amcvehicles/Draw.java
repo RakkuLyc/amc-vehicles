@@ -9,7 +9,7 @@ import java.util.function.IntToDoubleFunction;
  * seed) and of the bay, never of the order in which chunks load. No Minecraft classes: tested with JUnit.
  */
 final class Draw {
-    /** Chance of a car in each bay (the user's choice: 3% on 16 Nov 2026, 9% on 17 Nov 2026). */
+    /** Chance of a car in each bay (the user's choice: 3% on 2026-11-16, 9% on 2026-11-17). */
     public static final double CHANCE_PER_BAY = 0.09;
     /** Chance of the hood being open, of the trunk, and of each side door (each drawn separately). */
     public static final double HOOD_OPEN_CHANCE = 0.5;
@@ -19,7 +19,7 @@ final class Draw {
      * Lava in a fuel pump (the user's choice, 0.6.2): {@link #PUMP_EMPTY_CHANCE} empty, else 1 to
      * {@link #MAX_BUCKETS} buckets with the same chance (1/8 each since 0.7.13, when the user raised 3 to 4; 1/6 each
      * with 3). History: 0 to 3 the same chance (first choice), then 70% empty and 30% with 1 bucket (0.6.0, after the
-     * balance of 16 Nov 2026).
+     * balance of 2026-11-16).
      */
     public static final double PUMP_EMPTY_CHANCE = 0.5;
     public static final int MAX_BUCKETS = 4;

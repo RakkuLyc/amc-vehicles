@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
-"""Amostra uma tabela do AMC no servidor de teste (RCON, Sorte 0) e compara cada item do AMC Vehicles com o esperado.
+"""Samples an AMC table on the test server (RCON, Luck 0) and compares each AMC Vehicles item with the expected.
 
-Uso: python3 -I tools/sample_loot.py <tabela, ex.: workshop/barrel> [N]
-Gera a tabela `abandonedmoderncity:chests/<tabela>` N vezes num baú (os modificadores de loot de todos os mods se
-aplicam) e conta, por container: bancos, rodas, motores, blowtorch, repair kit, jumper pack, galão vazio e cheio (o
-cheio é o galão com `jerrycanFluid` no dado do item) e, para provar que o AMC TACZ Loot continua somando, os itens de
-`tacz:`/`lrtactical:`/`firstaid:`. O esperado vem de gen_loot.py (CHANCE por classe, baú ou barril; _hard = baú/barril).
-Mostra o desvio (em desvios-padrão da binomial): até 1,96 = ok; até 3 = limite (esperado em 5% dos itens por acaso);
-acima de 3 = defeito.
+usage: python3 -I tools/sample_loot.py <table, e.g. workshop/barrel> [N]
+Generates the table `abandonedmoderncity:chests/<table>` N times in a chest (the loot modifiers of every mod apply)
+and counts, per container: seats, wheels, engines, blowtorch, repair kit, jumper pack, empty and full jerry can (the
+full one is the jerry can with `jerrycanFluid` in the item's data) and, to prove that AMC TACZ Loot still adds, the
+items of `tacz:`/`lrtactical:`/`firstaid:`. The expected comes from gen_loot.py (chance per class, chest or barrel; _hard =
+chest/barrel). Shows the deviation (in standard deviations of the binomial): up to 1.96 = ok; up to 3 = limit (expected
+in 5% of the items by chance); above 3 = defect.
 """
 import collections, math, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from rconlib import Rcon
 import importlib.util
 
-spec = importlib.util.spec_from_file_location("gen", os.path.join(os.path.dirname(os.path.abspath(__file__)), "gen_loot.py"))
+spec = importlib.util.spec_from_file_location("gen", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                  "gen_loot.py"))
 gen = importlib.util.module_from_spec(spec)
 src = open(spec.origin).read().replace('\nif __name__ == "__main__":', '\nif False:')
 exec(compile(src, "gen_loot", "exec"), gen.__dict__)
 
 
-# a chave `id` inteira (não o fim de `jerrycanFluid: "lava"`, que também termina em `id: "`)
+# the whole `id` key (not the end of `jerrycanFluid: "lava"`, which also ends in `id: "`)
 ID_KEY = re.compile(r'(?:^|[\s,{])id: "([a-z_0-9:.]+)"')
 
 
@@ -43,7 +44,7 @@ def group(chunk):
 
 
 def split_items(text):
-    """Os itens de `data get block ... Items`: cada compound {...} do nível da lista (a ordem das chaves varia)."""
+    """The items of `data get block ... Items`: each compound {...} at the list's level (the key order varies)."""
     out, depth, start = [], 0, None
     i = text.find("[")
     for k in range(i, len(text)):
@@ -88,7 +89,7 @@ def main():
         for g, v in per.items():
             have[g] += 1
             units[g] += v
-    print("tabela %s: %d containers (tipo %s)" % (table, n, kind))
+    print("table %s: %d containers (kind %s)" % (table, n, kind))
     ok = True
     for g, cls in gen.THEMES[theme]:
         p = gen.chance(cls, kind, g) / gen.SCALE
@@ -97,18 +98,20 @@ def main():
         z = (obs - p) / sd
         inside = abs(z) <= 3
         ok &= inside
-        print("  %-15s esperado %5.2f%%  observado %5.2f%% (%d de %d)  desvio %+.1f  %s" % (
-            g, 100 * p, 100 * obs, have[g], n, z, "ok" if abs(z) <= 1.96 else ("limite (95%)" if inside else "FORA (3 desvios)")))
-    # qualquer item do AMC Vehicles que NÃO devia sair nesta tabela (ex.: galão vazio, wrench no posto) é defeito
+        print("  %-15s expected %5.2f%%  observed %5.2f%% (%d of %d)  deviation %+.1f  %s" % (
+            g, 100 * p, 100 * obs, have[g], n, z,
+            "ok" if abs(z) <= 1.96 else ("limit (95%)" if inside else "OUT (3 deviations)")))
+    # any AMC Vehicles item that should NOT come out in this table (e.g. empty jerry can, wrench at a gas station)
+    # is a defect
     stray = sorted(g for g in have if g not in gen_names(theme) and g not in ("addon", "other"))
     if stray:
         ok = False
-        print("  ITENS QUE NÃO DEVIAM SAIR:", {g: have[g] for g in stray})
-    print("  itens do AMC TACZ Loot (tacz/lrtactical/firstaid) em %.1f%% dos containers" % (100 * have["addon"] / n))
-    print("  ids vistos:", dict(items_seen))
+        print("  ITEMS THAT SHOULD NOT COME OUT:", {g: have[g] for g in stray})
+    print("  AMC TACZ Loot items (tacz/lrtactical/firstaid) in %.1f%% of the containers" % (100 * have["addon"] / n))
+    print("  ids seen:", dict(items_seen))
     if fluids:
-        print("  galão cheio: fluido", dict(fluids))
-    print("RESULTADO:", "nenhum item além de 3 desvios" if ok else "HÁ ITEM FORA (mais de 3 desvios)")
+        print("  full jerry can: fluid", dict(fluids))
+    print("RESULT:", "no item beyond 3 deviations" if ok else "AN ITEM IS OUT (more than 3 deviations)")
 
 
 def gen_names(theme):

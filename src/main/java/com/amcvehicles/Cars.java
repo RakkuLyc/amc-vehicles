@@ -3,7 +3,7 @@ package com.amcvehicles;
 import java.util.List;
 
 /**
- * The cars that spawn abandoned, with what the mod needs of each (the user's list, 16 Nov 2026: the Official Pack's
+ * The cars that spawn abandoned, with what the mod needs of each (the user's list, 2026-11-16: the Official Pack's
  * Mercedes 230, Mustang 69 and Scout; the Official Automobile Pack's Cagouille, Camaro, Escargot, Highwayman and
  * Station Wagon). The numbers come from the pack jars, printed by
  * {@code python3 -I tools/car_info.py <pack.jar> <pack id> <system names...>}. No Minecraft classes: tested with JUnit.

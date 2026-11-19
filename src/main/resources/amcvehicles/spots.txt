@@ -43,7 +43,7 @@ abandoned_wide_building bay 67 0 19 69 27 S
 abandoned_wide_building bay 71 0 19 73 27 S
 abandoned_wide_building bay 75 0 19 77 27 S
 
-# Stage 4 (16 Nov 2026, approved by the user from docs/spots/etapa4_propostas.png); written by hand and checked with
+# Stage 4 (2026-11-16, approved by the user from docs/spots/etapa4_propostas.png); written by hand and checked with
 # `python3 -I tools/find_spots.py <file.nbt> <y> --bays spots.txt --model <model>` (floor and 2 free cells in every
 # cell of the bay); PlacementTest checks them in every rotation and every colour variant against AMC's Def.code.
 #
@@ -53,7 +53,7 @@ workshop_medium bay 13 0 4 15 11 S
 # workshop_small (5 colours): one car in each box (the two doors of the front; pillars at x 10 between them).
 workshop_small bay 5 0 4 7 11 S
 workshop_small bay 13 0 4 15 11 S
-# gas_station and gas_station_small: no bays since 0.6.1 (the user, 16 Nov 2026: cars parked beside the pumps were in
+# gas_station and gas_station_small: no bays since 0.6.1 (the user, 2026-11-16: cars parked beside the pumps were in
 # the way of a car that comes to fill up). They had 4 and 2, along the islands with the nose drawn (X):
 #   gas_station bay 13 0 11 19 13 X / 25 0 11 31 13 X / 13 0 18 19 20 X / 25 0 18 31 20 X
 #   gas_station_small bay 7 0 5 13 7 X / 7 0 12 13 14 X
@@ -61,7 +61,7 @@ workshop_small bay 13 0 4 15 11 S
 # these bays back, either give each a fixed facing or bring that code back from git history (Spots.Bay.oriented,
 # Draw.Car.flip, draw index 6, in 0.8.1).
 # Their fuel pumps stay (below).
-# pharmacy_large (5 colours; added by the user, 16 Nov 2026): the parking of the front, between the worn yellow_concrete
+# pharmacy_large (5 colours; added by the user, 2026-11-16): the parking of the front, between the worn yellow_concrete
 # stripes at x 1, 6, 11, 16 and 21, nose to the shop; it stops at z 7 (the hedge of the facade is at z 8..9).
 pharmacy_large bay 2 0 1 5 7 S
 pharmacy_large bay 7 0 1 10 7 S
@@ -81,7 +81,7 @@ abandoned_modern_garage_house bay 14 0 10 16 17 S
 # abandoned_suburban_house: inside the garage and workshop with a door of 10 on the west side (x 10, z 25..34).
 abandoned_suburban_house bay 11 0 26 18 28 E
 abandoned_suburban_house bay 11 0 31 18 33 E
-# abandoned_house (pointed out by the user, 16 Nov 2026; docs/spots/garagens_propostas.png): the garage room of the
+# abandoned_house (pointed out by the user, 2026-11-16; docs/spots/garagens_propostas.png): the garage room of the
 # front left (x 4..10, z 13..24: no wall on the front, stone floor), two side by side, nose to the back.
 abandoned_house bay 4 0 14 6 21 S
 abandoned_house bay 8 0 14 10 21 S
@@ -92,18 +92,19 @@ abandoned_small_building bay 7 0 2 9 9 S
 abandoned_small_building bay 12 0 10 14 17 S
 abandoned_small_building bay 17 0 10 19 17 S
 
-# abandoned_glass_house (pointed out by the user with a photo, 18 Nov 2026): the room of the north-east corner, open to the
-# west between two pillars (x 32), with the anvil, a chest and barrels along the north wall. 2 cars side by side, nose to
-# the east wall, an aisle between them (z 15). A third one does not fit (the pillar at z 20 and the barrel at x 41, z 20).
+# abandoned_glass_house (pointed out by the user with a photo, 2026-11-18): the room of the north-east corner, open to
+# the west between two pillars (x 32), with the anvil, a chest and barrels along the north wall. 2 cars side by side,
+# nose to the east wall, an aisle between them (z 15). A third one does not fit (the pillar at z 20 and the barrel at
+# x 41, z 20).
 abandoned_glass_house bay 35 0 12 41 14 E
 abandoned_glass_house bay 35 0 16 41 18 E
 
-# REMOVED in 0.8.1 (18 Nov 2026) at the user's request after testing 0.8.0: the 21 bays below are commented out (kept here to
-# bring them back).
-# abandoned_ramp_building (pointed out by the user, 18 Nov 2026): the long hall (x 8..92, z 49..57), 3 floors (y 0, 5, 10).
-# Only y 10 (open to the sky, painted white stripes and a yellow centre line) and y 0 (smooth ground floor) get bays; y 5
-# has none that fit. 3 x 7 cells, nose to the north wall, the tail over the yellow line. Proposed every 4 cells from x 10,
-# the free ones kept (the others have rubble on the floor): y 10 and y 0, 21 in all.
+# REMOVED in 0.8.1 (2026-11-18) at the user's request after testing 0.8.0: the 21 bays below are commented out (kept
+# here to bring them back).
+# abandoned_ramp_building (pointed out by the user, 2026-11-18): the long hall (x 8..92, z 49..57), 3 floors (y 0, 5,
+# 10). Only y 10 (open to the sky, painted white stripes and a yellow centre line) and y 0 (smooth ground floor) get
+# bays; y 5 has none that fit. 3 x 7 cells, nose to the north wall, the tail over the yellow line. Proposed every 4
+# cells from x 10, the free ones kept (the others have rubble on the floor): y 10 and y 0, 21 in all.
 # abandoned_ramp_building bay 10 10 49 12 55 N
 # abandoned_ramp_building bay 22 10 49 24 55 N
 # abandoned_ramp_building bay 26 10 49 28 55 N
@@ -126,7 +127,7 @@ abandoned_glass_house bay 35 0 16 41 18 E
 # abandoned_ramp_building bay 46 0 49 48 55 N
 # abandoned_ramp_building bay 50 0 49 52 55 N
 
-# Stage 6 (16 Nov 2026, approved by the user from docs/spots/bombas_propostas.png): the fuel pumps, IV's own
+# Stage 6 (2026-11-16, approved by the user from docs/spots/bombas_propostas.png): the fuel pumps, IV's own
 # mts:fuelpump, always there; half of them empty (Draw.PUMP_EMPTY_CHANCE), the others with 1 to Draw.MAX_BUCKETS
 # buckets of lava, the same chance each (Draw.buckets).
 #   <model> pump <x> <y> <z> <facing>

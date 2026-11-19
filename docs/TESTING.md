@@ -751,3 +751,26 @@ repository.
   `spots.txt` at start): all of them stay within these numbers; **none would gain perceptibly, so none was changed** (the
   rule: without measuring, no optimizing, and what does not gain is dropped). Jar: 76 KB (`amcvehicles-0.9.3.jar`, 77,653
   bytes).
+
+## Version 0.9.5 — phase 6 of 1.0.0: documents in English (2026-11-19)
+- Translated (glossary in `docs/GLOSSARY.md`): a new short `README.md` for players, `docs/TECHNICAL.md` (the old README's
+  technical content), `CLAUDE.md`, this file, `docs/diagnostic_iv.md` (renamed from `diagnostico_iv.md`; still pending by the
+  user's decision), the notes of `docs/baseline/` (`ACHADOS.md` → `FINDINGS.md`, `DECISOES_1.0.md` → `DECISIONS_1.0.md`),
+  the messages and comments of `tools/gen_loot.py`, `tools/sample_loot.py` and `tools/rcon.py`; dates in ISO format also in
+  the comments of the Java and of `spots.txt`; lines of up to 120 columns in the tools and in `spots.txt`. The Java comments
+  and the game's messages were already in English. The class keys "Comum", "Incomum", "Raro" of `gen_loot.py` stay (they are
+  keys of the code).
+- Not translated: the captions drawn inside the images of `docs/spots/` (made by scripts that are not in the project);
+  explained in `docs/spots/README.md`.
+- Checks: (a) no accented letter left outside the glossary and the images' page, except "Épico", the AMC TACZ Loot name in
+  brackets (the user's choice); no common Portuguese word left; (b) the numbers of the Portuguese (from git) and the English
+  versions of `CLAUDE.md`, `TESTING.md` and the diagnosis compared after normalising decimals, thousands and dates: every
+  difference is either an artefact of the normalisation (coordinates "x,z", versions like 21.1.219 and 24.0.0, a date split
+  across two lines) or a deliberate update (0.9.x notes, 31 tests, 76 KB); (c) 78 paths cited in the documents exist (the only
+  other one, `docs/containers.json`, is AMC TACZ Loot's); (d) the values against the code: 9% per bay, 59 bays in 11
+  structures, 10 pumps, lava 0.05, tank 15%, battery 0, 1 to 4 buckets, IV `[24.0.0,25)`, 31 tests.
+- `python3 -I tools/gen_loot.py --write` followed by `git diff --stat src/main/resources`: empty (the loot did not change);
+  `tools/car_info.py` runs; the 69 data lines of `spots.txt` the same.
+- Build: 31 tests pass; golden test identical; the compiled constants of 0.9.5 equal to 0.9.3's. Jars in `run/jars/`:
+  `amcvehicles-0.9.5.jar` and `amcvehicles-0.9.5-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, only local). Not run on the
+  server: this version changes no code that runs (comments, documents, tool messages).

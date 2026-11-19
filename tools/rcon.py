@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Cliente RCON mínimo para o servidor de teste (porta 25576, senha "teste": run/server.properties).
-Uso: python3 -I tools/rcon.py "comando 1" "comando 2" ...   (imprime a resposta de cada um, inteira)"""
+"""Minimal RCON client for the test server (port 25576; password from AMCV_RCON_PASSWORD, default "teste").
+usage: python3 -I tools/rcon.py "command 1" "command 2" ...   (prints the whole reply of each one)"""
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from rconlib import Rcon

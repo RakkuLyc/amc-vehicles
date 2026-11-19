@@ -2,9 +2,9 @@
 """Checks, on the test server, that each IV car near a point stands between two painted stripes.
 
 usage: python3 -I tools/check_bays.py <x> <z> <radius> [stripe block, default white_concrete]
-For each car (entity mts:builder_existing within radius): its origin, the IV yaw (anglesy; absent = 0), the middle of its body
-(1.425 ahead of the rear axle), and how many cells of the two columns 2 blocks to each side of the middle, along
-the 5 cells of the body, are the stripe block on the floor (y of the car - 1).
+For each car (entity mts:builder_existing within radius): its origin, the IV yaw (anglesy; absent = 0), the middle of
+its body (1.425 ahead of the rear axle), and how many cells of the two columns 2 blocks to each side of the middle,
+along the 5 cells of the body, are the stripe block on the floor (y of the car - 1).
 """
 import math, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

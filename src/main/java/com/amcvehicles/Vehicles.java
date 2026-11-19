@@ -32,10 +32,10 @@ import java.util.Map;
  * invisible standing seat of the trunk, the Scout's pickup bed and bumper sticker, the Mustang's mirror ornament).
  */
 final class Vehicles {
-    /** Fuel left in the tank: 15% of the car's {@code motorized.fuelCapacity} (the user's choice, 17 Nov 2026). */
+    /** Fuel left in the tank: 15% of the car's {@code motorized.fuelCapacity} (the user's choice, 2026-11-17). */
     public static final double FUEL_FRACTION = 0.15;
     /**
-     * Charge of the battery: 0 (flat; the user's choice, 17 Nov 2026), so the jumper pack matters. IV's new car has
+     * Charge of the battery: 0 (flat; the user's choice, 2026-11-17), so the jumper pack matters. IV's new car has
      * 85.7% ({@code batteryCapacity * 0.85715}, set in its constructor for a vehicle with no saved data);
      * {@code electricPower} is the field IV saves and reads.
      */
