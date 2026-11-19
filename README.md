@@ -1,87 +1,50 @@
 # AMC Vehicles
 
-Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
-carros abandonados nas estruturas do AMC.
+A NeoForge 1.21.1 mod that puts abandoned **Immersive Vehicles** cars in the structures of **Abandoned Modern City**:
+in the underground garage of the wide building, the parking lots, the garages of the houses and inside the workshops,
+plus fuel pumps at the gas stations and car parts in the workshops' loot. Version 0.9.5 (2026-11-19), MIT license.
 
-**Versão 0.9.3** (19 Nov 2026; preparação do 1.0.0, Fase 4: defeitos; o `mtsconfig.json` não recebe mais a lava do mod; sem carro duplicado logo depois de o servidor subir. Fase 3, 0.9.2: o servidor não cai mais quando o IV recusa montar um carro na geração; aceita só o IV 24.x), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
-**aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 59 vagas de 11 estruturas do AMC (lista abaixo; desde a
-0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
+## Requirements
+- Minecraft 1.21.1 with NeoForge 21.1.219 or newer.
+- Immersive Vehicles **24.x** (`mts`; version 25 or newer is refused on purpose: the mod reaches two of its internal
+  members to place the fuel pumps).
+- MTS Official Pack V29+ (`mtsofficialpack`) and Official Automobile Pack V3+ (`oamp`).
+- Abandoned Modern City 0.1.0 (build of 2026-11-16 or newer).
 
-## Os carros abandonados
-- **Modelos** (a mesma chance cada): do Official Pack, **Mercedes 230**, **Mustang 69** e **Scout**; do Official
-  Automobile Pack, **Cagouille**, **Camaro**, **Escargot**, **Highwayman** e **Station Wagon**. Depois a cor, com a
-  mesma chance entre as cores civis do modelo.
-- **Viaturas só na delegacia** (e lá só elas): Mercedes (`_police`/`_police2`), Cagouille e Mustang, 1/3 cada.
-- Sempre: **bateria descarregada** (0.7.3; precisa de jumper pack), **sem motor, sem rodas** (nem estepe), **sem bancos**, **15% de combustível** do tanque de cada modelo (10% até a 0.7.3) e, no
-  painel, **só velocímetro (km/h) e marcador de combustível**. Apoiados nos blocos de apoio que o próprio modelo mostra
-  quando faltam as rodas.
-- Sorteados: capô, porta-malas (no Scout, a tampa da caçamba; o Mustang não tem) e cada porta lateral (a Station Wagon
-  tem 4), cada um aberto ou fechado com 50%, à parte.
-- Raridade: **9% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
-  média ~3,4 carros por cidade (8% das cidades sem nenhum; com 3% eram ~1,1; sem a casa de vidro, 3,2). Uma vaga com algo no caminho (por exemplo,
-  um baú que o AMC sorteou ali) fica sem o carro.
-- O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
-  lava.
+## Installation
+Put `amcvehicles-0.9.5.jar` in the `mods` folder next to the four mods above. Only **areas generated after** the mod is
+installed get cars and fuel pumps; for an area generated before, an operator can run `/amcv draw` inside a structure.
 
-## Bombas de combustível e combustível
-- Bombas `mts:fuelpump` (do IV) sempre presentes nos postos: 8 no posto (2 em cada ilha) e 2 no posto pequeno
-  (`docs/spots/bombas_propostas.png`). **50% vazias; as outras com 1, 2, 3 ou 4 baldes de lava** (a mesma chance cada, 12,5%;
-  ~1,25 balde por bomba, ~9 por cidade; o máximo era 3 até a 0.7.12).
-- **A lava rende 0,05** como combustível de motor (gasolina, diesel e avgas) desde a 0.7.12: ~0,07 cidade por balde (no IV
-  puro, ~1,3), ou seja, o consumo é muito rápido (escolha do usuário depois de testar). O mod aplica isso ao iniciar o
-  servidor (ou ao entrar num servidor), só na memória, e devolve o valor do IV ao parar; o arquivo `config/mtsconfig.json`
-  não é alterado pelo mod. Desde a 0.9.3, quando o IV grava a configuração com o mundo aberto (telas de controles e de
-  configuração, primeira entrada de um jogador), o mod põe os valores do IV de volta só durante a gravação: o arquivo fica
-  com os valores do IV. **Arquivo sujo de versões antigas**: se o seu `mtsconfig.json` já tem `"lava": 0.05` (ou 0,35, 0,45,
-  0,6) em `gasoline`, `diesel` ou `avgas`, edite para `1.0` com o jogo fechado; o mod não tem como saber o valor original.
-  (Histórico: 0,35 na 0.6.0 a 0.7.4, removido na 0.7.5, 0,60 na 0.7.9, 0,45 na 0.7.10, 0,35 na 0.7.11.)
+## What it does
+- **Cars**: 9% chance in each of the 59 parking bays of 11 AMC structures (on average ~3.4 cars per city). 8 models
+  with the same chance (Mercedes 230, Mustang 69, Scout, Cagouille, Camaro, Escargot, Highwayman, Station Wagon), then a
+  colour; police cars only at the police station (and only police cars there). Every car is abandoned: no engine, no
+  wheels, no seats, a flat battery (a jumper pack is needed), 15% of its tank, only a speedometer and a fuel gauge;
+  hood, trunk and each door open or closed at random.
+- **Fuel pumps** at every gas station (8, or 2 at the small one): half are empty, the others hold 1 to 4 buckets of lava.
+- **Lava is a weak fuel**: it goes 5% as far as normal in Immersive Vehicles (the mod sets this in memory when a world
+  starts and puts it back when it stops).
+- **Loot** (added to AMC's tables, nothing replaced): seats, wheels, wrenches, blowtorches, engines, repair kits and
+  jumper packs in the workshops; a full jerry can at the gas stations.
 
-## Loot de oficinas e postos
-Complementa o AMC TACZ Loot (soma às tabelas do AMC, não substitui nada; vasos ficam sem nada). Chance por container
-(barril tem a metade): Comum 9,2% baú / 4,6% barril; Incomum 4,4% / 2,2%; Raro 2,0% / 1,0%.
-- **Oficinas**: bancos, rodas e wrench (Comum), blowtorch (Incomum), motor, repair kit e jumper pack (Raro). Bancos: Car Seat,
-  Sport Seat, Vintage Seat e o banco genérico (34 cores); rodas: só offroad e vintage; motores: os 5 dos 8 carros;
-  nada de polícia.
-- **Postos**: só o galão do IV, **sempre cheio** (1 balde de lava), Incomum (baú 4,4% / barril 2,2%).
-- O repair kit é 10% mais comum que o motor e o jumper pack (baú 2,2% / barril 1,1% contra 2,0% / 1,0%).
-- Em média, por cidade: ~4,4 bancos, ~4,4 rodas, ~4,4 wrenches, ~2 blowtorch, ~1 motor, ~1,1 repair kit, ~1 jumper pack e ~0,6 galão (sempre cheio).
+## Commands (operators, level 2)
+- `/amcv car <model> [color] [hood trunk]`: one abandoned car in front of you (e.g. `/amcv car mustang police`).
+- `/amcv lineup`: the 8 models and the 4 police cars side by side.
+- `/amcv fill`: a car in every bay of the AMC structure you stand in (to check the bays).
+- `/amcv draw`: the real draw of the structure you stand in; places what is missing.
+- `/amcv pump [buckets]`: a fuel pump in front of you with 0 to 15 buckets of lava.
 
-## Vagas
-| Estrutura | Vagas | Onde |
-|---|---|---|
-| Prédio largo | 34 | garagem subterrânea, entre as faixas brancas, nariz para a parede |
-| Delegacia | 4 | estacionamento da frente (linhas brancas gastas), nariz para o prédio, **só viaturas** |
-| Farmácia grande (5 cores) | 4 | estacionamento da frente (faixas amarelas gastas), nariz para a loja |
-| Oficina média (3 cores) | 2 | dentro, nariz para o fundo |
-| Oficina pequena (5 cores) | 2 | dentro, uma em cada box |
-| Prédio pequeno | 4 | térreo de pilotis (2 na entrada, 2 ao fundo) |
-| Casa moderna com garagem | 2 | dentro da garagem |
-| Casa suburbana | 2 | dentro da garagem (porta do lado oeste) |
-| Casa abandonada | 2 | sala-garagem da frente |
-| Casa com garagem | 1 | dentro da garagem |
-| Casa de vidro | 2 | sala do canto nordeste (aberta para o oeste), lado a lado, nariz para a parede do fundo |
+## Important: Immersive Vehicles' config file
+Since 0.9.3 the mod keeps its lava value out of `config/mtsconfig.json`. **Versions before 0.9.3 could write it there**
+(when Immersive Vehicles saved its config with a world open), and then lava stays weak even without the mod. If your
+file has `"lava": 0.05` (or 0.35, 0.45, 0.6) under `gasoline`, `diesel` or `avgas`, close the game and set it to `1.0`.
 
-Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png` e
-`docs/spots/garagens_propostas.png` e `docs/spots/vidro_rampa_propostas.png` (a proposta da 0.8.0; as vagas do prédio-rampa saíram na 0.8.1). O carro fica centrado na vaga.
+## Known issues
+- Areas generated before the mod was installed have no cars (use `/amcv draw` there).
+- If the server crashes after a new chunk is saved and before the world saves the mod's list of pending chunks, the cars of
+  that chunk are lost (never duplicated).
+- `/amcv fill` does not see structures placed with `/amcs spawn` (they are not part of the city plan).
 
-## Comandos (op 2)
-- `/amcv car <modelo> [cor] [capô porta-malas]`: um carro na sua frente (ex.: `/amcv car mustang police`). O que não for
-  dito é sorteado.
-- `/amcv lineup`: os 8 modelos e as 4 viaturas lado a lado na sua frente.
-- `/amcv fill`: um carro em cada vaga da estrutura do AMC onde você está (para conferir as vagas). Não funciona em
-  estruturas postas com `/amcs spawn` (elas não fazem parte do plano da cidade).
-- `/amcv draw`: o sorteio real (o da geração) na estrutura onde você está: diz quais vagas têm carro e põe os que
-  faltam (útil em áreas geradas antes do mod e para testar).
-- `/amcv pump [baldes]`: uma bomba de combustível na sua frente com tantos baldes de lava.
-- `/amcv fill` e `/amcv draw` também põem as bombas do posto onde você está.
-
-## Requisitos
-- Immersive Vehicles 24.0.0+ (`mts`), MTS Official Pack V29+ (`mtsofficialpack`) e **Official Automobile Pack V3+
-  (`oamp`)**.
-- Abandoned Modern City (0.1.0, build de 16 Nov 2026 ou mais novo).
-
-## Build
-`JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.9.3.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
-Immersive Vehicles, dos dois packs e do AMC.
-Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.
+## More
+Technical documentation: `docs/TECHNICAL.md`; tests and their results: `docs/TESTING.md`; the work rules and the user's
+decisions: `CLAUDE.md`.
