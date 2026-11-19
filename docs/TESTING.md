@@ -625,3 +625,30 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   que lê cada classe). A varredura dos docs foi dirigida (a lista do roteiro e o que apareceu no caminho, mais "2 de altura
   livre" no "Pôr" e a "Arquitetura" sem `FuelBalance` e `ClientHooks`); a conferência de todo valor contra o código é da Fase 6.
 
+## Versão 0.9.1 — Fase 2 do 1.0.0: código mais limpo, mesmo comportamento (2026-11-19)
+- Decisão do usuário: sem formatador automático, só `.editorconfig`.
+- Rede extra antes de mexer (o teste dourado não cobre `Vehicles`, `AmcWorld.blocked`, o tick da geração, as bombas nem as
+  respostas dos comandos): no mundo da 0.9.0, gravados em `run/phase2/` (fora do git) os dados completos (`data get`) dos 4
+  carros gerados e das 8 bombas do posto e as respostas do `/amcv draw` nas 6 caixas da Fase 0 (`run/phase2/dump.py`), mais as
+  respostas de `fill`, `car` (válido, modelo errado, cor errada), `lineup`, `pump` e `fill` fora de estrutura; e o tamanho e o
+  aninhamento de cada método (`run/phase2/metrics.py`).
+- Mudanças (só forma): `Vehicles.spawn` (79 linhas) em `newVehicle`, `setOpenings`, `setDashboard`, `removeParts` e
+  `engineFuelType`, na mesma ordem de antes (variáveis e painel antes de o carro entrar no mundo, peças depois);
+  `Generation.onLevelTick` (54) em `resolve`, `placeReadyCars` e `placeReadyPumps` (os dois sempre rodam), a lista de carros e
+  bombas do chunk calculada uma vez, `pumpCellBlocked`, `drawn(s)`/`pumps(s)` sem os `Integer` nulos; `AmcvCommands`:
+  `structureHere`, `spawn` (o `try/catch` que se repetia 3 vezes), `forward`, `chunksUnder`, `lineupCars`, `fillPumps`;
+  `AmcWorld.Placed.of` (a mesma conta repetida em `AmcWorld.at` e `Generation.structuresIn`) e `room`; `FuelPumps.pumpData` e
+  `Block.UPDATE_ALL_IMMEDIATE` no lugar do `11`; `Spots.parseLine`; constantes com nome (`PERMISSION`, `MAX_PUMP_BUCKETS`,
+  `COLUMNS`, `PUMP_KEY_SALT`, `SLIVER`); comentários errados corrigidos (10% de combustível, 0 a 3 baldes, `CAR_LIFT`) e linhas
+  do Java com até 120 colunas; classes visíveis só no pacote (menos `AmcVehicles`); teste `halfEmptyHalfOneToThree` renomeado
+  `halfEmptyOthersOneToMaxBuckets`. Métodos com mais de 40 linhas: antes `Vehicles.spawn` 79, `AmcvCommands.fill` 54,
+  `Generation.onLevelTick` 54, `FuelPumps.place` 44, `AmcvCommands.draw` 42; depois só `AmcvCommands.fill` 41.
+- Provas: 26 testes passam, 0 avisos com `-Xlint:all`; **teste dourado idêntico** (sha256 `717de763...e4d8b7`); constantes do
+  jar iguais às da foto, mais as novas com nome (com os valores de antes). Servidor, mundo novo, a mesma semente: as 6 caixas
+  com os mesmos 4 carros; os dados completos dos 4 carros e das 8 bombas e as 6 respostas do `/amcv draw` **idênticos aos de
+  antes** (`diff` vazio, trocados só os UUIDs); o formato das respostas de `fill` (posto e ocupado), `car`, `lineup`, `pump` e
+  das 3 mensagens de erro igual; log com os mesmos 12 ERROR e 15 WARN (nenhum do mod).
+- Jars em `run/jars/`: `amcvehicles-0.9.1.jar` e `amcvehicles-0.9.1-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, só local).
+- Não conferido: parâmetros e variáveis locais sem uso foram procurados lendo cada classe (não por ferramenta); o jogo em si
+  (visual) não foi testado.
+

@@ -84,7 +84,12 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
 antes da seguinte. Fase 0 (rede de segurança: `GoldenDrawTest` e `docs/baseline/`) **aprovada em 2026-11-19**. Fase 1
 (código morto) **feita na 0.9.0, aguardando aprovação**: saiu o nariz sorteado (ver "Vagas"); `Spots.all`,
 `Spots.allPumps` e `Spots.Bay.alongZ` ficam (só os testes os usam, mas esses testes conferem as vagas e bombas reais:
-escolha do usuário); texto velho corrigido. O push passa a ser feito por mim (o usuário libera a permissão).
+escolha do usuário); texto velho corrigido. O push passa a ser feito por mim (o usuário libera a permissão). Fase 1
+**aprovada em 2026-11-19**. Fase 2 (código mais limpo, sem mudar comportamento) **feita na 0.9.1, aguardando aprovação**:
+sem formatador automático, só `.editorconfig` (escolha do usuário: 4 espaços, UTF-8, LF, 120 colunas); métodos longos
+divididos (`Vehicles.spawn`, `Generation.onLevelTick`, `FuelPumps.place`, os comandos), código repetido num lugar só
+(`AmcWorld.Placed.of`, `AmcvCommands.structureHere`/`spawn`/`forward`), números com nome; as classes, menos `AmcVehicles`,
+visíveis só no pacote. Achados para as Fases 3 a 5 (não corrigidos): `docs/baseline/ACHADOS.md`.
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
 foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
 removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".
