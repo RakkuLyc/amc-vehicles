@@ -121,7 +121,7 @@ before `Pending`" stays as it is (option c), the images keep their Portuguese ca
 (and the icon, see below), `CHANGELOG.md`, tag `v1.0.0` and a GitHub release with the jar. The user's instance
 "MAZ 2.0.0 (TESTE)" had `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read on 2026-11-19, saved 09:03; not changed:
 it needs his OK and the game closed).
-**Icon (2026-11-19, the user's request and OK):** `src/main/resources/icon.png` (his screenshot, 512×512) and `logoFile="icon.png"` in `neoforge.mods.toml`. The user asked to keep the version at 1.0.0 (nobody had downloaded it): tag `v1.0.0` moved to the commit with the icon and the release's jar replaced.
+**Icon (2026-11-19, the user's request and OK):** `src/main/resources/icon.png` (his screenshot, 512×512) and `logoFile="icon.png"` in `neoforge.mods.toml`. The user asked to keep the version at 1.0.0 (nobody had downloaded it): tag `v1.0.0` moved to the commit with the icon and the release's jar replaced. Same day, the AMC dependency went from `[0.1.0,)` to `[1.0.0,)` (0.1.0 was never public); `libs/abandonedmoderncity-0.1.0.jar` (compile and tests) was NOT swapped for AMC's 1.0.0 jar (their classes and some `.nbt` differ; swapping needs the golden test checked).
 **Public repository (2026-11-19, the user's request, like AbandonedModernCity and AMC TACZ Loot):** the e-mail of the 44
 old commits rewritten to GitHub's noreply address in the whole history (`git filter-branch --env-filter`; the tree of
 HEAD the same, `3110972...`), backup in `~/backups/amcv-repo-2026-11-19` (mirror, the old history), `push --force` of

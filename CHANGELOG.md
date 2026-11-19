@@ -3,7 +3,7 @@
 All dates are 2026. Details and test results of each version: `docs/TESTING.md`.
 
 ## 1.0.0 — 2026-11-19
-First release. The same game content as 0.9.5; `neoforge.mods.toml` gains the project's page, issue tracker, credits and an icon (`icon.png`).
+First release. The same game content as 0.9.5; `neoforge.mods.toml` gains the project's page, issue tracker, credits and an icon (`icon.png`); it requires Abandoned Modern City 1.0.0 or newer (the dependency said 0.1.0, a development version that was never released).
 What the mod does: abandoned Immersive Vehicles cars (8 models, 9% per parking bay, 59 bays in 11 AMC structures; police
 cars only at the police station) with no engine, wheels or seats, a flat battery and 15% of fuel; fuel pumps at every gas
 station (half empty, the others with 1 to 4 buckets of lava); lava as a weak engine fuel (0.05); car parts in the
