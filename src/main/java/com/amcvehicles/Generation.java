@@ -29,17 +29,22 @@ import java.util.Map;
  *   one loads: the user's choice, only new chunks get cars), its cars are drawn ({@link Draw}, a pure function of the
  *   lot's seed and the bay's position); if there is any, the chunk is written in {@link Pending} (saved with the
  *   world).</li>
- *   <li>Never inside AMC's generation: every {@link #EVERY} ticks the server looks at the pending chunks that are loaded
- *   full chunks and places each of their cars once every chunk under its body is a loaded full chunk too
- *   ({@code getChunkNow}, which never forces a load). A car whose chunks are not ready waits; a car blocked in the world
- *   (a block in the way, no floor, a vehicle there) is dropped for good. When no car of a chunk waits any more, it
- *   leaves Pending. Polling Pending itself (not a queue fed by chunk loads) also catches a chunk that drops below full
- *   and comes back at the edge of a player's view without a new load event, and the chunks pending after a restart.</li>
+ *   <li>Never inside AMC's generation: every {@link #EVERY} ticks the server looks at the pending chunks that are
+ *   loaded full chunks and places each of their cars once every chunk under its body is a loaded full chunk too
+ *   ({@code getChunkNow}, which never forces a load). A car whose chunks are not ready waits; a car blocked in the
+ *   world (a block in the way, no floor, a vehicle there) is dropped for good. When no car of a chunk waits any more,
+ *   it leaves Pending. Polling Pending itself (not a queue fed by chunk loads) also catches a chunk that drops below
+ *   full and comes back at the edge of a player's view without a new load event, and the chunks pending after a
+ *   restart.</li>
  * </ul>
  */
 public final class Generation {
     /** How often (ticks) the pending chunks are looked at. */
     static final int EVERY = 10;
+    /** Columns of a chunk: the size of {@code ChunkPlan.lot}. */
+    private static final int COLUMNS = 16 * 16;
+    /** Salt of {@link #resolvedKey(PlannedPump)} ("PUMP"), so a pump's key never equals a car's. */
+    private static final long PUMP_KEY_SALT = 0x50554D50L;
 
     /**
      * The cars resolved (placed or dropped) in this session in chunks that are still pending because another car of
@@ -78,48 +83,58 @@ public final class Generation {
             return;
         }
         for (long chunk : pending.toArray()) {
-            int cx = ChunkPos.getX(chunk);
-            int cz = ChunkPos.getZ(chunk);
-            if (level.getChunkSource().getChunkNow(cx, cz) == null) {
-                continue; // not loaded: it stays pending
+            resolve(level, pending, chunk);
+        }
+    }
+
+    /**
+     * Places what is ready of a pending chunk (if it is loaded); when nothing of it waits any more, it leaves Pending
+     * and its keys leave {@link #RESOLVED}, else the cars and pumps resolved now are remembered there.
+     */
+    private static void resolve(ServerLevel level, Pending pending, long chunk) {
+        int cx = ChunkPos.getX(chunk);
+        int cz = ChunkPos.getZ(chunk);
+        if (level.getChunkSource().getChunkNow(cx, cz) == null) {
+            return; // not loaded: it stays pending
+        }
+        List<Planned> cars = carsOf(level, cx, cz);
+        List<PlannedPump> pumps = pumpsOf(level, cx, cz);
+        boolean waiting = false;
+        List<Long> done = new ArrayList<>();
+        for (Planned p : cars) {
+            long key = resolvedKey(p);
+            if (RESOLVED.contains(key)) {
+                continue;
             }
-            boolean waiting = false;
-            List<Long> done = new ArrayList<>();
-            for (Planned p : carsOf(level, cx, cz)) {
-                long key = resolvedKey(p);
-                if (RESOLVED.contains(key)) {
-                    continue;
-                }
-                if (!ready(level, p.car())) {
-                    waiting = true;
-                    continue;
-                }
-                place(level, p, "generated");
-                done.add(key);
+            if (!ready(level, p.car())) {
+                waiting = true;
+                continue;
             }
-            for (PlannedPump p : pumpsOf(level, cx, cz)) {
-                long key = resolvedKey(p);
-                if (RESOLVED.contains(key)) {
-                    continue;
-                }
-                if (!pumpReady(level, cx, cz)) {
-                    waiting = true;
-                    continue;
-                }
-                placePump(level, p, "generated");
-                done.add(key);
+            place(level, p, "generated");
+            done.add(key);
+        }
+        for (PlannedPump p : pumps) {
+            long key = resolvedKey(p);
+            if (RESOLVED.contains(key)) {
+                continue;
             }
-            if (waiting) {
-                RESOLVED.addAll(done);
-            } else {
-                pending.remove(chunk);
-                for (Planned p : carsOf(level, cx, cz)) {
-                    RESOLVED.remove(resolvedKey(p));
-                }
-                for (PlannedPump p : pumpsOf(level, cx, cz)) {
-                    RESOLVED.remove(resolvedKey(p));
-                }
+            if (!pumpReady(level, cx, cz)) {
+                waiting = true;
+                continue;
             }
+            placePump(level, p, "generated");
+            done.add(key);
+        }
+        if (waiting) {
+            RESOLVED.addAll(done);
+            return;
+        }
+        pending.remove(chunk);
+        for (Planned p : cars) {
+            RESOLVED.remove(resolvedKey(p));
+        }
+        for (PlannedPump p : pumps) {
+            RESOLVED.remove(resolvedKey(p));
         }
     }
 
@@ -132,9 +147,9 @@ public final class Generation {
         return Draw.mix(p.structure().seed() ^ Draw.mix(p.bay() + 1L));
     }
 
-    /** A key of a pump: its copy and pump (never equal to a car's: another salt). */
+    /** A key of a pump: its copy and pump. */
     static long resolvedKey(PlannedPump p) {
-        return Draw.mix(p.structure().seed() ^ Draw.mix(0x50554D50L + p.pump()));
+        return Draw.mix(p.structure().seed() ^ Draw.mix(PUMP_KEY_SALT + p.pump()));
     }
 
     /**
@@ -169,14 +184,7 @@ public final class Generation {
         if (level.getBlockEntity(pos) instanceof BuilderTileEntity) {
             return "already there";
         }
-        BlockState s = level.getBlockState(pos);
-        BlockState under = level.getBlockState(pos.below());
-        // the cell may hold air, a plant, a vine, a cobweb or a thin block (a carpet), as PumpTest allows
-        VoxelShape shape = s.getCollisionShape(level, pos);
-        boolean free = !s.hasBlockEntity() && (s.canBeReplaced() || shape.isEmpty()
-                || shape.max(Direction.Axis.Y) <= AmcWorld.THIN);
-        String blocked = !free ? s.getBlock().getName().getString() + " in the cell"
-                : under.getCollisionShape(level, pos.below()).isEmpty() ? "no floor" : null;
+        String blocked = pumpCellBlocked(level, pos);
         if (blocked == null) {
             blocked = FuelPumps.place(level, pos, at.yaw(), p.buckets() * FuelPumps.BUCKET);
         }
@@ -187,6 +195,22 @@ public final class Generation {
         AmcVehicles.LOG.info("[AMCV] fuel pump {} in {} at {} {} {}, {} bucket(s) of lava ({})", p.pump() + 1, name,
                 at.x(), at.y(), at.z(), p.buckets(), why);
         return "placed";
+    }
+
+    /**
+     * Why a pump cannot stand in the cell {@code pos}, or null: the cell may hold air, a plant, a vine, a cobweb or a
+     * thin block (a carpet), as PumpTest allows, and needs a floor under it.
+     */
+    static String pumpCellBlocked(ServerLevel level, BlockPos pos) {
+        BlockState s = level.getBlockState(pos);
+        VoxelShape shape = s.getCollisionShape(level, pos);
+        boolean free = !s.hasBlockEntity() && (s.canBeReplaced() || shape.isEmpty()
+                || shape.max(Direction.Axis.Y) <= AmcWorld.THIN);
+        if (!free) {
+            return s.getBlock().getName().getString() + " in the cell";
+        }
+        BlockPos below = pos.below();
+        return level.getBlockState(below).getCollisionShape(level, below).isEmpty() ? "no floor" : null;
     }
 
     /**
@@ -222,7 +246,11 @@ public final class Generation {
     static List<Planned> carsOf(ServerLevel level, int cx, int cz) {
         List<Planned> out = new ArrayList<>();
         for (AmcWorld.Placed s : structuresIn(level, cx, cz)) {
-            out.addAll(drawn(s, cx, cz));
+            for (Planned p : drawn(s)) {
+                if (inChunk(p.car().x(), p.car().z(), cx, cz)) {
+                    out.add(p);
+                }
+            }
         }
         return out;
     }
@@ -231,9 +259,18 @@ public final class Generation {
     static List<PlannedPump> pumpsOf(ServerLevel level, int cx, int cz) {
         List<PlannedPump> out = new ArrayList<>();
         for (AmcWorld.Placed s : structuresIn(level, cx, cz)) {
-            out.addAll(pumps(s, cx, cz));
+            for (PlannedPump p : pumps(s)) {
+                if (inChunk(p.at().x(), p.at().z(), cx, cz)) {
+                    out.add(p);
+                }
+            }
         }
         return out;
+    }
+
+    /** Whether the column of (x, z) lies in chunk (cx, cz). */
+    private static boolean inChunk(double x, double z, int cx, int cz) {
+        return ((int) Math.floor(x)) >> 4 == cx && ((int) Math.floor(z)) >> 4 == cz;
     }
 
     /** The structures with bays or pumps that have a column in chunk (cx, cz) (a car or pump lies in its lot). */
@@ -243,46 +280,37 @@ public final class Generation {
             return List.of();
         }
         ChunkPlan cp = plan.chunk(cx, cz);
+        // one entry per lot, with the base of its first column in this chunk
         Map<Lot, AmcWorld.Placed> structures = new LinkedHashMap<>();
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < COLUMNS; i++) {
             Lot lot = cp.lot[i];
             if (lot != null && lot.building != null && !structures.containsKey(lot)
                     && (!Spots.of(lot.building.model()).isEmpty() || !Spots.pumps(lot.building.model()).isEmpty())) {
-                structures.put(lot, new AmcWorld.Placed(lot.building, lot.x0, lot.z0, lot.rot, cp.h2[i] / 2 - 1,
-                        lot.seed));
+                structures.put(lot, AmcWorld.Placed.of(cp, i));
             }
         }
         return List.copyOf(structures.values());
     }
 
-    /** The pumps of a structure whose cell lies in chunk (cx, cz); in any chunk if cx is null. */
-    static List<PlannedPump> pumps(AmcWorld.Placed s, Integer cx, Integer cz) {
+    /** Every fuel pump of a structure, with its buckets of lava ({@link Draw#buckets}). */
+    static List<PlannedPump> pumps(AmcWorld.Placed s) {
         List<Spots.Pump> pumps = Spots.pumps(s.def().model());
         List<PlannedPump> out = new ArrayList<>();
         for (int k = 0; k < pumps.size(); k++) {
-            Placement.PumpAt at = s.pump(pumps.get(k));
-            if (cx != null && (at.x() >> 4 != cx || at.z() >> 4 != cz)) {
-                continue;
-            }
-            out.add(new PlannedPump(s, k, at, Draw.buckets(s.seed(), pumps.get(k).key())));
+            out.add(new PlannedPump(s, k, s.pump(pumps.get(k)), Draw.buckets(s.seed(), pumps.get(k).key())));
         }
         return out;
     }
 
-    /** The drawn cars of a structure whose origin lies in chunk (cx, cz); in any chunk if cx is null. */
-    static List<Planned> drawn(AmcWorld.Placed s, Integer cx, Integer cz) {
+    /** Every drawn car of a structure (the bays the draw gives a car). */
+    static List<Planned> drawn(AmcWorld.Placed s) {
         List<Spots.Bay> bays = Spots.of(s.def().model());
         List<Planned> out = new ArrayList<>();
         for (int k = 0; k < bays.size(); k++) {
             Draw.Car d = Draw.car(s.seed(), bays.get(k).key(), s.police());
-            if (d == null) {
-                continue;
+            if (d != null) {
+                out.add(new Planned(s, k, s.car(bays.get(k), d.model()), d));
             }
-            Placement.Car car = s.car(bays.get(k), d.model());
-            if (cx != null && (((int) Math.floor(car.x())) >> 4 != cx || ((int) Math.floor(car.z())) >> 4 != cz)) {
-                continue;
-            }
-            out.add(new Planned(s, k, car, d));
         }
         return out;
     }

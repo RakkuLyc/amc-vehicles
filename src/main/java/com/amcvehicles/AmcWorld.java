@@ -41,6 +41,16 @@ public final class AmcWorld {
         public boolean police() {
             return "police_station".equals(def.type());
         }
+
+        /** The structure of column {@code i} of a chunk's plan, or null when that column is in no structure lot. */
+        static Placed of(ChunkPlan cp, int i) {
+            Lot lot = cp.lot[i];
+            if (lot == null || lot.building == null) {
+                return null;
+            }
+            // the base of a lot column, as AMC's ChunkBuilder works it out
+            return new Placed(lot.building, lot.x0, lot.z0, lot.rot, cp.h2[i] / 2 - 1, lot.seed);
+        }
     }
 
     /** The structure whose lot holds column (x, z), or null (no AMC plan, not a structure lot). */
@@ -49,39 +59,20 @@ public final class AmcWorld {
         if (plan == null) {
             return null;
         }
-        ChunkPlan cp = plan.chunk(x >> 4, z >> 4);
-        int i = ChunkPlan.idx(x & 15, z & 15);
-        Lot lot = cp.lot[i];
-        if (lot == null || lot.building == null) {
-            return null;
-        }
-        // the base of a lot column, as AMC's ChunkBuilder works it out
-        int base = cp.h2[i] / 2 - 1;
-        return new Placed(lot.building, lot.x0, lot.z0, lot.rot, base, lot.seed);
+        return Placed.of(plan.chunk(x >> 4, z >> 4), ChunkPlan.idx(x & 15, z & 15));
     }
 
     /**
      * Why the car cannot stand where it is planned, or null when it fits: under every column of its body a floor
-     * (a block with a collision shape) and {@link Placement#HEADROOM} (3) blocks free over it (no collision: air, grass and vines; on the first one a
-     * thin block, such as a carpet, is allowed: {@link #THIN}), and no
-     * Immersive Vehicles vehicle there already ({@code mts:builder_existing}: a car of an earlier {@code /amcv fill} or of
-     * the generation; not IV's helper entities, such as the ones that follow the players).
+     * (a block with a collision shape) and {@link Placement#HEADROOM} (3) blocks free over it (no collision: air,
+     * grass and vines; on the first one a thin block, such as a carpet, is allowed: {@link #THIN}), and no Immersive
+     * Vehicles vehicle there already ({@code mts:builder_existing}: a car of an earlier {@code /amcv fill} or of the
+     * generation; not IV's helper entities, such as the ones that follow the players).
      */
     public static String blocked(ServerLevel level, Placement.Car car) {
-        // the first block over the floor (the car's origin is CAR_LIFT over it)
+        // the first block over the floor (the car's origin is the model's lift over it)
         int y = (int) Math.floor(car.y());
-        int minX = Integer.MAX_VALUE;
-        int minZ = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxZ = Integer.MIN_VALUE;
-        for (int[] c : car.cells()) {
-            minX = Math.min(minX, c[0]);
-            minZ = Math.min(minZ, c[1]);
-            maxX = Math.max(maxX, c[0]);
-            maxZ = Math.max(maxZ, c[1]);
-        }
-        AABB box = new AABB(minX, y, minZ, maxX + 1, y + Placement.HEADROOM, maxZ + 1);
-        for (Entity e : level.getEntities((Entity) null, box,
+        for (Entity e : level.getEntities((Entity) null, room(car, y),
                 e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).equals(VEHICLE))) {
             return "occupied by a vehicle at " + e.getBlockX() + " " + e.getBlockY() + " " + e.getBlockZ();
         }
@@ -106,5 +97,20 @@ public final class AmcWorld {
             }
         }
         return null;
+    }
+
+    /** The room the car needs: the box over the columns of its body, from y up {@link Placement#HEADROOM} blocks. */
+    static AABB room(Placement.Car car, int y) {
+        int minX = Integer.MAX_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        for (int[] c : car.cells()) {
+            minX = Math.min(minX, c[0]);
+            minZ = Math.min(minZ, c[1]);
+            maxX = Math.max(maxX, c[0]);
+            maxZ = Math.max(maxZ, c[1]);
+        }
+        return new AABB(minX, y, minZ, maxX + 1, y + Placement.HEADROOM, maxZ + 1);
     }
 }
