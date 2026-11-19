@@ -37,11 +37,6 @@ class PlacementTest {
         return out;
     }
 
-    /** The bay with each way of the nose it may take (both for a drawn facing). */
-    static List<Spots.Bay> ways(Spots.Bay bay) {
-        return bay.drawnFacing() ? List.of(bay.oriented(false), bay.oriented(true)) : List.of(bay);
-    }
-
     static boolean free(String state) {
         if (state.equals("air") || state.startsWith("code ")) {
             return state.equals("air") || state.equals("code " + BlockCode.KEEP);
@@ -148,9 +143,8 @@ class PlacementTest {
     void carInsideItsBayAndAlongIt() {
         for (Map.Entry<String, List<Spots.Bay>> e : Spots.all().entrySet()) {
             Structures.Def def = def(e.getKey());
-            for (Spots.Bay drawnBay : e.getValue()) {
+            for (Spots.Bay bay : e.getValue()) {
                 for (Cars.Model model : Cars.ALL)
-                for (Spots.Bay bay : ways(drawnBay))
                 for (int rot = 0; rot < 4; rot++) {
                     int lotX = 1000;
                     int lotZ = -2000;

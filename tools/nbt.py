@@ -1,3 +1,7 @@
+"""Reads a gzipped NBT file (an AMC structure .nbt) into Python values; a library for find_spots.py.
+
+usage (from another tool in tools/): from nbt import load; data = load("<file.nbt>")
+"""
 import gzip, struct, sys, collections
 
 def read_nbt(path):

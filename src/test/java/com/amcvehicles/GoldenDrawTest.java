@@ -111,7 +111,7 @@ class GoldenDrawTest {
             if (c == null) {
                 continue;
             }
-            Placement.Car at = Placement.car(def, lot.x0, lot.z0, lot.rot, base, b.oriented(c.flip()), c.model());
+            Placement.Car at = Placement.car(def, lot.x0, lot.z0, lot.rot, base, b, c.model());
             out.add(String.format(Locale.ROOT, "%s bay %d,%d,%d %s at %.5f %.5f %.5f yaw %.1f cells %d", head, b.x0(),
                     b.y(), b.z0(), car(c), at.x(), at.y(), at.z(), at.noseYaw(), at.cells().size()));
         }

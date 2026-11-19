@@ -595,3 +595,30 @@ mundo e criação do carro no IV): 32 ms na primeira vez (aquecimento), depois 2
   desfeita a mudança, passou.
 - Servidor (mundo novo): 6 caixas geradas, 4 carros = 4 sorteados = 4 no lugar, 8 bombas com a lava sorteada, `/amcv fill`
   na casa de vidro com 2 carros; nenhum ERROR ou WARN do mod no log.
+
+## Versão 0.9.0 — Fase 1 do 1.0.0: código morto (2026-11-19)
+- Levantamento (sem mudar nada): `javac -Xlint:all` em main e test (por um init script do Gradle; conferido com `--debug` que
+  o `-Xlint:all` chegou ao compilador): **0 avisos**. Nenhum import sem uso (busca por nome fora de comentários). Nenhum
+  membro declarado pelo mod sem uso; só `Spots.all`, `Spots.allPumps` e `Spots.Bay.alongZ` são usados apenas por testes
+  (mantidos, escolha do usuário). Os 5 `catch` registram o erro com o stack trace e devolvem a mensagem; nenhum engole
+  erro. Nenhum código comentado no Java. As 9 ferramentas de `tools/` são citadas pelos docs ou usadas por outra
+  (`nbt.py` pelo `find_spots.py`; só ele não tinha a linha de uso, agora tem). As 7 imagens de `docs/spots/` são citadas.
+  Nada de `run/`, `build/` ou `.gradle/` no git.
+- Removido (escolha do usuário): o nariz sorteado (`X`/`Z` em `spots.txt`, `Spots.Bay.drawnFacing` e `oriented`,
+  `Draw.Car.flip`, o índice `FLIP` = 6, o `ways` do `PlacementTest`). O índice 6 fica livre; os outros mantêm o número.
+- Texto: o comentário das bombas em `spots.txt` (citava `Draw.PUMP_FUEL_CHANCE` e "30% com 1 balde"), a nota das vagas
+  comentadas dos postos, a linha duplicada do README, o parágrafo duplicado de "Como a bomba é posta" e as citações a
+  `Mercedes.spawn`, `Placement.CAR_LIFT` e "`Mercedes` as repete" no `CLAUDE.md`, os "63 vagas" que descreviam o estado
+  atual.
+- Provas: as 69 linhas de dados de `spots.txt` iguais às da 0.8.1 (`diff` sem os comentários); 26 testes passam, 0 avisos;
+  **teste dourado idêntico** (`golden: 4708 lines ... sha256 717de763...e4d8b7`, a referência não foi tocada); projeção
+  igual (1.683 carros, 3,42 por cidade, 8,3% sem carro).
+- Jars: `amcvehicles-0.9.0.jar` (`javap -constants`: `CHANCE_PER_BAY = 0.09d`; as constantes iguais às da foto da 0.8.1,
+  menos `FLIP = 6`; as 60 entradas do jar iguais) e `amcvehicles-0.9.0-TESTE-100pct.jar` (`CHANCE_PER_BAY = 1.0d`, feito
+  com `./gradlew jar`, sem os testes, e a constante devolvida; só local). Os 21 JSON iguais aos da foto.
+- Servidor (mundo novo, a mesma semente; o mundo da Fase 0 guardado em `run/world_phase0`): as mesmas 6 caixas da Fase 0
+  deram **o mesmo resultado** (os mesmos 4 carros nas mesmas vagas e posições, as mesmas 8 bombas com a mesma lava).
+  `/amcv fill` na casa de vidro: 2 vagas, 2 carros, 0 pulados; `/amcv car mercedes police true false`: `mercedes_police`,
+  capô aberto, porta-malas fechado; `/amcv lineup`: os 12 carros. Log: os mesmos 12 ERROR e 15 WARN da Fase 0 (IV, TACZ,
+  Minecraft, AMC), nenhum do mod.
+

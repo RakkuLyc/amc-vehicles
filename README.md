@@ -3,7 +3,7 @@
 Mod de integração para NeoForge 1.21.1 entre o **Abandoned Modern City** (AMC) e o **Immersive Vehicles** (IV):
 carros abandonados nas estruturas do AMC.
 
-**Versão 0.8.1** (18 Nov 2026), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
+**Versão 0.9.0** (19 Nov 2026; preparação do 1.0.0, Fase 1: limpeza de código morto, o jogo não muda), **etapa 6**: 8 modelos de carro e bombas de combustível nos postos. Os carros
 **aparecem sozinhos** quando o mundo é gerado (9% por vaga) nas 59 vagas de 11 estruturas do AMC (lista abaixo; desde a
 0.6.1 nenhum carro nos postos, para não atrapalhar quem vai abastecer), e as bombas em todos os postos. Só as áreas geradas depois de instalar o mod recebem carros e bombas.
 
@@ -20,7 +20,6 @@ carros abandonados nas estruturas do AMC.
 - Raridade: **9% por vaga**, sorteada uma vez por cópia da estrutura (a mesma em qualquer ordem de carregamento). Em
   média ~3,4 carros por cidade (8% das cidades sem nenhum; com 3% eram ~1,1; sem a casa de vidro, 3,2). Uma vaga com algo no caminho (por exemplo,
   um baú que o AMC sorteou ali) fica sem o carro.
-  AMC sorteou ali) fica sem o carro.
 - O combustível é o que o IV usaria num carro novo com o motor do modelo (tipo `gasoline`): sem um mod de gasolina,
   lava.
 
@@ -81,6 +80,6 @@ Imagens: `docs/spots/abandoned_wide_building.png`, `docs/spots/etapa4_vagas.png`
 
 ## Build
 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew build -Dorg.gradle.java.installations.paths=$JAVA_HOME` →
-`build/libs/amcvehicles-0.8.1.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
+`build/libs/amcvehicles-0.9.0.jar` (roda também os testes). A pasta `libs/` (fora do git) precisa dos jars do
 Immersive Vehicles, dos dois packs e do AMC.
 Detalhes técnicos, decisões e testes: `CLAUDE.md` e `docs/TESTING.md`.

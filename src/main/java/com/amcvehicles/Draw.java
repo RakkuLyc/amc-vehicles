@@ -19,23 +19,21 @@ public final class Draw {
     private static final long SALT = 0x414D4356L; // "AMCV"
     /**
      * What each number of the draw decides (the indices of {@link #unit}): 0 whether the bay has a car (unchanged since
-     * stage 3), 1 the colour, 2 the hood, 3 the trunk, 4 and 5 the first two doors, 6 the way of a drawn nose, 7 the
-     * model (stage 5), 8 and 9 the rear doors of the Station Wagon.
+     * stage 3), 1 the colour, 2 the hood, 3 the trunk, 4 and 5 the first two doors, 7 the model (stage 5), 8 and 9 the
+     * rear doors of the Station Wagon. Index 6 drew the way of the nose of a bay with a drawn facing until 0.9.0, when
+     * that unused feature was removed; it stays free so the others keep their numbers (and the same draw).
      */
-    static final int CAR = 0, COLOR = 1, HOOD = 2, TRUNK = 3, DOOR_A = 4, DOOR_B = 5, FLIP = 6, MODEL = 7, DOOR_C = 8,
-            DOOR_D = 9;
+    static final int CAR = 0, COLOR = 1, HOOD = 2, TRUNK = 3, DOOR_A = 4, DOOR_B = 5, MODEL = 7, DOOR_C = 8, DOOR_D = 9;
     private static final int[] DOORS = {DOOR_A, DOOR_B, DOOR_C, DOOR_D};
 
     private Draw() {
     }
 
     /**
-     * A drawn car: its model and colour (a subName), what is open ({@code doorsOpen} in the order of
-     * {@link Cars.Model#doors}; {@code trunkOpen} is false for a car without a trunk), and {@code flip}: the way of
-     * the nose in a bay whose facing is drawn ('X' or 'Z', {@link Spots.Bay#oriented}), 50%.
+     * A drawn car: its model and colour (a subName) and what is open ({@code doorsOpen} in the order of
+     * {@link Cars.Model#doors}; {@code trunkOpen} is false for a car without a trunk).
      */
-    public record Car(Cars.Model model, String color, boolean hoodOpen, boolean trunkOpen, List<Boolean> doorsOpen,
-                      boolean flip) {
+    public record Car(Cars.Model model, String color, boolean hoodOpen, boolean trunkOpen, List<Boolean> doorsOpen) {
     }
 
     /**
@@ -67,8 +65,7 @@ public final class Draw {
         return new Car(m, color,
                 u.applyAsDouble(HOOD) < HOOD_OPEN_CHANCE,
                 m.trunk() != null && u.applyAsDouble(TRUNK) < TRUNK_OPEN_CHANCE,
-                List.copyOf(doors),
-                u.applyAsDouble(FLIP) < 0.5);
+                List.copyOf(doors));
     }
 
     /**

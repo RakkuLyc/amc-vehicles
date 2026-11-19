@@ -2,7 +2,7 @@
 # variants share it). Template coordinates of the model's .nbt, as the structure block shows them.
 #   <model> bay <x0> <y> <z0> <x1> <z1> <facing>
 # x0..x1, z0..z1: the cells of the bay (inclusive); y: the layer of its floor; facing: where the nose of the car points
-# in the template (N = -Z, S = +Z, E = +X, W = -X), or X / Z: along that axis, the way drawn per car (50%). The car
+# in the template (N = -Z, S = +Z, E = +X, W = -X). The car
 # stands in the middle of the bay. The draw of each bay is keyed by its x0, y, z0 (keep them when editing others).
 #
 # abandoned_wide_building: the underground garage (floor on layer 0, 8 layers buried), found by
@@ -57,6 +57,9 @@ workshop_small bay 13 0 4 15 11 S
 # the way of a car that comes to fill up). They had 4 and 2, along the islands with the nose drawn (X):
 #   gas_station bay 13 0 11 19 13 X / 25 0 11 31 13 X / 13 0 18 19 20 X / 25 0 18 31 20 X
 #   gas_station_small bay 7 0 5 13 7 X / 7 0 12 13 14 X
+# The drawn nose (X / Z: along that axis, the way drawn per car, 50%) was removed in 0.9.0 (unused since 0.6.1): to put
+# these bays back, either give each a fixed facing or bring that code back from git history (Spots.Bay.oriented,
+# Draw.Car.flip, draw index 6, in 0.8.1).
 # Their fuel pumps stay (below).
 # pharmacy_large (5 colours; added by the user, 16 Nov 2026): the parking of the front, between the worn yellow_concrete
 # stripes at x 1, 6, 11, 16 and 21, nose to the shop; it stops at z 7 (the hedge of the facade is at z 8..9).
@@ -124,7 +127,8 @@ abandoned_glass_house bay 35 0 16 41 18 E
 # abandoned_ramp_building bay 50 0 49 52 55 N
 
 # Stage 6 (16 Nov 2026, approved by the user from docs/spots/bombas_propostas.png): the fuel pumps, IV's own
-# mts:fuelpump, always there, 30% of them with 1 bucket of lava (Draw.PUMP_FUEL_CHANCE), the others empty.
+# mts:fuelpump, always there; half of them empty (Draw.PUMP_EMPTY_CHANCE), the others with 1 to Draw.MAX_BUCKETS
+# buckets of lava, the same chance each (Draw.buckets).
 #   <model> pump <x> <y> <z> <facing>
 # x, y, z: the cell of the pump in the template (y = the layer over the floor of the island); facing: its front (N, S,
 # E, W). Checked with `find_spots.py --bays` (free or a plant, a floor under it) and by PumpTest.

@@ -127,10 +127,10 @@ final class AmcvCommands {
                 src.sendFailure(Component.literal(m.key() + " has no colour " + color));
                 return 0;
             }
-            d = new Draw.Car(m, sub, d.hoodOpen(), d.trunkOpen(), d.doorsOpen(), d.flip());
+            d = new Draw.Car(m, sub, d.hoodOpen(), d.trunkOpen(), d.doorsOpen());
         }
         if (hood != null) {
-            d = new Draw.Car(m, d.color(), hood, m.trunk() != null && trunk, d.doorsOpen(), d.flip());
+            d = new Draw.Car(m, d.color(), hood, m.trunk() != null && trunk, d.doorsOpen());
         }
         float yaw = snappedYaw(src);
         double x = Math.floor(src.getPosition().x) + 0.5 - Math.sin(Math.toRadians(yaw)) * AHEAD;
@@ -159,7 +159,7 @@ final class AmcvCommands {
         for (Cars.Model m : Cars.POLICE) {
             for (String p : m.police()) {
                 Draw.Car d = Draw.car(what -> r.nextDouble(), m, true);
-                cars.add(new Draw.Car(m, p, d.hoodOpen(), d.trunkOpen(), d.doorsOpen(), d.flip()));
+                cars.add(new Draw.Car(m, p, d.hoodOpen(), d.trunkOpen(), d.doorsOpen()));
             }
         }
         float yaw = snappedYaw(src);
@@ -211,7 +211,7 @@ final class AmcvCommands {
         List<String> models = new ArrayList<>();
         for (int k = 0; k < bays.size(); k++) {
             Draw.Car d = Draw.car(what -> r.nextDouble(), s.police());
-            Placement.Car car = s.car(bays.get(k).oriented(d.flip()), d.model());
+            Placement.Car car = s.car(bays.get(k), d.model());
             String why = AmcWorld.blocked(level, car);
             if (why != null) {
                 skipped.add("bay " + (k + 1) + " (" + d.model().key() + "): " + why);

@@ -80,6 +80,11 @@ Highwayman e Station Wagon do **Official Automobile Pack** (OAmP, mod id `oamp`,
    **tirar os carros dos postos**: os carros estacionados ao lado das bombas atrapalhavam abastecer um carro montado.
    As 6 vagas dos postos saíram de `spots.txt` (ficam num comentário); as bombas ficam.
 7. **(feita na 0.7.0, aguardando o teste do usuário)** Loot de oficinas e postos (ver "Loot de oficinas e postos").
+**Preparação do 1.0.0 (desde 2026-11-18; o roteiro fica fora do repositório):** seis fases, cada uma aprovada pelo usuário
+antes da seguinte. Fase 0 (rede de segurança: `GoldenDrawTest` e `docs/baseline/`) **aprovada em 2026-11-19**. Fase 1
+(código morto) **feita na 0.9.0, aguardando aprovação**: saiu o nariz sorteado (ver "Vagas"); `Spots.all`,
+`Spots.allPumps` e `Spots.Bay.alongZ` ficam (só os testes os usam, mas esses testes conferem as vagas e bombas reais:
+escolha do usuário); texto velho corrigido. O push passa a ser feito por mim (o usuário libera a permissão).
 **Pendente (16 Nov 2026):** o diagnóstico dos problemas do Immersive Vehicles (som e combustível, `docs/diagnostico_iv.md`)
 foi deixado pendente pelo usuário (aguarda os testes e as 4 respostas dele; nenhuma correção proposta). A lava a 0,35 foi
 removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou com 0,35 gravado pelo IV: ver "Balanceamento".
@@ -102,7 +107,7 @@ removida na 0.7.5 (17 Nov 2026), mas o `mtsconfig.json` da instância dele ficou
   | scout | mtsofficialpack:scout | 14 | - | 5,00 | 2,64 | 0,469 | 1,647 | door_l, door_r | door_tailgate (a tampa da caçamba) |
 
   Todos têm os blocos de apoio `cube_fl/fr/rl/rr`. O mais alto apoiado é o Mustang (2,25): `Cars.HEADROOM` = 3 blocos
-  livres. Os 8 cabem em todas as 63 vagas nas 4 rotações (`PlacementTest.carInsideItsBayAndAlongIt`).
+  livres. Os 8 cabem em todas as vagas (59 desde a 0.8.1) nas 4 rotações (`PlacementTest.carInsideItsBayAndAlongIt`).
 - **Montagem** (`Vehicles.spawn`, a antiga `Mercedes.spawn` para qualquer modelo): carro novo (dados `null`), capô,
   porta-malas e cada porta no valor sorteado; **painel**: velocímetro `instrument_car_spedometer_kph` no lugar do
   velocímetro do pack (um mostrador padrão com "spedometer" no nome), senão no do meio (pela posição `hudX`); marcador
@@ -146,14 +151,14 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
 - Combustível: `fuelCapacity` 15.000 mB → **1.500 mB**. O fluido é o que o próprio IV escolheria para o motor do
   pack: o mais potente do tipo `gasoline` na config de combustíveis do IV que existe no jogo (padrão do IV: lava 1,0,
   gasoline 1,0, ethanol 0,85). **Sem mod de gasolina, é lava** (como em qualquer carro novo do IV).
-- Rotação: o ângulo do IV é o do Minecraft com o sinal trocado (`WrapperEntity.getYaw`); `Mercedes.spawn` recebe o
+- Rotação: o ângulo do IV é o do Minecraft com o sinal trocado (`WrapperEntity.getYaw`); `Vehicles.spawn` (antes `Mercedes.spawn`) recebe o
   ângulo do Minecraft para onde o **nariz** aponta (0 sul, 90 oeste, 180 norte, 270 leste). A origem do modelo é o
   eixo traseiro: a carroceria vai de ~1,3 bloco atrás dele a ~4,15 à frente (rodas em z 0 e 3,19 do `merc230.json`).
 - **Altura (0.4.2, o usuário viu os carros meio enterrados)**: sem rodas, o merc230 se apoia nos 4 blocos de apoio do
   modelo (`cube_fl/fr/rl/rr`, que o pack mostra quando falta a roda daquele canto: `part_present_N` = 0 e perto do
   chão), com a base em y -0,46875 do modelo (as caixas de colisão mais baixas também: y -0,37, altura 0,2). Com a
-  origem no piso o carro afundava 0,47; agora a origem fica **0,46875 acima do piso** (`Placement.CAR_LIFT`, também no
-  `/amcv mercedes`). O ponto mais alto do modelo é 1,625 (a giroflex das cores de polícia; a carroceria 1,5625), então o
+  origem no piso o carro afundava 0,47; agora a origem fica **0,46875 acima do piso** (era `Placement.CAR_LIFT`; desde a 0.5.0 a altura de
+  cada modelo, `Cars.Model.lift`, usada por `Placement.car` e pelo `/amcv car`). O ponto mais alto do modelo é 1,625 (a giroflex das cores de polícia; a carroceria 1,5625), então o
   carro chega a 2,09 sobre o piso e precisa de **3 blocos livres** (`Placement.HEADROOM`), não 2.
 
 ## Vagas (`Spots`, `Placement`, `AmcWorld`)
@@ -168,9 +173,13 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   BLOCKED e não entra na lista). O nariz vai para a ponta fechada (o carro entra de frente): a outra ponta, com piso e
   altura livre além dela, é o corredor. A imagem (`--png`) mostra o piso, as faixas, as vagas (verde; vermelho =
   bloqueada), o carro (azul) e o nariz (ponto vermelho). Imagens aprovadas em `docs/spots/`.
-- **Nariz sorteado** (usado só pelas vagas dos postos, que saíram na 0.6.1; o formato continua aceito): o nariz é `X` ou `Z` em
-  `spots.txt`: ao longo desse eixo, o sentido sorteado por carro (`Draw.Car.flip`, 50%; `Spots.Bay.oriented`).
-- **Estruturas com vagas (0.4.1, 63 vagas em 12 modelos)**: prédio largo 34 (faixas pintadas, detectadas); e, escritas
+- **Nariz sorteado: removido na 0.9.0** (2026-11-19, aprovado pelo usuário na Fase 1 da preparação do 1.0.0). Até a 0.8.1 o
+  nariz podia ser `X` ou `Z` em `spots.txt` (ao longo desse eixo, o sentido sorteado por carro: `Draw.Car.flip`, 50%,
+  índice 6 do sorteio; `Spots.Bay.oriented`); só as vagas dos postos o usavam, e elas saíram na 0.6.1. Hoje o parser só
+  aceita N, S, E, W. O índice 6 fica livre (os outros não mudam: o teste dourado deu o mesmo resultado). Para voltar as
+  vagas dos postos (comentadas em `spots.txt`): um nariz fixo para cada uma, ou o código da 0.8.1 do histórico do git.
+- **Estruturas com vagas** (a lista da 0.4.1, 63 vagas em 12 modelos; **hoje 59 em 11**: sem os postos desde a 0.6.1 e com a
+  casa de vidro desde a 0.8.0): prédio largo 34 (faixas pintadas, detectadas); e, escritas
   à mão e conferidas (`find_spots.py --bays`): oficina média 2 e pequena 2 (dentro, uma por box, nariz para o fundo),
   posto 4 e posto pequeno 2 (ao lado das ilhas das bombas, ao longo delas, nariz sorteado), farmácia grande 4 (vagas da
   frente entre as faixas amarelas gastas, nariz para a loja, até a sebe da fachada), delegacia 4 (vagas da frente entre
@@ -223,8 +232,8 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   reordenar vagas de um modelo não mude o sorteio das outras), com um sal próprio (SplitMix64): a mesma vaga do mesmo mundo dá sempre o mesmo
   resultado, em qualquer ordem de carregamento. **9% por vaga** (`CHANCE_PER_BAY`; 3% até a 0.7.1); depois, cada um à parte: cor (as
   15 civis com a mesma chance; na delegacia, `type` `police_station`, só as 2 de polícia), capô 50%, porta-malas 50%,
-  porta esquerda 50%, porta direita 50%. As cores e as chances moram em `Draw` (sem classes do Minecraft, para os
-  testes); `Mercedes` as repete.
+  porta esquerda 50%, porta direita 50%. As chances moram em `Draw` e as cores em `Cars` (sem classes do Minecraft, para os
+  testes).
 - **Dono**: um carro pertence ao chunk da sua origem (o eixo traseiro).
 - **Quando**: no `ChunkEvent.Load` de um chunk **recém-gerado** (`isNewChunk`; o evento roda na thread principal,
   depois de o chunk virar `LevelChunk` com status FULL, conferido no código do NeoForge 21.1.219,
@@ -273,8 +282,6 @@ fantasma num cliente, a alternativa é pôr só as peças permanentes em vez de 
   bloco fino (até 1/4, como um tapete; a mesma regra do `PumpTest`), nem sem piso. Nas 10 variantes de cor, as células
   das bombas são ar no `.nbt` (conferido).
 - **Como a bomba é posta**: o `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
-  `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
-  `WrapperWorld.setBlock` do IV sem jogador só põe o bloco, sem a parte que guarda o estado (o tile entity).
   `FuelPumps.place` faz o que o IV faz para um jogador: põe o bloco do IV (o `BuilderBlock` do item, achado no mapa
   `BuilderBlock.blockMap`), cria o tile entity com dados que levam o ângulo (`angles`, lido pelo construtor antes de
   medir a caixa da bomba) e o tanque (`currentFluid` `lava`, `currentFluidMod` `minecraft`, o que o IV grava quando um

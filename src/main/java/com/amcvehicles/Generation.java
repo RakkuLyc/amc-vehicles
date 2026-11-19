@@ -278,7 +278,7 @@ public final class Generation {
             if (d == null) {
                 continue;
             }
-            Placement.Car car = s.car(bays.get(k).oriented(d.flip()), d.model());
+            Placement.Car car = s.car(bays.get(k), d.model());
             if (cx != null && (((int) Math.floor(car.x())) >> 4 != cx || ((int) Math.floor(car.z())) >> 4 != cz)) {
                 continue;
             }
