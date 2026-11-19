@@ -61,19 +61,8 @@ final class FuelPumps {
                 return "no IV block entity at " + pos.toShortString();
             }
             WrapperWorld world = WrapperWorld.getWrapperFor(level);
-            IWrapperNBT data = InterfaceManager.coreInterface.getNewNBTWrapper();
-            // IV turns by its own yaw, Minecraft's with the sign flipped (as the cars)
-            data.setPoint3d("angles", new Point3D(0.0, -yaw, 0.0));
-            if (mb > 0) {
-                // what IV stores when a player pours a lava bucket in: the fluid's path and namespace
-                IWrapperNBT tank = InterfaceManager.coreInterface.getNewNBTWrapper();
-                tank.setString("currentFluid", "lava");
-                tank.setString("currentFluidMod", "minecraft");
-                tank.setDouble("fluidLevel", mb);
-                data.setData("tank", tank);
-            }
             ATileEntityBase<?> te = ((ABlockBaseTileEntity) block).createTileEntity(world,
-                    new Point3D(pos.getX(), pos.getY(), pos.getZ()), null, item, data);
+                    new Point3D(pos.getX(), pos.getY(), pos.getZ()), null, item, pumpData(yaw, mb));
             Method set = BuilderTileEntity.class.getDeclaredMethod("setTileEntity", ATileEntityBase.class);
             set.setAccessible(true);
             set.invoke(tile, te);
@@ -84,5 +73,21 @@ final class FuelPumps {
             AmcVehicles.LOG.error("Could not place the fuel pump at {}", pos, e);
             return e.toString();
         }
+    }
+
+    /** The data a new pump is built from: its angle and, with {@code mb} > 0, a tank of lava. */
+    private static IWrapperNBT pumpData(float yaw, int mb) {
+        IWrapperNBT data = InterfaceManager.coreInterface.getNewNBTWrapper();
+        // IV turns by its own yaw, Minecraft's with the sign flipped (as the cars)
+        data.setPoint3d("angles", new Point3D(0.0, -yaw, 0.0));
+        if (mb > 0) {
+            // what IV stores when a player pours a lava bucket in: the fluid's path and namespace
+            IWrapperNBT tank = InterfaceManager.coreInterface.getNewNBTWrapper();
+            tank.setString("currentFluid", "lava");
+            tank.setString("currentFluidMod", "minecraft");
+            tank.setDouble("fluidLevel", mb);
+            data.setData("tank", tank);
+        }
+        return data;
     }
 }

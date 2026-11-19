@@ -99,8 +99,29 @@ final class Generation {
         }
         List<Planned> cars = carsOf(level, cx, cz);
         List<PlannedPump> pumps = pumpsOf(level, cx, cz);
-        boolean waiting = false;
         List<Long> done = new ArrayList<>();
+        // both always run (a waiting car does not hold the pumps back)
+        boolean carsWait = placeReadyCars(level, cars, done);
+        boolean pumpsWait = placeReadyPumps(level, pumps, cx, cz, done);
+        if (carsWait || pumpsWait) {
+            RESOLVED.addAll(done);
+            return;
+        }
+        pending.remove(chunk);
+        for (Planned p : cars) {
+            RESOLVED.remove(resolvedKey(p));
+        }
+        for (PlannedPump p : pumps) {
+            RESOLVED.remove(resolvedKey(p));
+        }
+    }
+
+    /**
+     * Places the cars not yet resolved whose chunks are ready, adding their keys to {@code done}; returns whether a car
+     * still waits for its chunks.
+     */
+    private static boolean placeReadyCars(ServerLevel level, List<Planned> cars, List<Long> done) {
+        boolean waiting = false;
         for (Planned p : cars) {
             long key = resolvedKey(p);
             if (RESOLVED.contains(key)) {
@@ -113,6 +134,16 @@ final class Generation {
             place(level, p, "generated");
             done.add(key);
         }
+        return waiting;
+    }
+
+    /**
+     * Places the pumps of chunk (cx, cz) not yet resolved once the chunk and its neighbours are ready, adding their
+     * keys to {@code done}; returns whether a pump still waits.
+     */
+    private static boolean placeReadyPumps(ServerLevel level, List<PlannedPump> pumps, int cx, int cz,
+                                           List<Long> done) {
+        boolean waiting = false;
         for (PlannedPump p : pumps) {
             long key = resolvedKey(p);
             if (RESOLVED.contains(key)) {
@@ -125,17 +156,7 @@ final class Generation {
             placePump(level, p, "generated");
             done.add(key);
         }
-        if (waiting) {
-            RESOLVED.addAll(done);
-            return;
-        }
-        pending.remove(chunk);
-        for (Planned p : cars) {
-            RESOLVED.remove(resolvedKey(p));
-        }
-        for (PlannedPump p : pumps) {
-            RESOLVED.remove(resolvedKey(p));
-        }
+        return waiting;
     }
 
     static void onServerStopped(ServerStoppedEvent e) {
