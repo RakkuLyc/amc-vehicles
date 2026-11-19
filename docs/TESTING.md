@@ -788,3 +788,16 @@ repository.
   test is that the game opens with this jar (the mixin is required).
 - The user's instance "MAZ 2.0.0 (TESTE)": `mtsconfig.json` with `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read,
   not changed); "McWW3" at 1.0.
+
+## Public repository (2026-11-19)
+- The user's request ("like AbandonedModernCity and AMCTaczLoot"): those two have their whole history with GitHub's noreply
+  e-mail. Here: mirror backup `~/backups/amcv-repo-2026-11-19` (55 commits), the e-mail of the 44 old commits rewritten
+  (`git filter-branch --env-filter ... --tag-name-filter cat -- --all`); the tree of HEAD the same before and after
+  (`311097202e4f...`); the 55 commits with the noreply e-mail (local and, after `push --force` of `main` and `v1.0.0`, on
+  GitHub: `commits` API, 55 noreply); no e-mail in any file content of the history; no fork, no pull request. The release
+  `v1.0.0` recreated with the same jar (SHA-256 `5b5b165d...`); the tag on the new top commit. Public: the page and the
+  release open without a login (HTTP 200).
+- Left over: GitHub still serves the old commits by their direct hash (`/commit/<old hash>.patch` HTTP 200, with the
+  e-mail); the same happens on AbandonedModernCity (an old commit of before its rewrite of 2026-11-18). Removing them needs
+  GitHub Support (or deleting and recreating the repository).
+

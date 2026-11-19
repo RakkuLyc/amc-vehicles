@@ -4,7 +4,7 @@ The rules of the Abandoned Modern City project apply (the user's choice, 2026-11
 1. **Ask along the way**: design decisions, numbers and style belong to the user; when there is more than one solution,
    present the options with a recommendation.
 2. **Build the `.jar` at every small/medium change** and say what changed in it.
-3. **GitHub** (`gh`, private repository `RakkuLyc/amc-vehicles`): frequent, clear commits; update the repository at
+3. **GitHub** (`gh`, repository `RakkuLyc/amc-vehicles`, public since 2026-11-19): frequent, clear commits; update the repository at
    every testable jar.
 4. **Iterative**: small, testable stages; at the end of each one, a summary + the recommended next step.
 5. **Do not move to the next stage before the user tests and approves the current one.**
@@ -121,6 +121,12 @@ before `Pending`" stays as it is (option c), the images keep their Portuguese ca
 (no logo: there is no image for it), `CHANGELOG.md`, tag `v1.0.0` and a GitHub release with the jar. The user's instance
 "MAZ 2.0.0 (TESTE)" had `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read on 2026-11-19, saved 09:03; not changed:
 it needs his OK and the game closed).
+**Public repository (2026-11-19, the user's request, like AbandonedModernCity and AMC TACZ Loot):** the e-mail of the 44
+old commits rewritten to GitHub's noreply address in the whole history (`git filter-branch --env-filter`; the tree of
+HEAD the same, `3110972...`), backup in `~/backups/amcv-repo-2026-11-19` (mirror, the old history), `push --force` of
+`main` and `v1.0.0` (approved by the user), the release recreated with the same jar, then public. Left over (the same in
+AbandonedModernCity): GitHub still serves the old commits by their direct hash (checked: an old commit's `.patch` shows
+the e-mail) until GitHub Support removes them.
 **Pending (2026-11-16):** the diagnosis of Immersive Vehicles' problems (sound and fuel, `docs/diagnostic_iv.md`) was
 left pending by the user (it waits for his tests and his 4 answers; no fix proposed). Lava at 0.35 was removed in 0.7.5
 (2026-11-17), but the `mtsconfig.json` of his instance kept 0.35 written by IV: see "Balance".
