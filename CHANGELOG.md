@@ -2,6 +2,9 @@
 
 All dates are 2026. Details and test results of each version: `docs/TESTING.md`.
 
+## 1.0.1 — 2026-11-19
+The mod gets an icon (`icon.png`, a game screenshot of an abandoned car), shown in the mod list. No game change.
+
 ## 1.0.0 — 2026-11-19
 First release. The same game content as 0.9.5; `neoforge.mods.toml` gains the project's page, issue tracker and credits.
 What the mod does: abandoned Immersive Vehicles cars (8 models, 9% per parking bay, 59 bays in 11 AMC structures; police
