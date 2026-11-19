@@ -118,10 +118,10 @@ Portuguese, explained in `docs/spots/README.md`.
 Phases 3 to 6 **approved on 2026-11-19**, with my recommendations applied (no code change): the window "chunk saved
 before `Pending`" stays as it is (option c), the images keep their Portuguese captions, `ConfigSystemMixin` stays required.
 **1.0.0 released on 2026-11-19** (the user's OK): `neoforge.mods.toml` with `displayURL`, `issueTrackerURL` and `credits`
-(no logo yet), `CHANGELOG.md`, tag `v1.0.0` and a GitHub release with the jar. The user's instance
+(and the icon, see below), `CHANGELOG.md`, tag `v1.0.0` and a GitHub release with the jar. The user's instance
 "MAZ 2.0.0 (TESTE)" had `"lava": 0.05` in `gasoline`, `diesel` and `avgas` (read on 2026-11-19, saved 09:03; not changed:
 it needs his OK and the game closed).
-**1.0.1 (2026-11-19, the user's request and OK to commit and release):** `src/main/resources/icon.png` (his screenshot, 512×512) and `logoFile="icon.png"` in `neoforge.mods.toml`; no game change.
+**Icon (2026-11-19, the user's request and OK):** `src/main/resources/icon.png` (his screenshot, 512×512) and `logoFile="icon.png"` in `neoforge.mods.toml`. The user asked to keep the version at 1.0.0 (nobody had downloaded it): tag `v1.0.0` moved to the commit with the icon and the release's jar replaced.
 **Public repository (2026-11-19, the user's request, like AbandonedModernCity and AMC TACZ Loot):** the e-mail of the 44
 old commits rewritten to GitHub's noreply address in the whole history (`git filter-branch --env-filter`; the tree of
 HEAD the same, `3110972...`), backup in `~/backups/amcv-repo-2026-11-19` (mirror, the old history), `push --force` of
