@@ -7,3 +7,4 @@ libs/
 out/
 bin/
 __pycache__/
+/logs/

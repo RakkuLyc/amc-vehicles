@@ -1,4 +1,0 @@
-[10:20:52] [Test worker/INFO]: [AMCV] Lava as a fuel set to 0.05 (joining a server; was: diesel 1.0, avgas 1.0, gasoline 1.0); IV's config file is not changed
-[10:20:52] [Test worker/INFO]: [AMCV] Lava as a fuel put back to IV's values (server stopped): {diesel=1.0, avgas=1.0, gasoline=1.0}
-[10:20:52] [Test worker/INFO]: [AMCV] Lava as a fuel set to 0.05 (server starting; was: diesel 1.0, avgas 1.0, gasoline 1.0); IV's config file is not changed
-[10:20:52] [Test worker/INFO]: [AMCV] Lava as a fuel put back to IV's values (leaving a server): {diesel=1.0, avgas=1.0, gasoline=1.0}
