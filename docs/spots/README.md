@@ -2,7 +2,8 @@
 
 The images were made while the documents were in Portuguese, and their captions are drawn **inside** the pictures, in
 Portuguese. They were composed by one-off scripts that are not in `tools/` (`tools/find_spots.py --png` draws only the
-numbers), so they could not be regenerated with English captions; this page explains them instead (0.9.5, 2026-11-19).
+numbers), so they were not regenerated: that would need a new compositing script (from AMC's `.nbt` files with
+`find_spots.py --png` and English titles). This page explains them instead (0.9.5, 2026-11-19).
 
 ## Colour key (all the maps)
 - **Blue** = covered floor; **grey** = open floor; **brown** = blocked (a wall, furniture, no room for a car); dark =

@@ -760,8 +760,8 @@ repository.
   the comments of the Java and of `spots.txt`; lines of up to 120 columns in the tools and in `spots.txt`. The Java comments
   and the game's messages were already in English. The class keys "Comum", "Incomum", "Raro" of `gen_loot.py` stay (they are
   keys of the code).
-- Not translated: the captions drawn inside the images of `docs/spots/` (made by scripts that are not in the project);
-  explained in `docs/spots/README.md`.
+- Not translated: the captions drawn inside the images of `docs/spots/` (made by scripts that are not in the project; a
+  new compositing script could rebuild them, a decision for the user); explained in `docs/spots/README.md`.
 - Checks: (a) no accented letter left outside the glossary and the images' page, except "Épico", the AMC TACZ Loot name in
   brackets (the user's choice); no common Portuguese word left; (b) the numbers of the Portuguese (from git) and the English
   versions of `CLAUDE.md`, `TESTING.md` and the diagnosis compared after normalising decimals, thousands and dates: every
